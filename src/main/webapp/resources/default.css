@@ -1,0 +1,66 @@
+@charset "UTF-8";
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'KyoboHand';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*전체 서식*/
+*{
+	 text-decoration : none;
+	 font-family : "Pretendard-Regular";
+	 color : black;
+	}
+
+/*헤더*/
+.header{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+nav{
+	padding : 30px;
+}
+
+.nav-text{
+	padding : 10px;
+}
+
+/*로고*/
+.logo{
+	display: flex;
+	content-align: center;
+	align-items: center;
+}
+
+/*로고 이미지*/
+.logo .logo-img{
+	width : 4vw;  /*뷰포트 넓이의 7%*/
+	padding : 10px;
+	max-width: 100px;
+    min-width: 50px;
+}
+
+/*로고 텍스트*/
+.logo .logo-text{
+	font-family : "KyoboHand";
+	color : #f0a235;
+	font-size: 2.5vw;
+	max-font-size: 70px;
+    min-font-size: 50px;
+    padding : 2px;
+}
+
+/*제출 버튼 종류*/
+.submit-button{
+
+	
+}
