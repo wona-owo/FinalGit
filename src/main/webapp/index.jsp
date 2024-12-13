@@ -15,21 +15,39 @@
 				<span class="logo-text">댕냥일기</span>
 			</div>		
 			<nav>
-				<span class="nav-text"><a href="/">회원가입</a></span>
-				<span class="nav-text"><a href="/">로그인</a></span>
+				<a href="/" class="nav-text">회원가입</a>
+				<a href="/" class="nav-text">로그인</a>
 			</nav>
 	</div>
 </header>
 
-	<h3>로그인</h3>
-	<form action="/" method="post">
-		ID <br> <input type="text" name="memberId"> <br>
-		Password <br> <input type="password" name="memberPw">
-		<h4><a href="/">아이디, 비밀번호를 잊었나요?</a></h4>
-		<input type="submit" value="로그인" class="submit-button">
-	</form>
+	<div class="main">
+	<div>
+		<img alt="메인 이미지" src="/resources/css_image/main.jpg" class="main-image">
+	</div>
+	
+		<div class="login-area">
+			<div id="login-title-text">로그인</div>
+			
+			<form action="/" method="post">
+				<div class="input-area">
+					<label for="memberId">ID</label> <br> 
+					<input type="text" name="memberId"> <br>
+					<label for="memberPw">Password</label> <br> 
+					<input type="password" name="memberPw">
+					<div class="srch-link">			
+						<a href="/" class="other-link">아이디, 비밀번호를 잊었나요?</a>
+					</div>
+				</div>
+				
+					<input type="submit" value="로그인" class="submit-button">		
+				<div>
+					<a href="/" class="other-link">계정이 없으신가요?</a>
+				</div>
+			</form>
+		</div>
+	</div>
 
-	<h4><a href="/">계정이 없으신가요?</a></h4>
 
 
 </body>

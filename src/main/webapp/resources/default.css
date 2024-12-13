@@ -17,22 +17,30 @@
 	 text-decoration : none;
 	 font-family : "Pretendard-Regular";
 	 color : black;
+	 border : none;
 	}
+	
 
 /*헤더*/
 .header{
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	margin-bottom: 2%;
 }
 
+/*상단메뉴*/
 nav{
 	padding : 30px;
 }
 
-.nav-text{
-	padding : 10px;
+.nav-text {
+	padding: 10px;
 }
+
+ .header .nav-text:hover {
+ 	text-decoration: underline;
+ }
 
 /*로고*/
 .logo{
@@ -43,7 +51,7 @@ nav{
 
 /*로고 이미지*/
 .logo .logo-img{
-	width : 4vw;  /*뷰포트 넓이의 7%*/
+	width : 4vw;  /*뷰포트 넓이의 4%*/
 	padding : 10px;
 	max-width: 100px;
     min-width: 50px;
@@ -53,14 +61,72 @@ nav{
 .logo .logo-text{
 	font-family : "KyoboHand";
 	color : #f0a235;
-	font-size: 2.5vw;
+	font-size: 2.5vw; /*뷰포트 넓이의 2.5%*/
 	max-font-size: 70px;
     min-font-size: 50px;
     padding : 2px;
 }
 
-/*제출 버튼 종류*/
-.submit-button{
-
-	
+/*메인 이미지*/
+.main-image {
+    width: 40vw;
+    height: auto;
+    margin-left: 5%;
+    border-radius: 30px;
+    border: 0.5px solid #E6E6E6;
 }
+
+
+/*제출 버튼(통합)*/
+.submit-button{
+	width: 35vw;
+	background-color: #f0a235;
+	color: #fff;
+	height: 5vh;
+	margin-bottom: 10px;
+}
+
+/*input 박스*/
+input {
+	width: 35vw;
+	height: 5vh;	
+	background-color: #E6E6E6;
+	border-radius: 5px;
+	padding: 3px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.login-area .other-link {
+	text-decoration: underline;
+}
+
+.main{
+	display: flex;
+	justify-content: space-around;
+}
+
+.login-area{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	font-size: 14px;
+	color: #D8D8D8;
+}
+
+.login-area .input-area{
+	text-align: left;
+}
+
+.srch-link{
+	margin-top: 15px;
+	margin-bottom: 8px;
+}
+
+.login-area #login-title-text{
+	font-size: 25px;
+	margin-bottom: 30px;
+}
+
