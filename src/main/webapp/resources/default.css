@@ -97,6 +97,7 @@ input {
 	margin-bottom: 5px;
 }
 
+/*로그인 화면*/
 .login-area .other-link {
 	text-decoration: underline;
 }
@@ -130,3 +131,57 @@ input {
 	margin-bottom: 30px;
 }
 
+/*피드 메뉴 로고*/
+.nav-logo{
+	display: flex;
+	content-align: center;
+	align-items: center;
+}
+
+.nav-logo .logo-img{
+	width : 2vw;  /*뷰포트 넓이의 2%*/
+	padding : 8px;
+	max-width: 80px;
+    min-width: 20px;
+}
+
+.nav-logo .nav-logo-text{
+	font-family : "KyoboHand";
+	color : #f0a235;
+	font-size: 1.5vw; /*뷰포트 넓이의 1.5%*/
+	max-font-size: 70px;
+    min-font-size: 12px;
+    padding : 1px;
+}
+
+/*피드 메뉴 양식*/
+.side-menu{
+	height: 100vh;
+	width:15vw;
+	border-right: solid 0.5px #E6E6E6;
+}
+
+.menu-list{
+	font-weight: bold;
+	display: flex;
+	flex-direction: column;
+	padding-left: 8px;
+	padding-top: 50px;
+}
+
+.icon-img{
+	width: 25px; 
+	padding-right: 10px;
+}
+
+.one-menu{
+	display: flex;
+	padding-bottom: 30px;
+	
+}
+
+/*메인 피드*/
+.container{
+	display: flex;
+	height: 100vh;
+}

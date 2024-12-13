@@ -29,14 +29,14 @@
 		<div class="login-area">
 			<div id="login-title-text">로그인</div>
 			
-			<form action="/" method="post">
+			<form action="/member/login.kh" method="post">
 				<div class="input-area">
 					<label for="memberId">ID</label> <br> 
 					<input type="text" name="memberId"> <br>
 					<label for="memberPw">Password</label> <br> 
 					<input type="password" name="memberPw">
 					<div class="srch-link">			
-						<a href="/" class="other-link">아이디, 비밀번호를 잊었나요?</a>
+						<a href="/" class="other-link">아이디/비밀번호를 잊었나요?</a>
 					</div>
 				</div>
 				
