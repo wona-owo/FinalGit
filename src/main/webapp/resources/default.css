@@ -176,12 +176,37 @@ input {
 
 .one-menu{
 	display: flex;
-	padding-bottom: 30px;
-	
+	padding-bottom: 15px;
+	padding-top: 15px;
 }
+
+.menu-link{
+	display: block;
+	height: 100%;
+	width: 100%;
+}
+
+/*메뉴 프로필*/
+.profile{
+	margin-top: 40px;
+	display: flex;
+    align-items: center;
+	gap: 10px;
+}
+
+.profile-frame{
+	background-color: #E6E6E6;
+	height: 5vw;
+	width: 5vw;
+	border-radius: 50%;
+	overflow: hidden; /*나중에 사진 들어가면 깔끔하게 잘리게*/
+}
+
+
 
 /*메인 피드*/
 .container{
 	display: flex;
 	height: 100vh;
 }
+
