@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="member">
-
+		
+	<!-- 회원가입 -->
+	<insert id="insertUser"
+	parameterType="member">
+	
+	insert into tbl_user 
+	(user_no, 
+	 user_id, 
+	 user_pw, 
+	 user_nickname, 
+	 user_name, 
+	 user_address, 
+	 user_email, 
+	 user_phone) 
+	values 
+	(seq_user.nextval, 
+	 #{userId}, 
+	 #{userPw}, 
+	 #{userNickname}, 
+	 #{userName}, 
+	 #{userAddress}, 
+	 #{userEmail}, 
+	 #{userPhone})
+	 	
+	</insert>
 </mapper>

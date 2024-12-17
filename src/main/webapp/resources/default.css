@@ -69,7 +69,7 @@ nav{
 
 /*메인 이미지*/
 .main-image {
-    width: 40vw;
+    width: 35vw;
     height: auto;
     margin-left: 5%;
     border-radius: 30px;
@@ -90,15 +90,36 @@ nav{
 input {
 	width: 35vw;
 	height: 5vh;	
+	display: flex;
+	align-items: flex-start;
 	background-color: #E6E6E6;
 	border-radius: 5px;
-	padding: 3px;
-	margin-top: 5px;
 	margin-bottom: 5px;
 }
 
+.submit-button:hover{
+	cursor: pointer;
+}
+
+/*버튼속성 양식*/
+[type=button]{
+	background-color: #f8f8f8;
+	border-radius: 4px;
+	border: 1px solid #CCC;
+	color: #333333;
+}
+
+[type=button]:hover{
+	cursor: pointer;
+}
+
+[type=button]:active {
+    background-color: #DDDDDD; 
+    border-color: #AAA;
+}
+
 /*로그인 화면*/
-.login-area .other-link {
+.index-area .other-link {
 	text-decoration: underline;
 }
 
@@ -107,7 +128,7 @@ input {
 	justify-content: space-around;
 }
 
-.login-area{
+.index-area{
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -117,7 +138,7 @@ input {
 	color: #D8D8D8;
 }
 
-.login-area .input-area{
+.index-area .input-area{
 	text-align: left;
 }
 
@@ -126,9 +147,26 @@ input {
 	margin-bottom: 8px;
 }
 
-.login-area #login-title-text{
+.index-area .title-text{
 	font-size: 25px;
 	margin-bottom: 30px;
+}
+
+
+/*회원가입 화면*/
+.join-area{
+	display : flex;
+	flex-direction: column;
+	margin-bottom: 10vh;
+}
+
+.join-form .tag-name{
+	text-align: left;
+}
+
+.tag-name{
+	display: block;
+	text-align: left;
 }
 
 /*피드 메뉴 로고*/
