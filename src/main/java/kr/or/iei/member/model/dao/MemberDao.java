@@ -5,10 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import kr.or.iei.member.model.vo.Member;
+
 @Repository("dao")
 public class MemberDao {
 	
 	@Autowired
 	@Qualifier("sqlSessionTemplate")
 	private SqlSessionTemplate sqlSession;
+
+	public Member memberLogin(Member member) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.loginMember", member);
+	}
 }

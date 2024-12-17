@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="member">
-
+	
+	<select id="loginMember" parameterType="member" resultType="member">
+		select user_no as userNo,
+           	   user_id as userId,
+           	   user_pw as userPw,
+           	   user_nickname as userNickname,
+               user_name as userName,
+               user_address as userAddress,
+               user_email as userEmail,
+               user_phone as userPhone,
+               user_type as userType,
+               enroll_date as enrollDate,
+               acct_level as acctLevel,
+               ban_yn as banYN, 
+               user_image as userImage
+          from tbl_user
+    	where user_id = #{userId} and user_pw = #{userPw}
+	</select>
 </mapper>
