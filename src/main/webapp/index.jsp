@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Home</title>
-<link rel ="stylesheet"  href="/resources/default.css"  >
+<link rel ="stylesheet"  href="/resources/default.css">
 </head>
 <body>
 <header>
@@ -20,7 +20,6 @@
 			</nav>
 	</div>
 </header>
-
 	<div class="main">
 	<div>
 		<img alt="메인 이미지" src="/resources/css_image/main.jpg" class="main-image">
@@ -32,9 +31,9 @@
 			<form action="/member/login.kh" method="post">
 				<div class="input-area">
 					<label for="memberId">ID</label> <br> 
-					<input type="text" name="memberId"> <br>
+					<input type="text" name="userId"> <br>
 					<label for="memberPw">Password</label> <br> 
-					<input type="password" name="memberPw">
+					<input type="password" name="userPw">
 					<div class="srch-link">			
 						<a href="/" class="other-link">아이디/비밀번호를 잊었나요?</a>
 					</div>
@@ -47,8 +46,11 @@
 			</form>
 		</div>
 	</div>
-
-
-
+	<script>
+	    let loginFailMsg = "${loginFailMsg}";
+	    if (loginFailMsg) {
+	        alert(loginFailMsg);
+	    }
+	</script>
 </body>
 </html>
