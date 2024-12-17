@@ -17,5 +17,9 @@ public class MemberService {
 	public int join(Member member) {
 		return memberDao.join(member);
 	}
+	
+	public Member memberLogin(Member member) {	
+		return memberDao.memberLogin(member);
+	}
 
 }

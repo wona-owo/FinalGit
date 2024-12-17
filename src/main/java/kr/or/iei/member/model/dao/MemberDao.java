@@ -17,4 +17,8 @@ public class MemberDao {
 	public int join(Member member) {
 		return sqlSession.insert("member.insertUser", member);
 	}
+	
+	public Member memberLogin(Member member) {
+		return sqlSession.selectOne("member.loginMember", member);
+	}
 }

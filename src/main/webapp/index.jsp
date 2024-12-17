@@ -20,7 +20,6 @@
 			</nav>
 	</div>
 </header>
-
 	<div class="main">
 	<div>
 		<img alt="메인 이미지" src="/resources/css_image/main.jpg" class="main-image">
@@ -47,8 +46,11 @@
 			</form>
 		</div>
 	</div>
-
-
-
+	<script>
+	    let loginFailMsg = "${loginFailMsg}";
+	    if (loginFailMsg) {
+	        alert(loginFailMsg);
+	    }
+	</script>
 </body>
 </html>
