@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
@@ -60,5 +61,23 @@ public class MemberController {
 			return "member/joinFail";
 		}		
 	}
+	
+	//아이디 중복체크
+	@GetMapping("idDuplChk.kh")
+	@ResponseBody
+	public String idDuplChk(String userId) {
+		int cnt = memberService.idDuplChk(userId);
+		return String.valueOf(cnt);
+	}
+	
+	//닉네임 중복체크
+	@GetMapping("nickDuplChk.kh")
+	@ResponseBody
+	public String nickDuplChk(String userNickname) {
+		int cnt = memberService.nickDuplChk(userNickname);
+		return String.valueOf(cnt);
+	}
+	
+	//전화번호 중복체크
 	
 }

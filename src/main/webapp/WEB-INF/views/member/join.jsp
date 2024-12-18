@@ -43,7 +43,7 @@
 							<input type="password" id="confirmPw" placeholder="동일한 비밀번호 입력"> <br>
 							
 							<span class="tag-name">Nickname</span> <br>
-							<input type="text" name="userNickname" placeholder="닉네임"><button type="button" id="nickDuplCk" class="join-button">닉네임 중복체크</button> <br>
+							<input type="text" id="userNickname" name="userNickname" placeholder="닉네임"><button type="button" id="nickDuplCk" class="join-button">닉네임 중복체크</button> <br>
 							
 							<span class="tag-name">이름</span> <br>
 							<input type="text" name="userName" placeholder="ex) 홍길동"> <br>
@@ -55,7 +55,7 @@
 							<input type="text" name="userEmail" placeholder="aaa@example.co.kr"> <br>
 							
 							<span class="tag-name">전화번호</span> <br>
-							<input type="text" name="userPhone" placeholder="010-0000-0000"><button type="button" id="phoneDuplCk" class="join-button">전화번호 중복체크</button> <br> <br>
+							<input type="text" id="userPhone" name="userPhone" placeholder="010-0000-0000"><button type="button" id="phoneDuplCk" class="join-button">전화번호 중복체크</button> <br> <br>
 							
 							<input type="submit" value="회원가입" class="submit-button">
 					</form>	
@@ -115,53 +115,96 @@
 			}		
 		});
 	
-		//중복검사 진행(아이디, 닉네임, 전화번호)
+		//버튼 클릭시 -> 중복검사 진행(아이디, 닉네임, 전화번호)
 		//중복체크값 저장필요(무결성 검사)
 		
+		const userNickname = $("#userNickname");
+		const userPhone = $("#userPhone");
+		
 		//아이디
-		$.ajax({
-			url : "/" //중복검사 서블릿
-			data :{ "userId" : userId.val()},
-			type : "GET",
+		$("#idDuplCk").on("click",function(){
 			
-			success : function(res) {
-				if(res == 0){
-					alert("사용 가능한 아이디입니다.")
-				}else{
-					alert("이미 사용중인 아이디입니다.")
-				}
+			//입력값이 없는 경우
+			if(!userId.val()){
+				alert("아이디를 입력해주세요");
+				return;
 			}
+			
+			$.ajax({
+				url : "/member/idDuplChk.kh", //중복검사 서블릿
+				data :{userId : userId.val()},
+				type : "GET",				
+				success : function(res) {				
+					 
+					if(res == '1'){
+						alert("이미 사용중인 아이디입니다.")
+					}else{
+						alert("사용 가능한 아이디입니다.")
+					}
+				},
+				error : function () {
+					console.error("ajax 요청 실패!")
+				}
+			});
 		});
+		
 		//닉네임
-		$.ajax({
-			url : "/" //중복검사 서블릿
-			data :{ "userNickname" : userNickname.val()},
-			type : "GET",
+		$("#nickDuplCk").on("click",function(){
 			
-			success : function(res) {
-				if(res == 0){
-					alert("사용 가능한 닉네임입니다.")
-				}else{
-					alert("이미 사용중인 닉네임입니다.")
-				}
+			//입력값이 없는 경우
+			if(!userNickname.val()){
+				alert("닉네임을 입력해주세요");
+				return;
 			}
+			
+			$.ajax({
+				url : "/member/nickDuplChk.kh", //중복검사 서블릿
+				data :{ userNickname : userNickname.val()},
+				type : "GET",
+				
+				success : function(res) {
+					if(res == '1'){
+						alert("이미 사용중인 닉네임입니다.")
+					}else{
+						alert("사용 가능한 닉네임입니다.")
+					}
+				},
+				error : function () {
+					console.error("ajax 요청 실패!")
+				}
+			});
 		});
+		
+		
+		
 		//전화번호
-		$.ajax({
-			url : "/" //중복검사 서블릿
-			data :{ "userPhone" : userPhone.val()},
-			type : "GET",
+		$("#phoneDuplCk").on("click",function(){
 			
-			success : function(res) {
-				if(res == 0){
-					alert("사용 가능한 전화번호입니다.")
-				}else{
-					alert("이미 사용중인 전화번호입니다.")
-				}
+			//입력값이 없는 경우
+			if(!userPhone.val()){
+				alert("전화번호를 입력해주세요");
+				return;
 			}
-		});
-		
-		
+			
+			
+			$.ajax({
+				url : "/member/phoneDuplChk.kh", //중복검사 서블릿
+				data :{ userPhone : userPhone.val()},
+				type : "GET",
+				
+				success : function(res) {
+					if(res == '1'){
+						alert("이미 가입된 전화번호입니다.")
+					}else{
+						alert("사용 가능한 전화번호입니다.")
+						}
+					},
+					error : function () {
+						console.error("ajax 요청 실패!")
+					}
+				});
+			});
+			
 		
 		//전체값 유효성 검사(나중에 맨위로...)
 		const chkValue = {

@@ -13,13 +13,21 @@ public class MemberService {
 	@Autowired
 	@Qualifier("dao")
 	private MemberDao memberDao;
-
+	
 	public int join(Member member) {
 		return memberDao.join(member);
 	}
 	
 	public Member memberLogin(Member member) {	
 		return memberDao.memberLogin(member);
+	}
+
+	public int idDuplChk(String userId) {
+		return memberDao.idDuplChk(userId);
+	}
+
+	public int nickDuplChk(String userNickname) {
+		return memberDao.nickDuplChk(userNickname);
 	}
 
 }

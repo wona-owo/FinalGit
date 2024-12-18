@@ -21,4 +21,16 @@ public class MemberDao {
 	public Member memberLogin(Member member) {
 		return sqlSession.selectOne("member.loginMember", member);
 	}
+
+	public int idDuplChk(String userId) {
+		return sqlSession.selectOne("member.idDuplChk", userId);
+	}
+
+	public int nickDuplChk(String userNickname) {
+		return sqlSession.selectOne("member.nickDuplChk", userNickname);
+	}
+
+	public int phoneDuplChk(String userPhone) {
+		return sqlSession.selectOne("member.phoneDuplChk", userPhone);
+	}
 }
