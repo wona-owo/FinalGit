@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -22,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.or.iei.common.exception.ApiLoginException;
+import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.naver.model.dao.NaverDao;
 import kr.or.iei.naver.model.vo.NaverUser;
 
@@ -30,7 +30,7 @@ public class NaverService {
 	
 	@Autowired
 	@Qualifier("naverDao")
-	private NaverDao Dao;
+	private NaverDao dao;
 	private final static String CLIENT_ID = "R7uvrgzkvgtjc54icJns";
 	private final static String CLIENT_SECRET = "UYxdNxkprV";
 	private final static String REDIRECT_URI = "http://localhost/naver/callback.kh";
@@ -71,10 +71,10 @@ public class NaverService {
 		}
 	}
 
-	public void getUserInfo(String accessToken) {
+	public NaverUser getUserInfo(String accessToken) {
 		HttpPost post = new HttpPost(USERINFO_URL);
 		post.setHeader("Authorization", "Bearer " + accessToken);
-		NaverUser nUser = new NaverUser();
+		NaverUser naverUser = new NaverUser();
 		
 		try (CloseableHttpClient client = HttpClients.createDefault();
 	             CloseableHttpResponse response = client.execute(post)) {
@@ -88,15 +88,23 @@ public class NaverService {
 	            String email = responseNode.get("email").asText();
 	            String phone = responseNode.get("mobile").asText();
 	            String id = "N_" + email.split("@")[0]; // 일반회원과 아이디 중복을 피하기 위해 앞에 N_를 삽입
+	            String pw = UUID.randomUUID().toString();
 	            
-	            nUser.setUserId(id);
-	            nUser.setUserName(name);
-	            nUser.setUserEmail(email);
-	            nUser.setUserPhone(phone);
+	            naverUser.setApiUserId(id);
+	            naverUser.setApiUserPw(pw);
+	            naverUser.setApiUserName(name);
+	            naverUser.setApiUserEmail(email);
+	            naverUser.setApiUserPhone(phone);
+	            naverUser.setApiUserType("N");
 	            
 	        } catch (IOException e) {
 	            throw new ApiLoginException("Failed to get user info from Naver", e);
 	        }
-
+		return naverUser;
+	}
+	
+	// 네이버 로그인회원이 DB에 존재 여부 확인
+	public Member naverLoginChk(NaverUser naverUser) {
+		return dao.naverLoginChk(naverUser);
 	}
 }

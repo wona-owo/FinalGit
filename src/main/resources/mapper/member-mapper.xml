@@ -74,4 +74,28 @@
 	  where user_phone = #{_parameter}
    </select>
 
+	<!-- API 회원가입 -->
+	<insert id="insertApiUser"
+	parameterType="member">
+		insert into tbl_user 
+		(user_no, 
+		 user_id, 
+		 user_pw, 
+		 user_nickname, 
+		 user_name, 
+		 user_address, 
+		 user_email, 
+		 user_phone,
+		 user_type) 
+		values 
+		(seq_user.nextval, 
+		 #{userId}, 
+		 #{userPw}, 
+		 #{userNickname}, 
+		 #{userName}, 
+		 #{userAddress}, 
+		 #{userEmail}, 
+		 #{userPhone},
+		 #{userType})
+	</insert>
 </mapper>

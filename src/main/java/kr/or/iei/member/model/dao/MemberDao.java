@@ -33,4 +33,8 @@ public class MemberDao {
 	public int phoneDuplChk(String userPhone) {
 		return sqlSession.selectOne("member.phoneDuplChk", userPhone);
 	}
+
+	public int apiJoin(Member member) {
+		return sqlSession.insert("member.insertApiUser", member);
+	}
 }

@@ -34,4 +34,8 @@ public class MemberService {
 		return memberDao.phoneDuplChk(userPhone);
 	}
 
+	public int apiJoin(Member member) {
+		return memberDao.apiJoin(member);
+	}
+
 }

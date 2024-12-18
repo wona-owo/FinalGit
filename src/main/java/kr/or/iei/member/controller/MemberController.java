@@ -101,4 +101,14 @@ public class MemberController {
 			return "member/myFeed";
 		}
 	
+	// api 회원가입
+	@PostMapping("apiJoin.kh")
+	public String apiJoin(Member member) {
+		int result = memberService.apiJoin(member);
+		if(result > 0) {
+			return "redirect:/";
+		}else{
+			return "member/joinFail";
+		}		
+	}
 }

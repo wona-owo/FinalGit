@@ -2,54 +2,75 @@ package kr.or.iei.naver.model.vo;
 
 public class NaverUser {
 
-	private String userId;
-	private String userName;
-	private String userEmail;
-	private String userPhone;
+	private String apiUserId;
+	private String apiUserPw;
+	private String apiUserName;
+	private String apiUserEmail;
+	private String apiUserPhone;
+	private String apiUserType;
 
 	public NaverUser() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public NaverUser(String userId, String userName, String userEmail, String userPhone) {
+	public NaverUser(String apiUserId, String apiUserPw, String apiUserName, String apiUserEmail, String apiUserPhone,
+			String apiUserType) {
 		super();
-		this.userId = userId;
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.userPhone = userPhone;
+		this.apiUserId = apiUserId;
+		this.apiUserPw = apiUserPw;
+		this.apiUserName = apiUserName;
+		this.apiUserEmail = apiUserEmail;
+		this.apiUserPhone = apiUserPhone;
+		this.apiUserType = apiUserType;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getApiUserId() {
+		return apiUserId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setApiUserId(String apiUserId) {
+		this.apiUserId = apiUserId;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getApiUserPw() {
+		return apiUserPw;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setApiUserPw(String apiUserPw) {
+		this.apiUserPw = apiUserPw;
 	}
 
-	public String getUserEmail() {
-		return userEmail;
+	public String getApiUserName() {
+		return apiUserName;
 	}
 
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public void setApiUserName(String apiUserName) {
+		this.apiUserName = apiUserName;
 	}
 
-	public String getUserPhone() {
-		return userPhone;
+	public String getApiUserEmail() {
+		return apiUserEmail;
 	}
 
-	public void setUserPhone(String userPhone) {
-		this.userPhone = userPhone;
+	public void setApiUserEmail(String apiUserEmail) {
+		this.apiUserEmail = apiUserEmail;
+	}
+
+	public String getApiUserPhone() {
+		return apiUserPhone;
+	}
+
+	public void setApiUserPhone(String apiUserPhone) {
+		this.apiUserPhone = apiUserPhone;
+	}
+
+	public String getApiUserType() {
+		return apiUserType;
+	}
+
+	public void setApiUserType(String apiUserType) {
+		this.apiUserType = apiUserType;
 	}
 
 }
