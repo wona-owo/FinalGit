@@ -44,6 +44,12 @@
 					<a href="/member/joinFrm.kh" class="other-link">계정이 없으신가요?</a>
 				</div>
 			</form>
+			<form action="/naver/login.kh" method="get">
+				<input type="submit" value="네이버">
+			</form>
+			<form action="/kakao/login.kh" method="get">
+				<input type="submit" value="카카오">
+			</form>
 		</div>
 	</div>
 	<script>
