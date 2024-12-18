@@ -30,4 +30,8 @@ public class MemberService {
 		return memberDao.nickDuplChk(userNickname);
 	}
 
+	public int phoneDuplChk(String userPhone) {
+		return memberDao.phoneDuplChk(userPhone);
+	}
+
 }

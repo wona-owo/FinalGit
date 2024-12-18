@@ -79,5 +79,11 @@ public class MemberController {
 	}
 	
 	//전화번호 중복체크
+	@GetMapping("phoneDuplChk.kh")
+	@ResponseBody
+	public String phoneDuplChk(String userPhone) {
+		int cnt = memberService.phoneDuplChk(userPhone);
+		return String.valueOf(cnt);
+	}
 	
 }
