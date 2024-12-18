@@ -45,10 +45,10 @@
 				</div>
 			</form>
 			<form action="/naver/login.kh" method="get">
-				<input type="submit" value="네이버">
+				<input type="submit" value="네이버" id="naver">
 			</form>
 			<form action="/kakao/login.kh" method="get">
-				<input type="submit" value="카카오">
+				<input type="submit" value="카카오" class="kakao">
 			</form>
 		</div>
 	</div>
