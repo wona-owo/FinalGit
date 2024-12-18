@@ -210,8 +210,11 @@ input {
 /*피드 메뉴 양식*/
 .side-menu{
 	height: 100vh;
-	width:15vw;
+	width: 250px;
 	border-right: solid 0.5px #E6E6E6;
+	position: fixed;
+	top: 0;
+	left: 0;
 }
 
 .menu-list{
@@ -258,8 +261,8 @@ input {
 
 
 /*메인 피드*/
-.container{
-	display: flex;
-	height: 100vh;
+main {
+ margin-left: 350px; /*메뉴 두께만큼 마진*/
+ margin-top: 50px;
 }
 

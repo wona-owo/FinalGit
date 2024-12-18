@@ -26,7 +26,7 @@ public class MemberController {
 		super();
 	}
 		
-	
+	//로그인
 	@PostMapping("login.kh")
 	public String memberLogin (Member member,HttpSession session, Model model) {
 		
@@ -44,6 +44,14 @@ public class MemberController {
 		}
 	}
 	
+	//로그아웃
+	@GetMapping("logout.kh")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		
+		return "redirect:/";
+	}
+	
 	
 	//회원가입 Frm
 	@GetMapping("joinFrm.kh")
@@ -56,7 +64,7 @@ public class MemberController {
 	public String join(Member member) {
 		int result = memberService.join(member);
 		if(result > 0) {
-			return "redirect :/";
+			return "redirect:/";
 		}else{
 			return "member/joinFail";
 		}		
@@ -85,5 +93,12 @@ public class MemberController {
 		int cnt = memberService.phoneDuplChk(userPhone);
 		return String.valueOf(cnt);
 	}
+	
+	
+	//개인피드 Frm
+		@GetMapping("myFeedFrm.kh")
+		public String myFeedFrm() {
+			return "member/myFeed";
+		}
 	
 }

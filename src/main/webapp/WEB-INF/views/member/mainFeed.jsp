@@ -6,58 +6,17 @@
 <meta charset="UTF-8">
 <title>Main Feed</title>
 <link rel ="stylesheet"  href="/resources/default.css"  >
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
 
-	<div class="container">
-	
-		<nav class="side-menu">
-			<div class="nav-logo">
-				<img alt="댕냥일기"  src="/resources/css_image/logo.png"  class="logo-img">
-				<span class="nav-logo-text">댕냥일기</span>
-			</div>
-			
-			  <div class="menu-list">
-				<div class="one-menu">
-					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/home" class="menu-link" data-url="/home.kh">홈</a>
-				</div>
-				
-				<div class="one-menu">
-					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/search" class="menu-link" data-url="/search.kh">검색</a>
-				</div>
-				
-				<div class="one-menu">
-					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					 <a href="/" class="menu-link" >알림</a>
-				</div>
-				
-				<div class="one-menu">
-					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/message" class="menu-link" data-url="/message.kh">메시지</a>
-				</div>
-				
-				<div class="one-menu">
-					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/" class="menu-link">정기구독</a>
-				</div>
-			</div>		
-			
-			<div class="profile">
-				<div class="profile-frame">
-				</div>
-					<a href="/">프로필(이름)</a>
-			</div>
-						
-		</nav>
-		
-		<main id="main-feed">
-		 	<p>본문영역</p>
-		</main>
-		
-	</div>
+	<%@ include file="/WEB-INF/views/member/sideMenu.jsp" %>
+	<main id="main-feed">
+	 	<p>메인피드</p>
+	</main>	
+
 
 	<script>
 	function loadPageContent(url, pushState = true) {
