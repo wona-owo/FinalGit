@@ -1,5 +1,7 @@
 package kr.or.iei.member.model.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,11 @@ public class MemberService {
 
 	public int apiJoin(Member member) {
 		return memberDao.apiJoin(member);
+	}
+
+	public ArrayList<Member> searchUser(String searchStr) {
+		// TODO Auto-generated method stub
+		return (ArrayList<Member>)memberDao.searchUser(searchStr);
 	}
 
 }
