@@ -1,5 +1,7 @@
 package kr.or.iei.member.controller;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,14 +111,31 @@ public class MemberController {
 			return "member/joinFail";
 		}		
 	}
-	
+	// 검색 Frm
 	@GetMapping("search.kh")
 	public String searchFrm() {
 		return "member/search";
 	}
 	
+	// 메시지 Frm 
 	@GetMapping("message.kh")
 	public String messageFrm() {
 		return "member/message";
+	}
+
+	@PostMapping("searchBoard.kh")
+	@ResponseBody
+	public String inputSearch(String searchStr, Model model) {
+		ArrayList<Member> users = memberService.searchUser(searchStr);
+		if (users.isEmpty()) {
+			return "<div class='user-result'>검색 결과가 없습니다.</div>";
+		}
+		model.addAttribute("user", users);
+		StringBuilder html = new StringBuilder();
+		for (Member m : users) {
+			html.append("<div class='user-result'>").append("<a href='/member/userView.kh?userNo=")
+				.append(m.getUserNo()).append("'>").append(m.getUserNickname()).append("</a>").append("</div>");
+		}
+		return html.toString();
 	}
 }

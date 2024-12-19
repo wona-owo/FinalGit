@@ -1,5 +1,8 @@
 package kr.or.iei.member.model.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,5 +39,10 @@ public class MemberDao {
 
 	public int apiJoin(Member member) {
 		return sqlSession.insert("member.insertApiUser", member);
+	}
+
+	public List<Member> searchUser(String searchStr) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.userSearch", searchStr);
 	}
 }
