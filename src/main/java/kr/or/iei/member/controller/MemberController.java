@@ -1,9 +1,8 @@
 package kr.or.iei.member.controller;
 
-import java.net.URLEncoder;
+
 import java.util.ArrayList;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,21 +132,22 @@ public class MemberController {
 		return "member/mainFeed";
 	}
 	
-	// 검색 결과 반환
-	@PostMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8")
+	// 실시간 검색
+	// value랑 produces 안해주면 인코딩 문제생김
+	@PostMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8") 
 	@ResponseBody
 	public String inputSearch(@RequestParam("searchStr") String searchStr) {
 	    ArrayList<Member> users = memberService.searchUser(searchStr);
 	    if (users.isEmpty()) {
-	        return "<div class='user-result'>검색 결과가 없습니다.</div>";
+	        return "<div class='user-result'>검색 결과가 없습니다.</div>"; //관련 검색이 없을때 보여줌
 	    }
 
-	    StringBuilder html = new StringBuilder();
-	    for (Member m : users) {
+	    StringBuilder html = new StringBuilder(); //HTML 코드 생성
+	    for(Member m : users) { //forEach
 	        html.append("<div class='user-result'>")
 	            .append("<a href='/member/profile/")
 	            .append(m.getUserNo())
-	            .append("' class='user-link'>")
+	            .append("'class='user-link'>")
 	            .append(m.getUserNickname())
 	            .append("/")
 	            .append(m.getUserId())

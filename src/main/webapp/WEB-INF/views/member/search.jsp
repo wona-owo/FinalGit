@@ -69,7 +69,7 @@
 		let debounceTimeout = null;
 	
 	    function searchResults(searchStr){
-	        clearTimeout(debounceTimeout);
+	        clearTimeout(debounceTimeout); //디바운스
 	        debounceTimeout = setTimeout(function() {
 	            var searchResultsBox = $('#searchResults');
 	            if (searchStr.trim().length === 0) {
@@ -92,25 +92,15 @@
 	                    searchResultsBox.html('<div class="user-result">서버 오류가 발생했습니다.</div>').show();
 	                }
 	            });
-	        }, 300); // 300ms 디바운스
+	        }, 300); // 300ms 디바운스(바로 뜨게 하는게 아닌 3초 뒤에 실시간 검색 이벤트 발생하게 함)
 	    }
 	
-	    // 검색 입력 필드에 키업 이벤트 연결
+	    // 입력을 받을때 마다 이벤트 발생 
 	    $(document).ready(function() {
 	        $('#search').on('keyup', function() {
 	            searchResults($(this).val());
 	        });
-	    });
-	
-	    // 검색 결과 외부 클릭 시 결과 숨기기
-	    $(document).click(function(event) { 
-	        var $target = $(event.target);
-	        if(!$target.closest('#searchInputBox').length && 
-	           !$target.closest('#searchResults').length) {
-	            $('#searchResults').hide();
-	        }        
-	    });
-	    
+	    });    
 	</script>
 </body>
 </html>
