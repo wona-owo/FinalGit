@@ -18,7 +18,7 @@
 			  <div class="menu-list">
 				<div class="one-menu">
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="" class="menu-link">홈</a>
+					<a href="/member/mainFeed.kh" class="menu-link">홈</a>
 				</div>
 				
 				<div class="one-menu">

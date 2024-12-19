@@ -260,9 +260,46 @@ input {
 
 
 
-/*메인 피드*/
+/*메인 영역*/
 main {
  margin-left: 350px; /*메뉴 두께만큼 마진*/
  margin-top: 50px;
+}
+
+/*개인 피드*/
+#myfeed-main{
+ margin-right: 300px; /*펫정보 두께만큼 마진*/
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ 
+}
+
+
+#profile-text{
+	padding-left: 20px;
+	gap: 30px;
+}
+
+#profile-text #myId {
+	font-size: 3.5vw;
+	font-weight: bold;
+}
+
+#profile-text #myNick {
+	font-size: 2vw;
+	font-weight: bold;
+	color: #666;
+}
+
+#myfeed-frame{
+	height: 15vw;
+	width: 15vw;
+}
+
+#follow-text{
+	display: flex;
+	padding-top: 2vh;
+	gap: 20px;
 }
 

@@ -119,4 +119,11 @@ public class MemberController {
 	public String messageFrm() {
 		return "member/message";
 	}
+	
+	//메인피드 Frm
+	@GetMapping("mainFeed.kh")
+	public String mainFeedFrm() {
+		return "member/mainFeed";
+	}
+	
 }

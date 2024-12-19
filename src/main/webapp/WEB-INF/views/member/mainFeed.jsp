@@ -11,7 +11,9 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
+	<%--사이드 메뉴--%>
 	<%@ include file="/WEB-INF/views/member/sideMenu.jsp" %>
+	
 	<main id="main-feed">
 	 	<p>메인피드</p>
 	</main>
