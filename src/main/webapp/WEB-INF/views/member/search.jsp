@@ -71,32 +71,46 @@
 	    function searchResults(searchStr){
 	        clearTimeout(debounceTimeout);
 	        debounceTimeout = setTimeout(function() {
-	            var searchResults = $('#searchResults');
-	            if (searchStr.trim().length == 0) {
-	                searchResults.hide();
-	                searchResults.empty();
+	            var searchResultsBox = $('#searchResults');
+	            if (searchStr.trim().length === 0) {
+	                searchResultsBox.hide();
+	                searchResultsBox.empty();
 	                return;
 	            }
 	            $.ajax({
-	                type: 'POST',
+	                type: 'POST', // GET에서 POST로 변경
 	                url: '/member/searchBoard.kh',
-	                data: { search: searchStr },
+	                data: { searchStr: searchStr }, // 'search'에서 'searchStr'로 변경
 	                success: function(response) {
 	                    if ($.trim(response)) {
-	                        searchResults.html(response);
-	                        searchResults.show();
+	                    	searchResultsBox.html(response).show(); // 서버에서 받은 HTML 그대로 삽입
 	                    } else {
-	                        searchResults.html('<div class="user-result">검색 결과가 없습니다.</div>');
-	                        searchResults.show();
+	                        searchResultsBox.html('<div class="user-result">검색 결과가 없습니다.</div>').show();
 	                    }
 	                },
 	                error: function() {
-	                    searchResults.html('<div class="user-result">서버 오류가 발생했습니다.</div>');
-	                    searchResults.show();
+	                    searchResultsBox.html('<div class="user-result">서버 오류가 발생했습니다.</div>').show();
 	                }
 	            });
 	        }, 300); // 300ms 디바운스
 	    }
+	
+	    // 검색 입력 필드에 키업 이벤트 연결
+	    $(document).ready(function() {
+	        $('#search').on('keyup', function() {
+	            searchResults($(this).val());
+	        });
+	    });
+	
+	    // 검색 결과 외부 클릭 시 결과 숨기기
+	    $(document).click(function(event) { 
+	        var $target = $(event.target);
+	        if(!$target.closest('#searchInputBox').length && 
+	           !$target.closest('#searchResults').length) {
+	            $('#searchResults').hide();
+	        }        
+	    });
+	    
 	</script>
 </body>
 </html>

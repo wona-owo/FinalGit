@@ -1,7 +1,9 @@
 package kr.or.iei.member.controller;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.iei.member.model.service.MemberService;
@@ -129,19 +132,27 @@ public class MemberController {
 		return "member/mainFeed";
 	}
 	
-	@PostMapping("searchBoard.kh")
+	// 검색 결과 반환
+	@PostMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8")
 	@ResponseBody
-	public String inputSearch(String searchStr, Model model) {
-		ArrayList<Member> users = memberService.searchUser(searchStr);
-		if (users.isEmpty()) {
-			return "<div class='user-result'>검색 결과가 없습니다.</div>";
-		}
-		model.addAttribute("user", users);
-		StringBuilder html = new StringBuilder();
-		for (Member m : users) {
-			html.append("<div class='user-result'>").append("<a href='/member/userView.kh?userNo=")
-				.append(m.getUserNo()).append("'>").append(m.getUserNickname()).append("</a>").append("</div>");
-		}
-		return html.toString();
+	public String inputSearch(@RequestParam("searchStr") String searchStr) {
+	    ArrayList<Member> users = memberService.searchUser(searchStr);
+	    if (users.isEmpty()) {
+	        return "<div class='user-result'>검색 결과가 없습니다.</div>";
+	    }
+
+	    StringBuilder html = new StringBuilder();
+	    for (Member m : users) {
+	        html.append("<div class='user-result'>")
+	            .append("<a href='/member/profile/")
+	            .append(m.getUserNo())
+	            .append("' class='user-link'>")
+	            .append(m.getUserNickname())
+	            .append("/")
+	            .append(m.getUserId())
+	            .append("</a>")
+	            .append("</div>");
+	    }
+	    return html.toString(); // HTML 문자열 반환
 	}
 }
