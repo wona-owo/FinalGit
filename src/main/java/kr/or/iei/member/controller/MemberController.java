@@ -94,13 +94,11 @@ public class MemberController {
 		return String.valueOf(cnt);
 	}
 	
-	
 	//개인피드 Frm
-		@GetMapping("myFeedFrm.kh")
-		public String myFeedFrm() {
-			return "member/myFeed";
-		}
-	
+	@GetMapping("myFeedFrm.kh")
+	public String myFeedFrm() {
+		return "member/myFeed";
+	}
 	// api 회원가입
 	@PostMapping("apiJoin.kh")
 	public String apiJoin(Member member) {
@@ -110,5 +108,15 @@ public class MemberController {
 		}else{
 			return "member/joinFail";
 		}		
+	}
+	
+	@GetMapping("search.kh")
+	public String searchFrm() {
+		return "member/search";
+	}
+	
+	@GetMapping("message.kh")
+	public String messageFrm() {
+		return "member/message";
 	}
 }

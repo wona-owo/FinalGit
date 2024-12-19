@@ -18,12 +18,12 @@
 			  <div class="menu-list">
 				<div class="one-menu">
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/home" class="menu-link" data-url="/home.kh">홈</a>
+					<a href="" class="menu-link">홈</a>
 				</div>
 				
 				<div class="one-menu">
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/search" class="menu-link" data-url="/search.kh">검색</a>
+					<a href="/member/search.kh" class="menu-link">검색</a>
 				</div>
 				
 				<div class="one-menu">
@@ -33,7 +33,7 @@
 				
 				<div class="one-menu">
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/message" class="menu-link" data-url="/message.kh">메시지</a>
+					<a href="/member/message.kh" class="menu-link">메시지</a>
 				</div>
 				
 				<div class="one-menu">
