@@ -106,9 +106,9 @@
 			   user_name as userName,
 			   user_image as userImage
 		from tbl_user
-		where user_id like '%' || #{searchStr} || '%' 
-			  OR user_name LIKE '%' || #{searchStr} || '%'
-           	  OR user_nickname LIKE '%' || #{searchStr} || '%'
-          ORDER BY user_name ASC
+		where UPPER(user_id) LIKE '%' || UPPER(#{searchStr}) || '%' 
+          OR UPPER(user_name) LIKE '%' || UPPER(#{searchStr}) || '%'
+          OR UPPER(user_nickname) LIKE '%' || UPPER(#{searchStr}) || '%'
+    	ORDER BY user_name ASC
 	</select>
 </mapper>
