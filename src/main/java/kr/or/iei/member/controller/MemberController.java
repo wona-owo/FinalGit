@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -103,7 +104,7 @@ public class MemberController {
 	}
 	// api 회원가입
 	@PostMapping("apiJoin.kh")
-	public String apiJoin(Member member) {
+	public String apiJoin(@ModelAttribute("naverUser") Member member) {
 		int result = memberService.apiJoin(member);
 		if(result > 0) {
 			return "redirect:/";

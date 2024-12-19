@@ -60,13 +60,15 @@ public class NaverController {
 			
 			if(loginMember != null && "N".equals(loginMember.getBanYN())) {
 				session.setAttribute("loginMember", loginMember);
-				return "member/mainFeed";
+				return "redirect:/naver/mainFeed.kh";
 			}else if(loginMember != null && "Y".equals(loginMember.getBanYN())){
 				redirectAttributes.addFlashAttribute("loginFailMsg", "정지된 계정입니다. 관리자에게 문의해주세요.");
-				return "redirect:/index.jsp";	
+				return "redirect:/";	
 			}else {
-				model.addAttribute("apiUser", naverUser);
-				return "member/apiJoin";
+				//model.addAttribute("apiUser", naverUser);
+				//return "member/apiJoin";
+				redirectAttributes.addFlashAttribute("apiUser", naverUser);
+				return "redirect:/naver/apiJoin.kh";
 			}
 			
 		} catch (ApiLoginException e) {
@@ -77,6 +79,15 @@ public class NaverController {
 			e.printStackTrace();
 		}
 		return "redirect:/";
-	};
+	}
 	
+	@GetMapping("apiJoin.kh")
+	public String apiJoin() {
+		return "member/apiJoin";
+	}
+	
+	@GetMapping("mainFeed.kh")
+	public String mainFeed() {
+		return "member/mainFeed";
+	}
 }
