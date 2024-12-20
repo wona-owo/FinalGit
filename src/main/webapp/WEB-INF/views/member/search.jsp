@@ -54,7 +54,8 @@
 		padding: 0;
 		margin: 20px 0 0 0;
 	}
-	#searchResults ul{
+	
+	#searchResults ul {
 		margin: 0;
 		padding: 0;
 	}
@@ -62,7 +63,6 @@
 	#ResultBox li {
 		list-style-type: none;
 		margin-bottom: 8px;
-		
 	}
 	
 	.user-result {
@@ -70,27 +70,48 @@
 		font-size: 16px;
 		height: 62px;
 	}
+	
 	.a-user {
 		display: block; /* block으로 변경하여 a가 li 크기를 채우도록 설정 */
 		width: 100%; /* 부모 요소의 너비만큼 클릭 가능 */
 		height: 100%;
 		text-decoration: none; /* 밑줄 제거 */
-		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
 	}
-	.a-user:hover{
+	
+	.a-user:hover {
 		background-color: #E6E6E6;
 	}
-	.profile-container{
-		display : flex;
+	
+	.profile-container {
+		display: flex;
+		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
 	}
-	.user-profile{
+	
+	.hash-container{
+		line-height: 31px;
+		margin-left: 55px;
+	}	
+	.tagName {
+		display: flex;
+	    font-weight: bold;
+	    font-size: 16px;
+	}
+	
+	.tagPostCount {
+		display: flex;
+	    color: #666;
+	    font-size: 12px;
+	}
+	
+	.user-profile {
 		width: 45px;
 		height: 45px;
 		border-radius: 50%;
 		background-color: gray;
 		margin: 8px 12px 5px 0;
 	}
-	#search-result{
+	
+	#search-result {
 		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
 		text-align: center; /* 가로 중앙 정렬 */
 	}

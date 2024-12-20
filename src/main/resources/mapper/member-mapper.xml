@@ -113,11 +113,12 @@
 	</select>
 	
 	<select id="tagSearch" parameterType="string" resultType="hashTag">
-		select hash_no as hashNo,
-			   post_no as postNo,
-			   hash_name as hashName
-		from HASHTAG
-		where upper(hash_name) like '%' || upper(#{searchStr}) || '%'
-		order by hash_name ASC
+		SELECT 
+            hash_name AS hashName,
+            COUNT(post_no) AS postCount
+        FROM HASHTAG
+        WHERE UPPER(hash_name) LIKE '%' || upper(#{searchStr}) || '%'
+        GROUP BY hash_name
+        ORDER BY hash_name ASC
 	</select>
 </mapper>
