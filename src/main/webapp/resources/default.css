@@ -325,7 +325,7 @@ main {
 	background-color: #FFE1B7;
 }
 
-.myfeed-write {
+.post-write {
 	 margin-left: 50px;
 	 margin-right: 50px;
 	 margin-top: 50px;
@@ -340,10 +340,20 @@ main {
 	height: 35px;
 }
 
-#feed{
+#post-button{
 	background-color: #F0A235;
 }
 
-#story{
+#story-button{
 	background-color: #3BBD9E;
 }
+
+.post-container{
+	
+}
+
+.post-grid{
+	
+}
+
+

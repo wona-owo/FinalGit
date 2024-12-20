@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,13 +39,18 @@
 			 </div>
 		</div> 	
 		
-	    <div class="myfeed-write">
-			<button class="write-button" id="feed" > 일기 쓰기 </button>
-			<button class="write-button" id="story"> 스토리 쓰기 </button>
+	    <div class="post-write">
+			<button class="write-button" id="post-button" > 일기 쓰기 </button>
+			<button class="write-button" id="story-button"> 스토리 쓰기 </button>
 	    </div>
-	    
-	    <div class="myfeed-content">
-	   	 <%--콘텐츠 썸네일 동적 노출 영역--%>
+	    	
+	    <div class="post-container">
+	   		<c:forEach var="post" items="${posts}">
+	   			<div class="post-grid">
+	   				<%-- 이미지 배열의 첫번째 이미지(0번)의 파일 이름 --%>
+	   				<img src="/resources/postFile${post.files[0].fileName}" alt="thumbnail">
+	   			</div>
+	   		</c:forEach>
 	    </div>
 	</main>
 	

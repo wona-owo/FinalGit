@@ -99,11 +99,7 @@ public class MemberController {
 		return String.valueOf(cnt);
 	}
 	
-	//개인피드 Frm
-	@GetMapping("myFeedFrm.kh")
-	public String myFeedFrm() {
-		return "member/myFeed";
-	}
+	
 	// api 회원가입
 	@PostMapping("apiJoin.kh")
 	public String apiJoin(@ModelAttribute("naverUser") Member member) {
@@ -156,4 +152,5 @@ public class MemberController {
 	    }
 	    return html.toString(); // HTML 문자열 반환
 	}
+
 }

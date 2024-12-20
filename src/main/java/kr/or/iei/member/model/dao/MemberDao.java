@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.post.model.vo.Post;
 
 @Repository("dao")
 public class MemberDao {
@@ -45,4 +46,5 @@ public class MemberDao {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("member.userSearch", searchStr);
 	}
+
 }

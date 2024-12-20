@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import kr.or.iei.member.model.dao.MemberDao;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.post.model.vo.Post;
 
 @Service("service")
 public class MemberService {
@@ -44,5 +45,6 @@ public class MemberService {
 		// TODO Auto-generated method stub
 		return (ArrayList<Member>)memberDao.searchUser(searchStr);
 	}
+
 
 }

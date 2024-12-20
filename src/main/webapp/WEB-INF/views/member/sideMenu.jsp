@@ -45,7 +45,7 @@
 			<div class="profile">
 				<div class="profile-frame">
 				</div>
-					<a href="/member/myFeedFrm.kh"> ${loginMember.userNickname}</a>
+					<a href="/post/myFeedFrm.kh"> ${loginMember.userNickname}</a>
 			</div>
 			<hr>
 			<hr>
