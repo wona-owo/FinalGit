@@ -111,4 +111,13 @@
           OR UPPER(user_nickname) LIKE '%' || UPPER(#{searchStr}) || '%'
     	ORDER BY user_name ASC
 	</select>
+	
+	<select id="tagSearch" parameterType="string" resultType="hashTag">
+		select hash_no as hashNo,
+			   post_no as postNo,
+			   hash_name as hashName
+		from HASHTAG
+		where upper(hash_name) like '%' || upper(#{searchStr}) || '%'
+		order by hash_name ASC
+	</select>
 </mapper>

@@ -8,15 +8,16 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.or.iei.member.model.service.MemberService;
+import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
 
 @Controller
@@ -33,7 +34,7 @@ public class MemberController {
 		
 	//로그인
 	@PostMapping("login.kh")
-	public String memberLogin (Member member,HttpSession session, Model model) {
+	public String memberLogin (Member member,HttpSession session, RedirectAttributes red) {
 		
 		Member loginMember = memberService.memberLogin(member);
 		
@@ -41,11 +42,11 @@ public class MemberController {
 			session.setAttribute("loginMember", loginMember);
 			return "member/mainFeed";
 		}else if(loginMember != null && "Y".equals(loginMember.getBanYN())){
-			model.addAttribute("loginFailMsg", "정지된 계정입니다. 관리자에게 문의해주세요.");
-			return "forward:/index.jsp";			
+			red.addFlashAttribute("loginFailMsg", "정지된 계정입니다. 관리자에게 문의해주세요.");
+			return "redirect:/";			
 		}else {
-			model.addAttribute("loginFailMsg", "로그인에 실패했습니다. ID와 비밀번호를 확인해주세요.");
-			return "forward:/index.jsp";	
+			red.addFlashAttribute("loginFailMsg", "로그인에 실패했습니다. ID와 비밀번호를 확인해주세요.");
+			return "redirect:/";	
 		}
 	}
 	
@@ -138,22 +139,54 @@ public class MemberController {
 	@ResponseBody
 	public String inputSearch(@RequestParam("searchStr") String searchStr) {
 	    ArrayList<Member> users = memberService.searchUser(searchStr);
-	    if (users.isEmpty()) {
-	        return "<div class='user-result'>검색 결과가 없습니다.</div>"; //관련 검색이 없을때 보여줌
+	    ArrayList<HashTag> tags = memberService.searchTag(searchStr);
+	    
+	    
+	    if (tags.isEmpty() && users.isEmpty()) {
+	        return "<div class='user-result'>"
+	        		+ "<span id='search-result'>검색 결과가 없습니다.</span>"
+	        		+ "</div>"; //관련 검색이 없을때 보여줌
 	    }
-
 	    StringBuilder html = new StringBuilder(); //HTML 코드 생성
-	    for(Member m : users) { //forEach
-	        html.append("<div class='user-result'>")
-	            .append("<a href='/member/profile/")
-	            .append(m.getUserNo())
-	            .append("'class='user-link'>")
-	            .append(m.getUserNickname())
-	            .append("/")
-	            .append(m.getUserId())
-	            .append("</a>")
-	            .append("</div>");
-	    }
+	    // 해시태그 결과 먼저 추가
+        if (!tags.isEmpty()) {
+            for (HashTag tag : tags) {
+                html.append("<li class='user-result'>")
+                    .append("<a class='a-user' href='/member/hashtags.kh?hashName='")
+                    .append(tag.getHashName()) // HashTag 객체의 hashName 사용
+                    .append("'>")
+                    .append("<div class='profile-container'>")
+                    .append("<span >")
+                    .append(tag.getHashName())
+                    .append("</span>")
+                    .append("</div>")
+                    .append("</a>")
+                    .append("</li>");
+            }
+        }
+        if (!users.isEmpty()) {
+		    for(Member m : users) { //forEach
+		        html.append("<li class='user-result'>")
+		            .append("<a class='a-user' href='/member/userProfile.kh?userName=")
+		            .append(m.getUserName())
+		            .append("'>")
+		            .append("<div class='profile-container'>")
+		            .append("<div class='user-profile'>")
+		            .append("</div>")
+		            .append("<span>")
+		            .append(m.getUserNickname())
+		            .append("/")
+		            .append(m.getUserId())
+		            .append("</span>")
+		            .append("</div>")
+		            .append("</a>")
+		            .append("</li>");
+		    }
+        }
 	    return html.toString(); // HTML 문자열 반환
+	}
+	@GetMapping("userProfile.kh")
+	public String userProfile() {
+		return "member/userProfile";
 	}
 }

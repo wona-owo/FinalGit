@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import kr.or.iei.member.model.dao.MemberDao;
+import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
 
 @Service("service")
@@ -43,6 +44,11 @@ public class MemberService {
 	public ArrayList<Member> searchUser(String searchStr) {
 		// TODO Auto-generated method stub
 		return (ArrayList<Member>)memberDao.searchUser(searchStr);
+	}
+
+	public ArrayList<HashTag> searchTag(String searchStr) {
+		// TODO Auto-generated method stub
+		return (ArrayList<HashTag>)memberDao.searchTag(searchStr);
 	}
 
 }
