@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.vo.Post;
 
@@ -47,4 +48,8 @@ public class MemberDao {
 		return sqlSession.selectList("member.userSearch", searchStr);
 	}
 
+	public List<HashTag> searchTag(String searchStr) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.tagSearch", searchStr);
+	}
 }

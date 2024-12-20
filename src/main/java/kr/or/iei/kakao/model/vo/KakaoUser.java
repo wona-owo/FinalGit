@@ -1,6 +1,6 @@
-package kr.or.iei.naver.model.vo;
+package kr.or.iei.kakao.model.vo;
 
-public class NaverUser {
+public class KakaoUser {
 	private String apiUserId;
 	private String apiUserPw;
 	private String apiUserName;
@@ -8,12 +8,12 @@ public class NaverUser {
 	private String apiUserPhone;
 	private String apiUserType;
 
-	public NaverUser() {
+	public KakaoUser() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public NaverUser(String apiUserId, String apiUserPw, String apiUserName, String apiUserEmail, String apiUserPhone,
+	public KakaoUser(String apiUserId, String apiUserPw, String apiUserName, String apiUserEmail, String apiUserPhone,
 			String apiUserType) {
 		super();
 		this.apiUserId = apiUserId;
