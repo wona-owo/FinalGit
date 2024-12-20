@@ -7,6 +7,7 @@
 		
 		<typeAliases>
 			<typeAlias type="kr.or.iei.member.model.vo.Member" alias="member"/>
+			<typeAlias type="kr.or.iei.kakao.model.vo.KakaoUser" alias="kakaoUser"/>
 			<typeAlias type="kr.or.iei.naver.model.vo.NaverUser" alias="naverUser"/>
 			<typeAlias type="kr.or.iei.member.model.vo.HashTag" alias="hashTag"/>
 		</typeAliases>

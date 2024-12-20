@@ -105,7 +105,9 @@ public class MemberController {
 	public String myFeedFrm() {
 		return "member/myFeed";
 	}
+	
 	// api 회원가입
+	// addFlashAttribute로 보낸 데이터를 받기 위한 어노테이션 선언
 	@PostMapping("apiJoin.kh")
 	public String apiJoin(@ModelAttribute("naverUser") Member member) {
 		int result = memberService.apiJoin(member);

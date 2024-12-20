@@ -1,5 +1,4 @@
-package kr.or.iei.naver.controller;
-
+package kr.or.iei.kakao.controller;
 
 import javax.servlet.http.HttpSession;
 
@@ -16,62 +15,57 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.or.iei.common.exception.ApiLoginException;
+import kr.or.iei.kakao.model.service.KakaoService;
+import kr.or.iei.kakao.model.vo.KakaoUser;
 import kr.or.iei.member.model.vo.Member;
-import kr.or.iei.naver.model.service.NaverService;
-import kr.or.iei.naver.model.vo.NaverUser;
 
 @Controller
-@RequestMapping("/naver/")
-public class NaverController {
+@RequestMapping("/kakao/")
+public class KakaoController {
 
 	@Autowired
-	@Qualifier("naverService")
-	private NaverService service;
-
+	@Qualifier("kakaoService")
+	private KakaoService service;
+	
 	@GetMapping("login.kh")
-	public String naverLogin(HttpSession session) {
-		String apiURL = service.naverLogin(session);
+	public String kakoLogin(HttpSession session) {
+		String apiURL = service.kakaoLogin(session);
 		return "redirect:" + apiURL;
 	}
-
+	
 	@GetMapping("callback.kh")
-	public String naverLoginCallback(@RequestParam("code") String code, @RequestParam("state") String state,
+	public String kakaoLoginCallback(@RequestParam("code") String code, @RequestParam("state") String state,
 			HttpSession session, RedirectAttributes redirectAttributes) {
-		// State 검증
-        String sessionState = (String) session.getAttribute("oauth_state");
-        if (sessionState == null || !sessionState.equals(state)) {
+		String sessionState = (String) session.getAttribute("oauth_state");
+		if (sessionState == null || !sessionState.equals(state)) {
         	System.out.println("state값 불일치");
             return "redirect:/";
         }
-        
+		
 		try {
-			// 액세스 토큰 요청
 			String tokenResponse = service.getAccessToken(code, state);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode tokenJson = mapper.readTree(tokenResponse);
 			String accessToken = tokenJson.get("access_token").asText();
 			
-			// 유저 정보 조회
-			NaverUser naverUser = service.getUserInfo(accessToken);
+			KakaoUser kakaoUser = service.getUserInfo(accessToken);
 			
-			// 네이버 회원가입 여부 확인
-			Member loginMember = service.naverLoginChk(naverUser);
-			
-			if(loginMember != null && !"N".equals(loginMember.getUserType())) {
+			Member loginMember = service.kakaoLoginChk(kakaoUser);
+				
+			if(loginMember != null && !"K".equals(loginMember.getUserType())) {
 				redirectAttributes.addFlashAttribute("loginFailMsg", "이미 가입된 회원입니다.");
 				return "redirect:/";
 			}else if(loginMember != null && "N".equals(loginMember.getBanYN())) {
 				session.setAttribute("loginMember", loginMember);
 				return "redirect:/member/mainFeed.kh";
-			}else if(loginMember != null && "Y".equals(loginMember.getBanYN())){
+			}else if(loginMember != null && "Y".equals(loginMember.getBanYN())) {
 				redirectAttributes.addFlashAttribute("loginFailMsg", "정지된 계정입니다. 관리자에게 문의해주세요.");
-				return "redirect:/";	
+				return "redirect:/";
 			}else {
 				// 회원이 아닐시 회원가입 페이지로 이동
-				redirectAttributes.addFlashAttribute("apiUser", naverUser);
-				return "redirect:/naver/apiJoin.kh";
+				redirectAttributes.addFlashAttribute("apiUser", kakaoUser);
+				return "redirect:/kakao/apiJoin.kh";
 			}
-			
 		} catch (ApiLoginException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
