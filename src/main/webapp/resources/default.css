@@ -152,6 +152,14 @@ button:hover{
 	margin-bottom: 30px;
 }
 
+.api-area{
+	width : 500px;
+	height : 70px;
+	display: flex;
+  	align-items: center;
+  	justify-content: space-evenly;
+}
+
 /*네이버 로그인*/
 #naver{
 	margin-top: 20px;
@@ -164,8 +172,16 @@ button:hover{
 	text-indent: -9999px;
 }
 
-#naver:hover{
-	cursor: pointer;
+/*카카오 로그인*/
+#kakao{
+	margin-top: 20px;
+	width: 187px;
+	height: 50px;
+	background-image: url("../resources/css_image/kakao-login.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	text-indent: -9999px;
 }
 
 /*회원가입 화면*/

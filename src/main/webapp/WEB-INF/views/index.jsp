@@ -44,12 +44,10 @@
 					<a href="/member/joinFrm.kh" class="other-link">계정이 없으신가요?</a>
 				</div>
 			</form>
-			<form action="/naver/login.kh" method="get">
-				<input type="submit" value="네이버" id="naver">
-			</form>
-			<form action="/kakao/login.kh" method="get">
-				<input type="submit" value="카카오" class="kakao">
-			</form>
+			<div class="api-area">
+			<a href="/naver/login.kh" id="naver"></a>
+			<a href="/kakao/login.kh" id="kakao"></a>
+			</div>
 		</div>
 	</div>
 	<script>
