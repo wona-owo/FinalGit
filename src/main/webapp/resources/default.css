@@ -109,7 +109,7 @@ input {
 	color: #333333;
 }
 
-[type=button]:hover{
+button:hover{
 	cursor: pointer;
 }
 
@@ -269,12 +269,14 @@ main {
 /*개인 피드*/
 #myfeed-main{
  margin-right: 300px; /*펫정보 두께만큼 마진*/
+}
+
+#myfeed-profile{
  display: flex;
  align-items: center;
  justify-content: center;
- 
+ position: static;
 }
-
 
 #profile-text{
 	padding-left: 20px;
@@ -303,3 +305,45 @@ main {
 	gap: 20px;
 }
 
+.profile-button{
+	margin-top: 10px;
+	border-radius: 20px;
+	background-color: #c9c9c9;
+	width: 100px;
+	height: 30px;
+}
+
+#updPet{
+	background-color: #F4F4E6;
+}
+
+#allBook{
+	background-color: #FFD06B;
+}
+
+#mySub{
+	background-color: #FFE1B7;
+}
+
+.myfeed-write {
+	 margin-left: 50px;
+	 margin-right: 50px;
+	 margin-top: 50px;
+	 padding-bottom: 20px;
+	 border-bottom: 0.5px solid black;
+	 position: static;
+}
+
+.write-button{
+	border-radius: 15px;
+	width: 85px;
+	height: 35px;
+}
+
+#feed{
+	background-color: #F0A235;
+}
+
+#story{
+	background-color: #3BBD9E;
+}

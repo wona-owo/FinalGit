@@ -27,16 +27,31 @@
 					 <span>팔로워 00</span>
 				 </div>
 				 
-				 <div>
-				 	<button class="profile-button"> 프로필 편집 </button>
-				 	<button class="profile-button"> 마이펫 편집 </button>
-				 	<button class="profile-button"> 북마크 확인 </button>
-				 	<button class="profile-button"> 내 구독 관리 </button>
-				 </div>
-				 
+				 <div> <%--구현안된 페이지는 홈으로 랜딩 --%>
+				 	<button class="profile-button" onclick="location.href='/member/mainFeed.kh'"> 프로필 편집 </button>
+				 	<button class="profile-button" id="updPet" onclick="location.href='/member/mainFeed.kh'"> 마이펫 편집 </button>
+				 </div>	
+				 <div>	
+				 	<button class="profile-button" id="allBook" onclick="location.href='/member/mainFeed.kh'"> 북마크 확인 </button>
+				 	<button class="profile-button" id="mySub" onclick="location.href='/member/mainFeed.kh'"> 내 구독 관리 </button>
+				 </div>			 
 			 </div>
-		</div> 
-	</main>
+		</div> 	
 		
+	    <div class="myfeed-write">
+			<button class="write-button" id="feed" > 일기 쓰기 </button>
+			<button class="write-button" id="story"> 스토리 쓰기 </button>
+	    </div>
+	    
+	    <div class="myfeed-content">
+	   	 <%--콘텐츠 썸네일 동적 노출 영역--%>
+	    </div>
+	</main>
+	
+	
+	<script>
+	
+	
+	</script>
 </body>
 </html>
