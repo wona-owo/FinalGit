@@ -149,12 +149,15 @@ public class MemberController {
         if (!tags.isEmpty()) {
             for (HashTag tag : tags) {
                 html.append("<li class='user-result'>")
-                    .append("<a class='a-user' href='/member/hashtags.kh?hashName='")
+                    .append("<a class='a-user' href='/member/hashtags.kh?hashName=")
                     .append(tag.getHashName()) // HashTag 객체의 hashName 사용
                     .append("'>")
-                    .append("<div class='profile-container'>")
-                    .append("<span >")
+                    .append("<div class='hash-container'>")
+                    .append("<span class='tagName'>")
                     .append(tag.getHashName())
+                    .append("</span>")
+                    .append("<span class='tagPostCount'>게시글 : ")
+                    .append(tag.getPostCount())
                     .append("</span>")
                     .append("</div>")
                     .append("</a>")
