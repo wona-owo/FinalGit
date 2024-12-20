@@ -43,26 +43,32 @@ public class KakaoController {
         }
 		
 		try {
+			// 액세스 토큰 요청
 			String tokenResponse = service.getAccessToken(code, state);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode tokenJson = mapper.readTree(tokenResponse);
 			String accessToken = tokenJson.get("access_token").asText();
 			
+			// 유저 정보 조회
 			KakaoUser kakaoUser = service.getUserInfo(accessToken);
 			
+			// 카카오 회원가입 여부 조회
 			Member loginMember = service.kakaoLoginChk(kakaoUser);
-				
+			
+			// 카카오 로그인 시 동일한 이룸, 전화번호를 가지고 있는 회원이이 가입경로가 다를 경우
 			if(loginMember != null && !"K".equals(loginMember.getUserType())) {
-				redirectAttributes.addFlashAttribute("loginFailMsg", "이미 가입된 회원입니다.");
+				redirectAttributes.addFlashAttribute("loginFailMsg", "다른 경로로 가입된 회원입니다.");
 				return "redirect:/";
+			// 카카오 로그인 성공
 			}else if(loginMember != null && "N".equals(loginMember.getBanYN())) {
 				session.setAttribute("loginMember", loginMember);
 				return "redirect:/member/mainFeed.kh";
+			// 카카오 로그인 시 밴이 되어있을 경우
 			}else if(loginMember != null && "Y".equals(loginMember.getBanYN())) {
 				redirectAttributes.addFlashAttribute("loginFailMsg", "정지된 계정입니다. 관리자에게 문의해주세요.");
 				return "redirect:/";
+			// 회원이 아닐시 회원가입 페이지로 이동
 			}else {
-				// 회원이 아닐시 회원가입 페이지로 이동
 				redirectAttributes.addFlashAttribute("apiUser", kakaoUser);
 				return "redirect:/kakao/apiJoin.kh";
 			}

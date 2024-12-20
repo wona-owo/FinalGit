@@ -38,6 +38,7 @@ public class KakaoService {
 	private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 	private static final String KAKAO_USERINFO_URL = "https://kapi.kakao.com/v2/user/me";
 	
+	// 카카오 로그인 페이지로 이동
 	public String kakaoLogin(HttpSession session) {
 		String state = UUID.randomUUID().toString();
 		session.setAttribute("oauth_state", state);
@@ -51,6 +52,7 @@ public class KakaoService {
 		return apiURL;
 	}
 
+	// 카카오 로그인 토큰 가져오기
 	public String getAccessToken(String code, String state) {
 		String params = "grant_type=authorization_code"
 					  + "&client_id=" + KAKAO_CLIENT_ID
@@ -72,6 +74,7 @@ public class KakaoService {
 		}
 	}
 
+	// 카카오 유저 정보 가져오기
 	public KakaoUser getUserInfo(String accessToken) {
 		HttpPost post = new HttpPost(KAKAO_USERINFO_URL);
 		post.setHeader("Authorization", "Bearer " + accessToken);

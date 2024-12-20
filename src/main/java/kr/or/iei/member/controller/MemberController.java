@@ -40,7 +40,7 @@ public class MemberController {
 		
 		if(loginMember != null && "N".equals(loginMember.getBanYN())) {
 			session.setAttribute("loginMember", loginMember);
-			return "member/mainFeed";
+			return "redirect:/member/mainFeed.kh";
 		}else if(loginMember != null && "Y".equals(loginMember.getBanYN())){
 			red.addFlashAttribute("loginFailMsg", "정지된 계정입니다. 관리자에게 문의해주세요.");
 			return "redirect:/";			

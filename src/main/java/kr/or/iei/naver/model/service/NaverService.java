@@ -37,7 +37,8 @@ public class NaverService {
 	private static final String NAVER_REDIRECT_URI = "http://localhost/naver/callback.kh";
 	private static final String NAVER_TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
     private static final String NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me";
-			
+	
+    // 네이버 로그인 페이지로 이동
 	public String naverLogin(HttpSession session) {
 		String state = UUID.randomUUID().toString();
 		session.setAttribute("oauth_state", state);
@@ -51,6 +52,7 @@ public class NaverService {
 		return apiURL;
 	}
 
+	// 네이버 로그인 토큰 가져오기
 	public String getAccessToken(String code, String state) {
 		String params = "grant_type=authorization_code"
 					  + "&client_id=" + NAVER_CLIENT_ID
@@ -72,6 +74,7 @@ public class NaverService {
 		}
 	}
 
+	// 네이버 유저 정보 가져오기
 	public NaverUser getUserInfo(String accessToken) {
 		HttpPost post = new HttpPost(NAVER_USERINFO_URL);
 		post.setHeader("Authorization", "Bearer " + accessToken);
