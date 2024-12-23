@@ -144,4 +144,10 @@
 		insert into search (user_no, keyword)
     	values (#{userNo}, #{keyword})
 	</insert>
+	
+	<delete id="userDelete"
+	parameterType="string">
+	delete from tbl_user
+		  where user_id = #{_parameter}
+	</delete>
 </mapper>

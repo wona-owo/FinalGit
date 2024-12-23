@@ -237,4 +237,32 @@ public class MemberController {
 	public String userProfile() {
 		return "member/userProfile";
 	}
+	
+	// API 연동 끊기 및 탈퇴 메소드 호출
+	@GetMapping("userUnlink.kh")
+	public String userUnlink(HttpSession session) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		String userType = loginMember.getUserType();
+			
+		// 회원가입 경로에 따른 탈퇴 절차
+		if(userType != null && userType.equals("K")) {
+			return "redirect:/kakao/kakaoUnlink.kh";
+		}else if(userType != null && userType.equals("N")) {
+			return "redirect:/naver/naverUnlink.kh";
+		}else {
+			return "redirect:/member/userDelete.kh";
+		}
+	}
+		
+	// 회원 탈퇴
+	@GetMapping("userDelete.kh")
+	public String userDelete(HttpSession session) {
+		Member loginMember  = (Member) session.getAttribute("loginMember");
+		int result = memberService.userDelete(loginMember.getUserId());
+		if(result > 0) {
+			return "redirect:/member/logout.kh";
+		}else {
+			return "member/deleteFail";
+		}
+	}
 }

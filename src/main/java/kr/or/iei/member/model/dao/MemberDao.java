@@ -74,4 +74,8 @@ public class MemberDao {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("member.searchResultTag", search);
 	}
+	
+	public int userDelete(String userId) {
+		return sqlSession.delete("member.userDelete", userId);
+	}
 }

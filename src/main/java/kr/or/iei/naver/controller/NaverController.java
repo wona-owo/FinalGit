@@ -50,6 +50,7 @@ public class NaverController {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode tokenJson = mapper.readTree(tokenResponse);
 			String accessToken = tokenJson.get("access_token").asText();
+			session.setAttribute("accessToken", accessToken);
 			
 			// 유저 정보 조회
 			NaverUser naverUser = service.getUserInfo(accessToken);
@@ -85,8 +86,23 @@ public class NaverController {
 		return "redirect:/";
 	}
 	
+	// 회원가입 페이지로 이동
 	@GetMapping("apiJoin.kh")
 	public String apiJoin() {
 		return "member/apiJoin";
+	}
+	
+	// 네이버 연동 해제 후 탈퇴
+	@GetMapping("naverUnlink.kh")
+	public String naverUnlink(HttpSession session) {
+		String accessToken = (String) session.getAttribute("accessToken");
+		boolean state = service.naverUnlink(accessToken);
+		
+		if(state) {
+			return "redirect:/member/userDelete.kh";
+		} else {
+			System.out.println("회원탈퇴 실패");
+			return "member/deleteFail";
+		}
 	}
 }

@@ -80,5 +80,9 @@ public class MemberService {
 		// TODO Auto-generated method stub
 		return (ArrayList<HashTag>)memberDao.searchResultTag(search);
 	}
+	
+	public int userDelete(String userId) {
+		return memberDao.userDelete(userId);
+	}
 
 }

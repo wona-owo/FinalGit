@@ -37,6 +37,7 @@ public class KakaoService {
 	private static final String KAKAO_REDIRECT_URI = "http://localhost/kakao/callback.kh";
 	private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 	private static final String KAKAO_USERINFO_URL = "https://kapi.kakao.com/v2/user/me";
+	private static final String KAKAO_UNLINK_URL = "https://kapi.kakao.com/v1/user/unlink";
 	
 	// 카카오 로그인 페이지로 이동
 	public String kakaoLogin(HttpSession session) {
@@ -114,5 +115,28 @@ public class KakaoService {
 	// 카카오 로그인회원이 DB에 존재 여부 확인
 	public Member kakaoLoginChk(KakaoUser kakaoUser) {
 		return dao.kakakoLoginChk(kakaoUser);
+	}
+
+	// 회원탈퇴 시 카카오 연동해제
+	public boolean kakaoUnlink(String accessToken) {
+		HttpPost post = new HttpPost(KAKAO_UNLINK_URL);
+		post.setHeader("Authorization", "Bearer " + accessToken);
+		post.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+		
+		try (CloseableHttpClient client = HttpClients.createDefault();
+		         CloseableHttpResponse response = client.execute(post)) {
+			int statusCode = response.getStatusLine().getStatusCode();
+		    if (statusCode == 200) {
+		        // 연동 해제 성공
+		    	return true;
+		    } else {
+		    	// 실패 처리
+		    	String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+		    	System.out.println("Unlink failed: " + responseBody);
+		    	return false;
+		    }
+		} catch (IOException e) {
+			throw new ApiLoginException("Failed to unlink Kakao account", e);
+		}
 	}
 }
