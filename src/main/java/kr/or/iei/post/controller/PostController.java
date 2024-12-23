@@ -31,7 +31,7 @@ public class PostController {
 		
 		int userNo = loginMember.getUserNo();		
 		ArrayList<Post> imgList = postService.postUserImg(userNo);
-		
+		System.out.println(imgList);
 		model.addAttribute("post",imgList);
 		
 		return "member/myFeed";

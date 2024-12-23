@@ -45,17 +45,57 @@
 	    </div>
 	    	
 	    <div class="post-container">
-	   		<c:forEach var="post" items="${posts}">
+	   		<c:forEach var="post" items="${post}">
 	   			<div class="post-grid">
-	   				<%-- 이미지 배열의 첫번째 이미지(0번)의 파일 이름 --%>
-	   				<img src="/resources/postFile${post.files[0].fileName}" alt="thumbnail">
+	   				<img src="/resources/post_file/${post.postFileName}" alt="thumbnail" class="feed-thumbnail">
 	   			</div>
 	   		</c:forEach>
 	    </div>
+	    
+	    <%-- 콘텐츠 모달창 --%>
+	    <div class="modal">
+	    	<div class="modal-place">
+		    <div class="modal-contents"> 		     
+			    <div class="modal-image">
+		    	  <c:forEach var="post" items="${post}">
+		    	    <img src="/resources/post_file/${post.postFileName}" alt="thumbnail" class="post-modal">
+		    	  </c:forEach>
+			    </div>
+			    
+		     	 <div class="modal-body">
+		     	  	<div class="top">
+			    	   <div class="modal-user">
+			    	   	<div class="profile-frame" id="modal-profile"></div>
+			    	    <p>${loginMember.userNickname}</p>
+			    	   </div>
+			    	   <a href="#" class="modal-close">X</a>
+			    	 </div>
+			    	 
+			    	 
+		        </div>		        
+		    </div>
+		    </div>   	        
+	    </div>
+	    			    
 	</main>
 	
 	
 	<script>
+	
+		//모달창 노출
+		const modal = $(".modal");
+		
+		$(".feed-thumbnail").on("click",function(){
+			modal.css("display","block");
+		});
+		
+		//모달창 닫기
+		$(".modal-close").on("click", function(){
+			modal.css("display", "none");
+		})
+	
+		
+	
 	
 	
 	</script>
