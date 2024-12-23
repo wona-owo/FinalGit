@@ -81,6 +81,12 @@
 		    </div>
 		    </div>   	        
 	    </div>
+	    
+	     <%-- 포스트 작성 모달창 --%>
+	    <div class="modal">
+	    	<div class="modal-place">
+	    	</div>
+	    </div>
 	    			    
 	</main>
 	
@@ -106,7 +112,14 @@
 			modal.css("display", "none");
 		})
 		
-	
+		
+		//포스트 작성
+		$("#post-button").on("click",function(){
+			
+			
+		});
+		
+		
 	
 	
 	</script>
