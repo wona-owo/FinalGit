@@ -1,6 +1,7 @@
 package kr.or.iei.member.model.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,14 +43,46 @@ public class MemberService {
 		return memberDao.apiJoin(member);
 	}
 
-	public ArrayList<Member> searchUser(String searchStr) {
+	public ArrayList<Member> searchUser(String search) {
 		// TODO Auto-generated method stub
-		return (ArrayList<Member>)memberDao.searchUser(searchStr);
+		return (ArrayList<Member>)memberDao.searchUser(search);
 	}
 
 	public ArrayList<HashTag> searchTag(String searchStr) {
 		// TODO Auto-generated method stub
 		return (ArrayList<HashTag>)memberDao.searchTag(searchStr);
+	}
+
+	public int updateKeyword(int userNo, String search) {
+		// TODO Auto-generated method stub
+	    HashMap<String, Object> searchs = new HashMap<>();
+	    searchs.put("userNo", userNo); // 사용자 번호
+	    searchs.put("keyword", search); // 검색 키워드
+	    
+		return memberDao.updateKeyword(searchs);
+	}
+
+	public int insertKeyword(int userNo, String search) {
+		HashMap<String, Object> insertKey = new HashMap<>();
+		insertKey.put("userNo", userNo); // 사용자 번호
+		insertKey.put("keyword", search); // 검색 키워드
+	    
+		return memberDao.insertKeyword(insertKey);
+		
+	}
+
+	public ArrayList<Member> searchResultUser(String search) {
+		// TODO Auto-generated method stub
+		return (ArrayList<Member>)memberDao.searchResultUser(search);
+	}
+
+	public ArrayList<HashTag> searcResulthTag(String search) {
+		// TODO Auto-generated method stub
+		return (ArrayList<HashTag>)memberDao.searchResultTag(search);
+	}
+	
+	public int userDelete(String userId) {
+		return memberDao.userDelete(userId);
 	}
 
 }

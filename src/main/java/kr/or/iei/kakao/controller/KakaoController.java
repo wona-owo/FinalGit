@@ -48,6 +48,7 @@ public class KakaoController {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode tokenJson = mapper.readTree(tokenResponse);
 			String accessToken = tokenJson.get("access_token").asText();
+			session.setAttribute("accessToken", accessToken);
 			
 			// 유저 정보 조회
 			KakaoUser kakaoUser = service.getUserInfo(accessToken);
@@ -82,8 +83,24 @@ public class KakaoController {
 		return "redirect:/";
 	}
 	
+	// 회원가입 페이지로 이동
 	@GetMapping("apiJoin.kh")
 	public String apiJoin() {
 		return "member/apiJoin";
+	}
+	
+	// 카카오 연동 해제 후 탈퇴
+	@GetMapping("kakaoUnlink.kh")
+	public String kakaoUnlink(HttpSession session) {
+		String accessToken = (String) session.getAttribute("accessToken");
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		boolean state = service.kakaoUnlink(accessToken);
+		
+		if(state) {
+			return "redirect:/member/userDelete.kh";
+		} else {
+			System.out.println("회원탈퇴 실패");
+			return "member/deleteFail";
+		}
 	}
 }

@@ -1,0 +1,87 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel ="stylesheet"  href="/resources/default.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+	#searchInputBox {
+		display: flex;
+		align-items: center; /* 수직 정렬 */
+		border: 3px solid #ccc;
+		padding: 0 10px 0 10px;
+		border-radius: 16px;
+		width: 400px;
+		height: 40px; /* 고정 높이 설정 */
+		background-color: white; /* 배경색 */
+		flex-shrink: 0; /* 컨테이너가 줄어들지 않도록 설정 */
+	}
+	
+	#searchInputBox svg {
+		margin-right: 12px; /* 아이콘과 입력창 간 간격 */
+		vertical-align: middle; /* 아이콘 위치 중앙 정렬 */
+		flex-shrink: 0; /* 아이콘 크기 고정 */
+	}
+	/* 포커스가 있을 때 SVG 아이콘 숨기기 */
+	#searchInputBox:focus-within svg {
+		display: none; /* 아이콘을 완전히 숨김 */
+	}
+	
+	#searchInputBox input[type="search"] {
+		padding: 0;
+		margin: 0;
+		border: none; /* 테두리 제거 */
+		outline: none; /* 클릭 시 아웃라인 제거 */
+		flex: 1; /* 입력 필드가 남은 공간 차지 */
+		flex-shrink: 0; /* 줄어들지 않도록 설정 */
+		font-size: 16px; /* 글자 크기 */
+		color: #666; /* 글자 색상 */
+		background-color: white; /* 배경 투명 */
+		height: 100%;
+	}
+	
+	#searchInputBox input[type="search"]::placeholder {
+		color: #aaa;
+	}
+</style>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/member/sideMenu.jsp" %>
+	<main>
+		<form action="/member/keywordSearch.kh" method="get">
+	        <div id="searchInputBox">
+	            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#999" class="bi bi-search" viewBox="0 0 16 16">
+	                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+	            </svg>
+	            <input type="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" value="${search}">        
+	        </div>
+	    </form>    	
+	</main>
+	
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+	        const searchInput = document.getElementById('search');
+	        const originalValue = searchInput.value; // 원래 값을 저장
+	
+	        // 입력창을 클릭하면 값 비우기
+	        searchInput.addEventListener('focus', function () {
+	            if (searchInput.value == originalValue) {
+	                searchInput.value = '';
+	            }
+	        });
+	
+	        // 입력창에서 포커스를 벗어나면 원래 값 복원
+	        searchInput.addEventListener('blur', function () {
+	            if (searchInput.value.trim() == '') {
+	                searchInput.value = originalValue;
+	            }
+	        });
+	    });
+	</script>
+</body>
+</html>

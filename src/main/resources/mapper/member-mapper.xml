@@ -100,25 +100,54 @@
 	</insert>
 	
 	<select id="userSearch" parameterType="string" resultType="member">
-		select user_no as userNo,
-			   user_id as userId,
-			   user_nickname as userNickname,
-			   user_name as userName,
-			   user_image as userImage
-		from tbl_user
-		where UPPER(user_id) LIKE '%' || UPPER(#{searchStr}) || '%' 
-          OR UPPER(user_name) LIKE '%' || UPPER(#{searchStr}) || '%'
-          OR UPPER(user_nickname) LIKE '%' || UPPER(#{searchStr}) || '%'
-    	ORDER BY user_name ASC
+		<![CDATA[
+	        SELECT * FROM (
+	            SELECT user_no AS userNo,
+	                   user_id AS userId,
+	                   user_nickname AS userNickname,
+	                   user_name AS userName,
+	                   user_image AS userImage
+	            FROM tbl_user
+	            WHERE UPPER(user_id) LIKE '%' || UPPER(#{search}) || '%'
+	               OR UPPER(user_name) LIKE '%' || UPPER(#{search}) || '%'
+	               OR UPPER(user_nickname) LIKE '%' || UPPER(#{search}) || '%'
+	            ORDER BY user_name ASC
+	        )
+	        WHERE ROWNUM <= 5
+    	]]>
 	</select>
 	
 	<select id="tagSearch" parameterType="string" resultType="hashTag">
-		SELECT 
-            hash_name AS hashName,
-            COUNT(post_no) AS postCount
-        FROM HASHTAG
-        WHERE UPPER(hash_name) LIKE '%' || upper(#{searchStr}) || '%'
-        GROUP BY hash_name
-        ORDER BY hash_name ASC
+		 <![CDATA[
+            SELECT * FROM (
+                SELECT 
+                    hash_name AS hashName,
+                    COUNT(post_no) AS postCount
+                FROM HASHTAG
+                WHERE LENGTH(#{search}) > 0
+                  AND UPPER(hash_name) LIKE '%' || UPPER(#{search}) || '%'
+                GROUP BY hash_name
+                ORDER BY hash_name ASC
+            )
+            WHERE ROWNUM <= 5
+        ]]>
 	</select>
+	
+	<update id="updateKeyword" parameterType="map">
+		update search
+			set keyword_date = SYSDATE
+			where user_no = #{userNo}
+		and keyword = #{keyword}
+	</update>
+	
+	<insert id="insertKeyword" parameterType="map">
+		insert into search (user_no, keyword)
+    	values (#{userNo}, #{keyword})
+	</insert>
+	
+	<delete id="userDelete"
+	parameterType="string">
+	delete from tbl_user
+		  where user_id = #{_parameter}
+	</delete>
 </mapper>

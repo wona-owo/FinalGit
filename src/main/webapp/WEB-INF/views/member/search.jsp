@@ -88,19 +88,40 @@
 	}
 	
 	.hash-container{
+		display: flex;
 		line-height: 31px;
-		margin-left: 55px;
 	}	
+	.tag-profile{
+		font-size: 24px;
+		width: 45px;
+		height: 45px;
+		border: 1px solid gray;
+		border-radius: 50%;
+		background-color: white;
+		margin: 8px 12px 5px 0;
+		display: flex; /* Flexbox 활성화 */
+	    justify-content: center; /* 수평 가운데 정렬 */
+	    align-items: center; /* 수직 가운데 정렬 */
+	}
+	.tag-span{
+		display: flex;
+    	flex-direction: column; /* 태그 이름과 게시글 수를 수직으로 정렬 */
+    	justify-content: center; /* 수직 정렬 */
+    	gap: 2px; /* 태그 이름과 게시글 수 간의 간격 */ 
+	}
 	.tagName {
 		display: flex;
 	    font-weight: bold;
 	    font-size: 16px;
+	    margin: 0; /* 여백 제거 */
+    	line-height: normal; /* 텍스트 높이를 기본값으로 */
 	}
-	
 	.tagPostCount {
-		display: flex;
+		display: block; /* block으로 설정하여 아래로 이동 */
 	    color: #666;
 	    font-size: 12px;
+	    margin: 0; /* 여백 제거 */
+    	line-height: normal; /* 텍스트 높이를 기본값으로 */
 	}
 	
 	.user-profile {
@@ -119,59 +140,60 @@
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/member/sideMenu.jsp" %>
-	<main>
-		<form action="/member/search.kh" method="get">
-			<div id="searchInputBox">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#999" class="bi bi-search" viewBox="0 0 16 16">
-  					<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-				</svg>
-				<input type="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">		
-			</div>
-			<div id="searchResults">
-				<ul id="ResultBox">
-				
-				</ul>
-			</div>
-		</form>	
-	</main>
-	
-	<script>
-		let debounceTimeout = null;
-		//디바운스 하는 이유 : 서버 과부화 최소화하기 위해	
-	    function searchResults(searchStr){
-	        clearTimeout(debounceTimeout); // 이전에 설정된 타이머 제거 (중복 요청 방지)
-	        debounceTimeout = setTimeout(function() {
-	            var searchResultsBox = $('#ResultBox');
-	            if (searchStr.trim().length == 0) { // 입력된 검색어가 공백이거나 비어 있는 경우
-	                searchResultsBox.hide(); // 결과 박스 숨김
-	                searchResultsBox.empty(); 
-	                return;
-	            }
-	            $.ajax({
-	                type: 'POST', // GET에서 POST로 변경
-	                url: '/member/searchBoard.kh',
-	                data: { searchStr: searchStr }, // 'search'에서 'searchStr'로 변경
-	                success: function(response) {
-	                    if ($.trim(response)) {
-	                    	searchResultsBox.html(response).show(); // 서버에서 받은 HTML 그대로 삽입
-	                    } else {
-	                        searchResultsBox.html('<li class="user-result"><span id="search-result">검색 결과가 없습니다.</span></li>').show();
-	                    }
-	                },
-	                error: function() {
-	                    searchResultsBox.html('<li class="user-result">서버 오류가 발생했습니다.</li>').show();
-	                }
-	            });
-	        }, 300); // 사용자가 입력을 멈춘 후 300ms가 지나면 서버 요청 실행
-	    }
-	
-	    // 입력을 받을때 마다 이벤트 발생 
-	    $(document).ready(function() {
-	    	// 검색 입력란에 입력 이벤트(keyup)가 발생할 때마다 searchResults 함수 실행
-	        $('#search').on('keyup', function() {
-	            searchResults($(this).val());// 입력된 검색어를 searchResults 함수에 전달
-	        });
-	    });    
-	</script>
+<main>
+    <form action="/member/keywordSearch.kh" method="get">
+        <div id="searchInputBox">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#999" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+            </svg>
+            <input type="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">        
+        </div>
+        <div id="searchResults">
+            <ul id="ResultBox">
+            
+            </ul>
+        </div>
+    </form>    
+</main>
+
+<script>
+    let debounceTimeout = null;
+    // 디바운스 하는 이유 : 서버 과부화 최소화하기 위해    
+    function searchResults(search){
+        clearTimeout(debounceTimeout); // 이전에 설정된 타이머 제거 (중복 요청 방지)
+        debounceTimeout = setTimeout(function() {
+            var searchResultsBox = $('#ResultBox');
+            if (search.trim().length == 0 || search == '#') { // 검색어가 비었거나 '#'만 있는 경우
+                searchResultsBox.hide();
+                searchResultsBox.empty();
+                return;
+            }
+            $.ajax({
+                type: 'POST', // GET에서 POST로 변경
+                url: '/member/searchBoard.kh',
+                data: { search: search }, // 'searchStr'에서 'search'로 변경
+                success: function(response) {
+                    if ($.trim(response)) {
+                        searchResultsBox.html(response).show(); // 서버에서 받은 HTML 그대로 삽입
+                    } else {
+                        searchResultsBox.html('<li class="user-result"><span id="search-result">검색 결과가 없습니다.</span></li>').show();
+                    }
+                },
+                error: function() {
+                    searchResultsBox.html('<li class="user-result">서버 오류가 발생했습니다.</li>').show();
+                }
+            });
+        }, 300); // 사용자가 입력을 멈춘 후 300ms(0.3초)가 지나면 서버 요청 실행
+    }
+
+    // 입력을 받을때 마다 이벤트 발생 
+    $(document).ready(function() {
+        // 검색 입력란에 입력 이벤트(keyup)가 발생할 때마다 searchResults 함수 실행
+        $('#search').on('keyup', function() {
+            searchResults($(this).val()); // 입력된 검색어를 searchResults 함수에 전달
+        });
+    });    
+</script>
+
 </body>
 </html>

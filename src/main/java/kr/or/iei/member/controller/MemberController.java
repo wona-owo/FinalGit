@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.member.model.vo.Search;
 
 @Controller
 @RequestMapping("/member/")
@@ -134,16 +136,27 @@ public class MemberController {
 	// value랑 produces 안해주면 인코딩 문제생김
 	@PostMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8") 
 	@ResponseBody
-	public String inputSearch(@RequestParam("searchStr") String searchStr) {
-	    ArrayList<Member> users = memberService.searchUser(searchStr);
-	    ArrayList<HashTag> tags = memberService.searchTag(searchStr);
+	public String inputSearch(@RequestParam("search") String search) {
+	    ArrayList<Member> users = memberService.searchUser(search);
+	    ArrayList<HashTag> tags;
 	    
+	    //#으로 시작하고 #뒤에 값이 없으면 
+	    if(search.charAt(0) == '#' && "#".equals(search)) { 
+	    	tags = new ArrayList<>(); // 빈 리스트로 초기화
+	    	
+	    } else if(search.charAt(0) == '#' && search.length() > 1) { // #으로 시작하고 #뒤에 값이 있으면
+	    	tags = memberService.searchTag(search);
+	    	
+	    } else {
+	    	 tags = new ArrayList<>(); // 검색어가 #으로 시작하지 않으면 태그 검색 안함
+	    }
 	    
 	    if (tags.isEmpty() && users.isEmpty()) {
 	        return "<div class='user-result'>"
 	        		+ "<span id='search-result'>검색 결과가 없습니다.</span>"
 	        		+ "</div>"; //관련 검색이 없을때 보여줌
 	    }
+	    
 	    StringBuilder html = new StringBuilder(); //HTML 코드 생성
 	    // 해시태그 결과 먼저 추가
         if (!tags.isEmpty()) {
@@ -153,6 +166,12 @@ public class MemberController {
                     .append(tag.getHashName()) // HashTag 객체의 hashName 사용
                     .append("'>")
                     .append("<div class='hash-container'>")
+                    .append("<div class='tag-profile'>")
+                    .append("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"black\">")
+                    .append("<path d=\"m240-160 40-160H120l20-80h160l40-160H180l20-80h160l40-160h80l-40 160h160l40-160h80l-40 160h160l-20 80H660l-40 160h160l-20 80H600l-40 160h-80l40-160H360l-40 160h-80Zm140-240h160l40-160H420l-40 160Z\"/>")
+                    .append("</svg>")
+		            .append("</div>")
+		            .append("<div class='tag-span'>")
                     .append("<span class='tagName'>")
                     .append(tag.getHashName())
                     .append("</span>")
@@ -160,8 +179,10 @@ public class MemberController {
                     .append(tag.getPostCount())
                     .append("</span>")
                     .append("</div>")
+                    .append("</div>")
                     .append("</a>")
                     .append("</li>");
+                
             }
         }
         if (!users.isEmpty()) {
@@ -181,13 +202,67 @@ public class MemberController {
 		            .append("</div>")
 		            .append("</a>")
 		            .append("</li>");
+		        
+		       
 		    }
         }
 	    return html.toString(); // HTML 문자열 반환
 	}
+	
+	//검색 결과(검색 기록 업데이트 및 등록)
+	@GetMapping(value = "keywordSearch.kh", produces = "text/html; charset=UTF-8")
+	public String searchPage(@RequestParam("search") String search, Model model, HttpSession session) {
+	    
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		
+		int userNo = loginMember.getUserNo();
+		
+		int updateResult  = memberService.updateKeyword(userNo, search);
+		
+		int insertKeyword = 0;
+		
+		if (updateResult == 0) {
+			insertKeyword =	memberService.insertKeyword(userNo, search);
+			
+			if(insertKeyword == 0) {
+				throw new RuntimeException("키워드 삽입에 실패했습니다."); //확인용
+			}
+		}
+	    model.addAttribute("search", search);
 
+	    // 검색 결과 페이지로 이동
+	    return "member/searchResult";
+	}
 	@GetMapping("userProfile.kh")
 	public String userProfile() {
 		return "member/userProfile";
+	}
+	
+	// API 연동 끊기 및 탈퇴 메소드 호출
+	@GetMapping("userUnlink.kh")
+	public String userUnlink(HttpSession session) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		String userType = loginMember.getUserType();
+			
+		// 회원가입 경로에 따른 탈퇴 절차
+		if(userType != null && userType.equals("K")) {
+			return "redirect:/kakao/kakaoUnlink.kh";
+		}else if(userType != null && userType.equals("N")) {
+			return "redirect:/naver/naverUnlink.kh";
+		}else {
+			return "redirect:/member/userDelete.kh";
+		}
+	}
+		
+	// 회원 탈퇴
+	@GetMapping("userDelete.kh")
+	public String userDelete(HttpSession session) {
+		Member loginMember  = (Member) session.getAttribute("loginMember");
+		int result = memberService.userDelete(loginMember.getUserId());
+		if(result > 0) {
+			return "redirect:/member/logout.kh";
+		}else {
+			return "member/deleteFail";
+		}
 	}
 }
