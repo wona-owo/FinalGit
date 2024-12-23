@@ -48,6 +48,7 @@
 	   		<c:forEach var="post" items="${post}">
 	   			<div class="post-grid">
 	   				<img src="/resources/post_file/${post.postFileName}" alt="thumbnail" class="feed-thumbnail">
+	   				<p class="hidden-post-content" style="display: none;">${post.postContent}</p>
 	   			</div>
 	   		</c:forEach>
 	    </div>
@@ -71,7 +72,11 @@
 			    	   <a href="#" class="modal-close">X</a>
 			    	 </div>
 			    	 
-			    	 
+			    	 <div class="post-content">
+			    	 	<div class="post-content-text"></div>
+			    	 </div>		
+			    	     	 
+			    	 <%-- 나중에 댓글 넣기 --%>
 		        </div>		        
 		    </div>
 		    </div>   	        
@@ -85,15 +90,21 @@
 		//모달창 노출
 		const modal = $(".modal");
 		
+		const postText = $(".post-content-text");
+		const postCon = $(".hidden-post-content").text();
+		
 		$(".feed-thumbnail").on("click",function(){
 			modal.css("display","block");
+			
+			//콘텐츠 노출
+			postText.text(postCon);
+			
 		});
 		
 		//모달창 닫기
 		$(".modal-close").on("click", function(){
 			modal.css("display", "none");
 		})
-	
 		
 	
 	

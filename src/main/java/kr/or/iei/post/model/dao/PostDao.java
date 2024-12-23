@@ -19,7 +19,7 @@ public class PostDao {
 	private SqlSessionTemplate sqlSession;
 
 	public List<Post> postUserImg(int userNo) {
-		return sqlSession.selectList("post.postUserImg", userNo);
+		return sqlSession.selectList("post.postData", userNo);
 	}
 	
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.service.PostService;
@@ -23,7 +24,7 @@ public class PostController {
 	private PostService postService;
 	
 	
-	//post 이미지 불러오기
+	//post 이미지 불러오기 + (다른 내용들 포함)
 	@GetMapping("myFeedFrm.kh") //메뉴 버튼이랑 매핑
 	public String postUserImg(Model model, HttpSession session) {
 		 
@@ -31,10 +32,12 @@ public class PostController {
 		
 		int userNo = loginMember.getUserNo();		
 		ArrayList<Post> imgList = postService.postUserImg(userNo);
-		System.out.println(imgList);
+
 		model.addAttribute("post",imgList);
 		
 		return "member/myFeed";
 	}
+	
+
 	
 }

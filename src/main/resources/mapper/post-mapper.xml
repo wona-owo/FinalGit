@@ -2,16 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="post">
 	
-	<!-- 게시물 데이터 조회 -->
-	<select id="postUserImg" parameterType="_int"
+	<!-- 게시글 데이터 조회 -->
+	<select id="postData" parameterType="_int"
 	resultType="post">
 		
-		select post_file_no as postFileNo,
+		select f.post_file_no as postFileNo,
 			   f.post_no as postNo,
-			   post_file_name as postFileName
+			   f.post_file_name as postFileName,
+			   p.user_no as userNo,
+			   p.post_content as postContent,
+			   p.post_date as postDate
 	      from post_file f
 		 join post p on (f.post_no = p.post_no)	  
 		 where p.user_no = ${_parameter}    		
 	</select>
+	
 	
 </mapper>
