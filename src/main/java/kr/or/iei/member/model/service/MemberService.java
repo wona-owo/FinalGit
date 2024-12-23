@@ -85,4 +85,13 @@ public class MemberService {
 		return memberDao.userDelete(userId);
 	}
 
+	public ArrayList<HashTag> searchHashTagsKeyword(String search) {
+		// TODO Auto-generated method stub
+		return (ArrayList<HashTag>)memberDao.searchHashTagsKeyword(search);
+	}
+
+	public ArrayList<Member> searchUsersKeyword(String search) {
+		return (ArrayList<Member>)memberDao.searchUsersKeyword(search);
+	}
+
 }

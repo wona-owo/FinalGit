@@ -78,4 +78,14 @@ public class MemberDao {
 	public int userDelete(String userId) {
 		return sqlSession.delete("member.userDelete", userId);
 	}
+
+	public List<HashTag> searchHashTagsKeyword(String search) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.searchHashTagsKeyword", search);
+	}
+
+	public List<Member> searchUsersKeyword(String search) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.searchUsersKeyword", search);
+	}
 }
