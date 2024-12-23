@@ -10,7 +10,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <style>
-	#searchInputBox {
+	.searchInputBox {
 		display: flex;
 		align-items: center; /* 수직 정렬 */
 		border: 3px solid #ccc;
@@ -22,17 +22,17 @@
 		flex-shrink: 0; /* 컨테이너가 줄어들지 않도록 설정 */
 	}
 	
-	#searchInputBox svg {
+	.searchInputBox svg {
 		margin-right: 12px; /* 아이콘과 입력창 간 간격 */
 		vertical-align: middle; /* 아이콘 위치 중앙 정렬 */
 		flex-shrink: 0; /* 아이콘 크기 고정 */
 	}
 	/* 포커스가 있을 때 SVG 아이콘 숨기기 */
-	#searchInputBox:focus-within svg {
+	.searchInputBox:focus-within svg {
 		display: none; /* 아이콘을 완전히 숨김 */
 	}
 	
-	#searchInputBox input[type="search"] {
+	.searchInputBox input[type="search"] {
 		padding: 0;
 		margin: 0;
 		border: none; /* 테두리 제거 */
@@ -45,22 +45,22 @@
 		height: 100%;
 	}
 	
-	#searchInputBox input[type="search"]::placeholder {
+	.searchInputBox input[type="search"]::placeholder {
 		color: #aaa;
 	}
 	
-	#searchResults {
+	.searchResults {
 		width: 425.2px;
 		padding: 0;
 		margin: 20px 0 0 0;
 	}
 	
-	#searchResults ul {
+	.searchResults ul {
 		margin: 0;
 		padding: 0;
 	}
 	
-	#ResultBox li {
+	.ResultBox li {
 		list-style-type: none;
 		margin-bottom: 8px;
 	}
@@ -142,14 +142,14 @@
 	<%@ include file="/WEB-INF/views/member/sideMenu.jsp" %>
 <main>
     <form action="/member/keywordSearch.kh" method="get">
-        <div id="searchInputBox">
+        <div class="searchInputBox" id="searchInputBox">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#999" class="bi bi-search" viewBox="0 0 16 16">
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
             </svg>
-            <input type="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">        
+            <input type="search" class="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">        
         </div>
-        <div id="searchResults">
-            <ul id="ResultBox">
+        <div class="searchResults" id="searchResults">
+            <ul class="ResultBox" id="ResultBox">
             
             </ul>
         </div>
@@ -169,7 +169,7 @@
                 return;
             }
             $.ajax({
-                type: 'POST', // GET에서 POST로 변경
+                type: 'GET',
                 url: '/member/searchBoard.kh',
                 data: { search: search }, // 'searchStr'에서 'search'로 변경
                 success: function(response) {

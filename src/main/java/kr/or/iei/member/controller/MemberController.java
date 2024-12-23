@@ -21,6 +21,8 @@ import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Search;
+import kr.or.iei.post.model.service.PostService;
+import kr.or.iei.post.model.vo.Post;
 
 @Controller
 @RequestMapping("/member/")
@@ -29,6 +31,10 @@ public class MemberController {
 	@Autowired
 	@Qualifier("service")
 	private MemberService memberService;
+	
+	@Autowired
+	@Qualifier("postService")
+	private PostService postService;
 	
 	public MemberController() {
 		super();
@@ -134,7 +140,7 @@ public class MemberController {
 	
 	// 실시간 검색
 	// value랑 produces 안해주면 인코딩 문제생김
-	@PostMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8") 
+	@GetMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8") 
 	@ResponseBody
 	public String inputSearch(@RequestParam("search") String search) {
 	    ArrayList<Member> users = memberService.searchUser(search);
@@ -182,7 +188,6 @@ public class MemberController {
                     .append("</div>")
                     .append("</a>")
                     .append("</li>");
-                
             }
         }
         if (!users.isEmpty()) {
@@ -253,16 +258,89 @@ public class MemberController {
 			return "redirect:/member/userDelete.kh";
 		}
 	}
-		
+
 	// 회원 탈퇴
 	@GetMapping("userDelete.kh")
 	public String userDelete(HttpSession session) {
-		Member loginMember  = (Member) session.getAttribute("loginMember");
+		Member loginMember = (Member) session.getAttribute("loginMember");
 		int result = memberService.userDelete(loginMember.getUserId());
-		if(result > 0) {
+		if (result > 0) {
 			return "redirect:/member/logout.kh";
-		}else {
+		} else {
 			return "member/deleteFail";
 		}
 	}
+
+	@GetMapping(value = "filterResults.kh", produces = "text/html; charset=UTF-8")
+	@ResponseBody
+	public String filterResults(@RequestParam("filterType") String filterType,
+			@RequestParam("search") String search) {
+		StringBuilder html = new StringBuilder();
+
+		switch (filterType) {
+		case "post":
+			// 게시물 데이터 가져오기
+			//ArrayList<Post> posts = postService.searchPostsKeyword(search);
+			//for (Post post : posts) {
+				
+			//}
+			break;
+
+		case "hashtag":
+			// 해시태그 데이터 가져오기
+			ArrayList<HashTag> hashtags = memberService.searchHashTagsKeyword(search);
+			for (HashTag tag : hashtags) {
+				html.append("<li class='user-result'>")
+	                .append("<a class='a-user' href='/member/hashtags.kh?hashName=")
+	                .append(tag.getHashName()) // HashTag 객체의 hashName 사용
+	                .append("'>")
+	                .append("<div class='hash-container'>")
+	                .append("<div class='tag-profile'>")
+	                .append("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"black\">")
+	                .append("<path d=\"m240-160 40-160H120l20-80h160l40-160H180l20-80h160l40-160h80l-40 160h160l40-160h80l-40 160h160l-20 80H660l-40 160h160l-20 80H600l-40 160h-80l40-160H360l-40 160h-80Zm140-240h160l40-160H420l-40 160Z\"/>")
+	                .append("</svg>")
+		            .append("</div>")
+		            .append("<div class='tag-span'>")
+	                .append("<span class='tagName'>")
+	                .append(tag.getHashName())
+	                .append("</span>")
+	                .append("<span class='tagPostCount'>게시글 : ")
+	                .append(tag.getPostCount())
+	                .append("</span>")
+	                .append("</div>")
+	                .append("</div>")
+	                .append("</a>")
+	                .append("</li>");
+			}
+			break;
+
+		case "user":
+			// 유저 데이터 가져오기
+			ArrayList<Member> users = memberService.searchUsersKeyword(search);
+			for (Member user : users) {
+				html.append("<li class='user-result'>")
+		            .append("<a class='a-user' href='/member/userProfile.kh?userName=")
+		            .append(user.getUserName())
+		            .append("'>")
+		            .append("<div class='profile-container'>")
+		            .append("<div class='user-profile'>")
+		            .append("</div>")
+		            .append("<span>")
+		            .append(user.getUserNickname())
+		            .append("/")
+		            .append(user.getUserId())
+		            .append("</span>")
+		            .append("</div>")
+		            .append("</a>")
+		            .append("</li>");
+			}
+			break;
+		default:
+			html.append("<p>유효하지 않은 필터입니다.</p>");
+			break;
+		}
+
+		return html.toString();
+	}
+
 }
