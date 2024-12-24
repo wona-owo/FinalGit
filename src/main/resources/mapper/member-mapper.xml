@@ -135,14 +135,27 @@
 	
 	<update id="updateKeyword" parameterType="map">
 		update search
-			set keyword_date = SYSDATE
-			where user_no = #{userNo}
-		and keyword = #{keyword}
-	</update>
+        set 
+            keyword_date = SYSDATE,
+            <if test="resultVal != null and !&quot;x&quot;.equals(resultVal)">
+                keyword = #{keyword},		        
+            </if>
+            search_type = #{searchType},
+            search_user_id = #{userId}
+        where user_no = #{userNo}
+        <choose>
+            <when test="&quot;x&quot;.equals(resultVal)">
+                and keyword = #{keyword}
+            </when>
+            <otherwise>
+                and keyword = #{resultVal}		    	
+            </otherwise>
+        </choose>
+</update>
 	
 	<insert id="insertKeyword" parameterType="map">
-		insert into search (user_no, keyword)
-    	values (#{userNo}, #{keyword})
+		insert into search (user_no, keyword, search_type, search_user_id)
+    	values (#{userNo}, #{keyword}, #{searchType}, #{userId})
 	</insert>
 	
 	<delete id="userDelete"
@@ -171,5 +184,24 @@
 	       OR UPPER(user_name) LIKE '%' || UPPER(#{search}) || '%'
 	       OR UPPER(user_nickname) LIKE '%' || UPPER(#{search}) || '%'
 	    ORDER BY user_name ASC
+	</select>
+	<select id="selectKeywordTag" parameterType="string" resultType="hashTag">
+		select hash_no as hashNo,
+			   post_no as postNo,
+			   hash_name as hashName
+		  from HASHTAG
+		 where hash_name = #{hashName}
+	</select>
+	
+	<select id="selectKeywordUser" parameterType="string" resultType="member">
+		select user_no as userNo,
+		       user_id as userId,
+		       user_nickname as userNickname,
+		       user_name as userName,
+		       user_address as userAddress,
+		       enroll_date as enrollDate,
+		       user_image as userImage
+		  from tbl_user
+		 where user_nickname = #{userName}
 	</select>
 </mapper>

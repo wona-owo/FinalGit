@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.member.model.vo.Search;
 import kr.or.iei.post.model.vo.Post;
 
 @Repository("dao")
@@ -87,5 +88,15 @@ public class MemberDao {
 	public List<Member> searchUsersKeyword(String search) {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("member.searchUsersKeyword", search);
+	}
+
+	public List<HashTag> selectKeywordTag(String hashName) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.selectKeywordTag", hashName);
+	}
+
+	public Member selectKeywordUser(String userName) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.selectKeywordUser", userName);
 	}
 }
