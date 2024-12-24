@@ -148,6 +148,11 @@
             </svg>
             <input type="search" class="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">        
         </div>
+        <div class="searchRecord" id="searchRecord">
+				<ul class="searchRecordBox" id="searchRecordBox">
+					
+				</ul>
+			</div>
         <div class="searchResults" id="searchResults">
             <ul class="ResultBox" id="ResultBox">
             

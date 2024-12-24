@@ -1,6 +1,8 @@
 package kr.or.iei.member.controller;
 
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
@@ -146,6 +148,8 @@ public class MemberController {
 	    ArrayList<Member> users = memberService.searchUser(search);
 	    ArrayList<HashTag> tags;
 	    
+	    
+	    
 	    //#으로 시작하고 #뒤에 값이 없으면 
 	    if(search.charAt(0) == '#' && "#".equals(search)) { 
 	    	tags = new ArrayList<>(); // 빈 리스트로 초기화
@@ -166,10 +170,14 @@ public class MemberController {
 	    StringBuilder html = new StringBuilder(); //HTML 코드 생성
 	    // 해시태그 결과 먼저 추가
         if (!tags.isEmpty()) {
+        	
             for (HashTag tag : tags) {
+            	//#은 페이지 내 위치를 나타내는 특수문자라 서버로 전달되지 않기때문에 enconding 해줘야됨
+            	String encodedHashName = URLEncoder.encode(tag.getHashName(), StandardCharsets.UTF_8);
                 html.append("<li class='user-result'>")
-                    .append("<a class='a-user' href='/member/hashtags.kh?hashName=")
-                    .append(tag.getHashName()) // HashTag 객체의 hashName 사용
+                    .append("<a class='a-user' href='/member/keywordResult.kh?hashName=")
+                    .append(encodedHashName) // HashTag 객체의 hashName 사용
+                    .append("&vals=x")
                     .append("'>")
                     .append("<div class='hash-container'>")
                     .append("<div class='tag-profile'>")
@@ -193,8 +201,9 @@ public class MemberController {
         if (!users.isEmpty()) {
 		    for(Member m : users) { //forEach
 		        html.append("<li class='user-result'>")
-		            .append("<a class='a-user' href='/member/userProfile.kh?userName=")
-		            .append(m.getUserName())
+		            .append("<a class='a-user' href='/member/keywordResult.kh?userName=")
+		            .append(m.getUserNickname())
+		            .append("&vals=x")
 		            .append("'>")
 		            .append("<div class='profile-container'>")
 		            .append("<div class='user-profile'>")
@@ -216,21 +225,27 @@ public class MemberController {
 	
 	//검색 결과(검색 기록 업데이트 및 등록)
 	@GetMapping(value = "keywordSearch.kh", produces = "text/html; charset=UTF-8")
-	public String searchPage(@RequestParam("search") String search, Model model, HttpSession session) {
-	    
+	public String searchPage(@RequestParam("search") String search, Model model, HttpSession session,
+			@RequestParam(value = "vals", required = false) String vals) {//검색 결과에서 원하는 검색 값을 a태그로 이동했을때 값이 담겨있고 아닌경우 x로 표시 
+
 		Member loginMember = (Member) session.getAttribute("loginMember");
-		
+
 		int userNo = loginMember.getUserNo();
-		
-		int updateResult  = memberService.updateKeyword(userNo, search);
-		
-		int insertKeyword = 0;
-		
+
+		int insertKeyword = 0; //등록 확인
+		String searchType = "G"; //검색일 경우 G
+		String userId = null; 
+		String val = null;
+		if (vals == null || vals.isEmpty()) { // 검색 결과 페이지로 이돟한 경우 null값이거나 비어있음
+			val = "x"; //강제로 문자열 X라는 값 부여
+		}
+
+		int updateResult = memberService.updateKeyword(userNo, searchType, val, userId, search); //검색 날짜 최신으로 업데이트
 		if (updateResult == 0) {
-			insertKeyword =	memberService.insertKeyword(userNo, search);
-			
-			if(insertKeyword == 0) {
-				throw new RuntimeException("키워드 삽입에 실패했습니다."); //확인용
+			insertKeyword = memberService.insertKeyword(userNo, searchType, userId, search); // 검색한 값이 처음인 경우 새롭게 등록
+
+			if (insertKeyword == 0) {
+				throw new RuntimeException("키워드 삽입에 실패했습니다."); // 확인용
 			}
 		}
 	    model.addAttribute("search", search);
@@ -290,9 +305,12 @@ public class MemberController {
 			// 해시태그 데이터 가져오기
 			ArrayList<HashTag> hashtags = memberService.searchHashTagsKeyword(search);
 			for (HashTag tag : hashtags) {
+				String encodedHashName = URLEncoder.encode(tag.getHashName(), StandardCharsets.UTF_8);
 				html.append("<li class='user-result'>")
-	                .append("<a class='a-user' href='/member/hashtags.kh?hashName=")
-	                .append(tag.getHashName()) // HashTag 객체의 hashName 사용
+	                .append("<a class='a-user' href='/member/keywordResult.kh?hashName=")
+	                .append(encodedHashName) // HashTag 객체의 hashName 사용
+	                .append("&vals=")
+		            .append(search)
 	                .append("'>")
 	                .append("<div class='hash-container'>")
 	                .append("<div class='tag-profile'>")
@@ -319,8 +337,10 @@ public class MemberController {
 			ArrayList<Member> users = memberService.searchUsersKeyword(search);
 			for (Member user : users) {
 				html.append("<li class='user-result'>")
-		            .append("<a class='a-user' href='/member/userProfile.kh?userName=")
-		            .append(user.getUserName())
+		            .append("<a class='a-user' href='/member/keywordResult.kh?userName=")
+		            .append(user.getUserNickname())
+		            .append("&vals=")
+		            .append(search)
 		            .append("'>")
 		            .append("<div class='profile-container'>")
 		            .append("<div class='user-profile'>")
@@ -342,5 +362,105 @@ public class MemberController {
 
 		return html.toString();
 	}
+	
+	//검색 창에서 a 링크 클릭 시 기록 남기는 용도(이거 안쓰면 피드에서 a 링크 눌러도 검색 기록으로 처리됨)
+	//required
+	@GetMapping("keywordResult.kh")
+	@ResponseBody
+	public String keywordResult( 
+			@RequestParam(value = "hashName", required = false) String hashName,
+	        @RequestParam(value = "userName", required = false) String userName, //유저 이름
+	        @RequestParam(value = "vals", required = false) String vals, //검색 결과에서 원하는 검색 값을 a태그로 이동했을때 값이 담겨있고 아닌경우 x로 표시 
+	        HttpSession session, Model model) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		int userNo = loginMember.getUserNo();
+		
+		String searchType = null; //이게 User검색인지 HashTag 검색인지 일반 검색인지 구분해주는 값
+		String userId = null; //user Name값
+		String val = null;
+		Member member = memberService.selectKeywordUser(userName);
+		
+		ArrayList<HashTag> hash = memberService.selectKeywordTag(hashName); //어차피 a태그 눌렀을때 검색 기록 등록 수정 목적으로 하는거라 여기에 선언함
+		
+		int result = 0; //값 정상적으로 들어갔나 확인용
+		
+		if (hashName != null && !hashName.isEmpty() && "x".equals(vals)) { //해시태그 값이 있고 실시간 검색에서 a태그로 페이지를 이동한 경우
+			searchType = "H";
+			val = vals;
+			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,hashName);
+			if(updateResult == 0) {
+				result = memberService.insertKeyword(userNo, searchType, userId, hashName);
+				
+				if(result == 1) {
+					model.addAttribute("hashtags", hash);
+					return "member/hashTag";
+				}else {
+					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
+				}
+			}else {
+				model.addAttribute("hashtags", hash);
+				return "member/hashTag";
+			}
+		}else if(hashName != null && !hashName.isEmpty() && !"x".equals(vals)) {//해시태그 값이 있고 검색 결과 페이지에서 a태그로 페이지를 이동한 경우
+			searchType = "H";
+			val = vals;
+			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,hashName);
+			if(updateResult == 0) {
+				result = memberService.insertKeyword(userNo, searchType, userId, hashName);
+				
+				if(result == 1) {
+					model.addAttribute("hashtags", hash);
+					return "member/hashTag";
+				}else {
+					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
+				}
+			}else {
+				model.addAttribute("hashtags", hash);
+				return "member/hashTag";
+			}
+		}else if (userName != null && !userName.isEmpty()&& "x".equals(vals)) { //유저 이름 값이 있고 실시간 검색에서 a태그로 페이지를 이동한 경우
+			searchType = "U"; 
+			userId = userName;
+			val = vals;
+			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,userName);
+			
+			if(updateResult == 0) {
+				result = memberService.insertKeyword(userNo, searchType, userId, userName);
 
+				if (result == 1) {
+					model.addAttribute("members", member);
+					return "member/userProfile";
+				} else {
+					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
+				}
+			}else {
+				model.addAttribute("members", member);
+				return "member/userProfile";
+			}
+		}else if(userName != null && !userName.isEmpty()&& !"x".equals(vals)) { //유저 이름 값이 있고 검색 결과 페이지에서 a태그로 페이지를 이동한 경우
+			searchType = "U"; 
+			userId = userName;
+			val = vals;
+			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,userName);
+			
+			if(updateResult == 0) {
+				result = memberService.insertKeyword(userNo, searchType, userId, userName);
+
+				if (result == 1) {
+					model.addAttribute("members", member);
+					return "member/userProfile";
+				} else {
+					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
+				}
+			}else {
+				model.addAttribute("members", member);
+				return "member/userProfile";
+			}
+			
+		}else {
+			System.out.println("검색 a 태그 이동 실패 keywordResult.kh으로 매핑 선언한 부분 오류남");
+			return "redirect:/"; // 로그아웃 상태일떄 등록, 업데이트 실패인경우 
+		}
+		
+	}
 }
