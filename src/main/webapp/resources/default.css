@@ -182,6 +182,7 @@ button:hover{
 	background-repeat: no-repeat;
 	background-position: center;
 	text-indent: -9999px;
+	border-radius: 3px;
 }
 
 /*회원가입 화면*/
@@ -497,6 +498,75 @@ main {
     background-color: rgba(0, 0, 0, 0.4); /* 어두운 반투명 배경 */
     z-index: 1000; /* 다른 요소 위로 표시 */
 }
+
+.post-modal .modal-body{
+	display: flex;
+	align-items: center;
+	width: 600px;
+	border-top-left-radius: 15px;
+	border-bottom-left-radius: 15px;   
+}
+
+#post-write-close{
+	margin-left: 400px;
+}
+
+.modal-body textarea:focus {
+    border-color: #a0a0a0;
+    outline: none;
+}
+
+.modal-body textarea {
+    border: 0.5px solid #a0a0a0;
+}
+
+.modal-body input[type="submit"] {
+    width: 200px;
+    height: 40px;
+    background-color: #f0a235;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-body input[type="submit"]:hover {
+    background-color: #e59424;
+}
+
+.modal-body span {
+    font-size: 14px;
+    color: #555;
+}
+
+#post-input{
+	margin-top: 10px;
+	background-color: #fff;
+}
+
+#post-hashtag:focus{
+	outline: none;
+}
+
+#post-hashtag{
+	background-color: #fff;
+	border: 0.5px solid #a0a0a0;
+}
+
+#post-input{
+	width: 408px;
+}
+
+/*태그박스*/
+.tagify{
+	width: 408px;
+	margin-bottom: 10px;
+}
+
+
+
 
 
 
