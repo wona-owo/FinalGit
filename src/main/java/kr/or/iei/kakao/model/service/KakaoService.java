@@ -95,8 +95,8 @@ public class KakaoService {
             String phone = responseNode.get("phone_number").asText();
                    // kakao에서는 +82 10-0000-0000 형식으로 주기때문에 replaceFirst로 변경
             	   phone = phone.replaceFirst("\\+82\\s*", "0");
-            // 일반회원과 아이디 중복을 피하기 위해 앞에 K_를 삽입
-            String id = "K_" + email.split("@")[0];
+            // 일반회원과 아이디 중복을 피하기 위해 뒤에 _kakao를 삽입
+            String id = email.split("@")[0] + "_kakao";
             String pw = UUID.randomUUID().toString();
 	        
             kakaoUser.setApiUserId(id);

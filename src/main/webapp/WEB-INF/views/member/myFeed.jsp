@@ -13,6 +13,192 @@
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+<style>
+/* ===== 모달 배경 ===== */
+.modal-backdrop-G {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* 어두운 반투명 */
+  z-index: 9998;
+}
+
+/* ===== 모달 창 ===== */
+.modal-G {
+  position: absolute; /* 혹은 fixed */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 601px;
+  max-width: 90%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+}
+
+.modal-content-G {
+  padding: 20px;
+  position: relative;
+}
+
+.modal-content-G h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* ===== 모달 내부 레이아웃 ===== */
+.modal-body-G {
+  display: flex; /* 좌우 배치 */
+  gap: 20px;
+}
+
+/* 왼쪽 영역 */
+.modal-left-G {
+  flex: 0 0 260px; /* 고정너비 (예시) */
+  border-right: 1px solid #f0f0f0;
+  padding-right: 20px;
+}
+
+/* 오른쪽 영역 */
+.modal-right-G {
+  flex: 1; /* 나머지 공간 */
+}
+
+/* ===== 프로필 이미지 ===== */
+.profile-image-container {
+  width: 150px;
+  height: 150px;
+  margin-left: 55px;
+  border-radius: 50%;
+  overflow: hidden; /* 둥글게 잘림 */
+  background-color: #f5f5f5;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#profileImagePreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 이미지 변경/삭제 버튼 영역 */
+.image-btn-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+/* ===== 아이디/이름 (읽기전용) ===== */
+.info-group {
+  margin-bottom: 0.75rem;
+}
+.info-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
+.info-group input[disabled] {
+  background-color: #eee;
+  color: #666;
+  outline: none;
+  cursor: not-allowed;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 94%;
+}
+
+/* ===== 오른쪽 폼 ===== */
+.form-group {
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+.form-group label {
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
+.modal-in {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 94%;
+}
+.form-group label{
+display: flex;
+justify-content: space-between;
+}
+/* 닉네임/전화번호 중복체크 버튼 나란히 배치 */
+.duplication-group .input-with-btn {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ===== 버튼 기본 ===== */
+.btn {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* 삭제 버튼 */
+.btn-delete {
+  background-color: #f7d3d3;
+  color: #a33;
+}
+.btn-delete:hover {
+  background-color: #f5bcbc;
+}
+
+/* 중복확인 버튼 */
+.btn-dup-check {
+  background-color: #ffdd66;
+}
+.btn-dup-check:hover {
+  background-color: #ffc107;
+}
+
+/* 수정/취소 버튼 (오른쪽 정렬) */
+.button-area {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.save-btn {
+  background-color: #4078c0;
+  color: #fff;
+}
+.save-btn:hover {
+  background-color: #33629a;
+}
+.cancel-btn {
+  background-color: #ccc;
+}
+.cancel-btn:hover {
+  background-color: #bbb;
+}
+
+#btnDeleteUser{
+margin-top:16px;
+}
+</style>
 </head>
 <body>
 	<%--사이드 메뉴--%>
@@ -21,7 +207,11 @@
 	<%--피드 영역--%>
 	<main id="myfeed-main">
 		<div class="profile" id="myfeed-profile">
-			<div class="profile-frame" id="myfeed-frame"></div>
+			<div class="profile-frame" id="myfeed-frame">
+				<img id="profileImage"
+                            src="${loginMember.userImage ? loginMember.userImage : '/resources/profile_file/default_profile.png'}"
+                            alt="프로필 이미지" />
+			</div>
 			 <div id="profile-text">
 				 <span id="myId">${loginMember.userId}</span> <br>
 				 <span id="myNick">${loginMember.userNickname}</span>
@@ -32,7 +222,7 @@
 				 </div>
 				 
 				 <div> <%--구현안된 페이지는 홈으로 랜딩 --%>
-				 	<button class="profile-button" onclick="location.href='/member/mainFeed.kh'"> 프로필 편집 </button>
+				 	<button class="profile-button" onclick="openProfileModal()"> 프로필 편집 </button>
 				 	<button class="profile-button" id="updPet" onclick="location.href='/member/mainFeed.kh'"> 마이펫 편집 </button>
 				 </div>	
 				 <div>	
@@ -192,5 +382,23 @@
 		});
 		 
 	</script>
+	<%-- js 파일에서 변수를 불러오기 위한 세팅 --%>
+	<script type="text/javascript">
+	const loginMember = {
+	        userId: "${sessionScope.loginMember.userId}",
+	        userName: "${sessionScope.loginMember.userName}",
+	        userImage: "${sessionScope.loginMember.userImage}",
+	        userNickname: "${sessionScope.loginMember.userNickname}",
+	        userAddress: "${sessionScope.loginMember.userAddress}",
+	        userEmail: "${sessionScope.loginMember.userEmail}",
+	        userPhone: "${sessionScope.loginMember.userPhone}"
+	    };
+	
+	// 기존 값 사용 시 체크할 변수
+    const currentUserPhone = "${loginMember.userPhone}";
+    const currentNickname = "${loginMember.userNickname}";
+    
+	</script>
+	<script type="text/javascript" src="/resources/modal_profile.js"></script>
 </body>
 </html>

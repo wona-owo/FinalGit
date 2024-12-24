@@ -204,4 +204,16 @@
 		  from tbl_user
 		 where user_nickname = #{userName}
 	</select>
+	
+	<update id="updateProfile" parameterType="member">
+		update tbl_user
+		   set user_nickname = #{userNickname},
+			   user_address = #{userAddress},
+			   user_email = #{userEmail},
+			   user_phone = #{userPhone}
+			   <if test="userImage != null">
+			   , user_image = #{userImage}
+			   </if>
+		 where user_id = #{userId}
+	</update>
 </mapper>

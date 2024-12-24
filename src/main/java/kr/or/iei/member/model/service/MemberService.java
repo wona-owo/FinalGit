@@ -118,4 +118,8 @@ public class MemberService {
 		return memberDao.selectKeywordUser(userName);
 	}
 
+	public int updateProfile(Member member) {
+		return memberDao.updateProfile(member);
+	}
+
 }

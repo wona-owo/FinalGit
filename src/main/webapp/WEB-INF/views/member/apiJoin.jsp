@@ -216,11 +216,11 @@
 	    if (!chkDuplNick) {
 	        alert("닉네임 중복검사를 완료해주세요.");
 	        return;
-	    	}
+	    }
 	    if (!chkDuplPhone) {
 	        alert("전화번호 중복검사를 완료해주세요.");
 	        return;
-	    	}
+	    }
 	    
 		//데이터 유효 검사
 		isValid = phoneVal && 

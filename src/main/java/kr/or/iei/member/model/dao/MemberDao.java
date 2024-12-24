@@ -99,4 +99,8 @@ public class MemberDao {
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("member.selectKeywordUser", userName);
 	}
+
+	public int updateProfile(Member member) {
+		return sqlSession.update("member.updateProfile", member);
+	}
 }

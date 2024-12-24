@@ -99,8 +99,8 @@ public class NaverService {
 	        String name = responseNode.get("name").asText(); 
 	        String email = responseNode.get("email").asText();
 	        String phone = responseNode.get("mobile").asText();
-	        // 일반회원과 아이디 중복을 피하기 위해 앞에 N_를 삽입
-	        String id = "N_" + email.split("@")[0];
+	        // 일반회원과 아이디 중복을 피하기 위해 뒤에 _naver를 삽입
+	        String id = email.split("@")[0] + "_naver";
 	        String pw = UUID.randomUUID().toString();
 	        
 	        naverUser.setApiUserId(id);
