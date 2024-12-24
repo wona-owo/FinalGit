@@ -17,5 +17,25 @@
 		 where p.user_no = ${_parameter}    		
 	</select>
 	
+	<!-- 게시글 코드(시퀀스) 생성 -->	
+	<select id="getPostId" resultType="_int">
+		select post_seq.nextval from dual
+	</select>
+	
+	<!-- 게시글 생성 -->
+	<insert id="write" parameterType="post">
+		insert into post 
+		(post_no, user_no, post_content, post_date) 
+		values
+		(#{postNo}, #{userNo}, #{postContent}, sysdate)
+	</insert>
+	
+	<!-- 이미지 삽입 -->
+	<insert id="image" parameterType="post">
+		insert into post_file
+		(post_file_no, post_no, post_file_name)
+		values
+		(post_file_seq.nextval, #{postNo}, #{postFileName})
+	</insert>
 	
 </mapper>

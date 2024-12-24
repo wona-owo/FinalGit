@@ -88,7 +88,8 @@
 	     <%-- 포스트 작성 모달창 --%>
 	    <div class="post-modal">
 	    	<div class="modal-place">
-	    	<form action="/">
+	    	
+	    	<form action="/post/write.kh" method="post" enctype="multipart/form-data">
 	    	<div class="modal-body">
 			    <div class="top">
 			   		 <span class="modal-title">일기쓰기</span>
@@ -116,6 +117,7 @@
 					
 	    	</div>
 	    </form>	
+	    
 	   </div> 
 	  </div> 			    
 	</main>
@@ -173,7 +175,22 @@
 			}
 		 });
 		
-		
+		 //사진이 하나라도 없으면 작성 불가
+		 const imageCk = $("#post-input");
+		 const submit = $("#post-submit");
+		 
+		 submit.on("click",function(){
+				
+			//기본 제출 동작 방지
+			event.preventDefault();
+				 
+			if(!imageCk.val()){
+				alert("1개 이상의 이미지를 등록해야 합니다!");
+			}else{
+				this.submit();
+			}
+		});
+		 
 	</script>
 </body>
 </html>

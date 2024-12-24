@@ -21,5 +21,18 @@ public class PostDao {
 	public List<Post> postUserImg(int userNo) {
 		return sqlSession.selectList("post.postData", userNo);
 	}
+
+	public int write(Post post) {
+		return sqlSession.insert("post.write", post);
+	}
+	
+	//시퀀스
+	public int postNo() {
+		return sqlSession.selectOne("post.getPostId");
+	}
+
+	public int image(Post post) {
+		return sqlSession.insert("post.image", post);
+	}
 	
 }

@@ -20,5 +20,21 @@ public class PostService {
 	public ArrayList<Post> postUserImg(int userNo) {
 		return (ArrayList<Post>) postDao.postUserImg(userNo);
 	}
+
+	public int write(Post post) {
+		return postDao.write(post);
+	}
+	
+	public int postNo() {
+		return postDao.postNo();
+	}
+
+	public int image(Post post) {
+		return postDao.image(post);
+	}
+
+	public int hashtag() {
+		return 0;
+	}
 	
 }
