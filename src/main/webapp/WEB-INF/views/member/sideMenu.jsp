@@ -44,11 +44,11 @@
 			
 			<div class="profile">
 				<div class="profile-frame">
-					<img id="profileImage"
-                            src="${loginMember.userImage ? loginMember.userImage : '/resources/profile_file/default_profile.png'}"
+					<img class="profileImage"
+                            src="${not empty loginMember.userImage ? loginMember.userImage : '/resources/profile_file/default_profile.png'}"
                             alt="프로필 이미지" />
 				</div>
-					<a href="/post/myFeedFrm.kh"> ${loginMember.userNickname}</a>
+					<a class="myNick" href="/post/myFeedFrm.kh"> ${loginMember.userNickname}</a>
 			</div>
 			<hr>
 			<hr>

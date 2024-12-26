@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.dao.PostDao;
@@ -32,9 +33,10 @@ public class PostService {
 	public int image(Post post) {
 		return postDao.image(post);
 	}
-
-	public int hashtag() {
-		return 0;
+	
+	@Transactional //트랜잭션 설정
+	public int hashtag(ArrayList<String> tagArr, int postNo) {
+		return postDao.hashTag(tagArr, postNo);
 	}
 	
 }

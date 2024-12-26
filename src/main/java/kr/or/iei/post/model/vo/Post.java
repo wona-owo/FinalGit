@@ -9,6 +9,9 @@ public class Post {
 	//join으로 인한 객체 통합
 	private int postFileNo;
 	private String postFileName;
+	
+	
+	
 	public Post() {
 		super();
 		// TODO Auto-generated constructor stub

@@ -566,10 +566,11 @@ main {
 }
 
 /* 프로필 이미지 */
-#profileImage {
+.profileImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 50%;
 }
 
 

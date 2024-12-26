@@ -86,6 +86,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 50%;
 }
 
 /* 이미지 변경/삭제 버튼 영역 */
@@ -208,13 +209,13 @@ margin-top:16px;
 	<main id="myfeed-main">
 		<div class="profile" id="myfeed-profile">
 			<div class="profile-frame" id="myfeed-frame">
-				<img id="profileImage"
-                            src="${loginMember.userImage ? loginMember.userImage : '/resources/profile_file/default_profile.png'}"
+				<img class="profileImage"
+                            src="${not empty loginMember.userImage ? loginMember.userImage : '/resources/profile_file/default_profile.png'}"
                             alt="프로필 이미지" />
 			</div>
 			 <div id="profile-text">
 				 <span id="myId">${loginMember.userId}</span> <br>
-				 <span id="myNick">${loginMember.userNickname}</span>
+				 <span class="myNick" id="myNick">${loginMember.userNickname}</span>
 				 
 				 <div id="follow-text">
 					 <span>팔로잉 00</span> <%-- 팔로워 테이블 연동 예정 --%>
@@ -279,7 +280,8 @@ margin-top:16px;
 	    <div class="post-modal">
 	    	<div class="modal-place">
 	    	
-	    	<form action="/post/write.kh" method="post" enctype="multipart/form-data">
+	    	<form id="postForm" action="/post/write.kh" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="userNo" value="${sessionScope.loginMember.userNo}">
 	    	<div class="modal-body">
 			    <div class="top">
 			   		 <span class="modal-title">일기쓰기</span>
@@ -288,17 +290,17 @@ margin-top:16px;
 			
 			   <div>
 			   		<span class="modal-title">이미지, 영상파일 추가</span> <br>
-			   		<input type="file" id="post-input" accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
+			   		<input name="files" type="file" id="post-input" accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
 			   </div>
 			   
 			   <div>
 				   <span>내용 추가</span> <br>
-				   <textarea rows="10" cols="55" style="resize: none;"></textarea> 
+				   <textarea name="content" rows="10" cols="55" style="resize: none;"></textarea> 
 			   </div>
 			   
 			   <div>
 			  	   <span>태그 추가</span> <br>
-			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag">
+			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag" type="hidden">
 			   </div>
 			   
 			    <div>
@@ -369,36 +371,462 @@ margin-top:16px;
 		 const imageCk = $("#post-input");
 		 const submit = $("#post-submit");
 		 
-		 submit.on("click",function(){
+		 submit.on("click",function(event){
 				
 			//기본 제출 동작 방지
 			event.preventDefault();
 				 
-			if(!imageCk.val()){
+			if(!imageCk[0].files.length){
 				alert("1개 이상의 이미지를 등록해야 합니다!");
 			}else{
-				this.submit();
+				
+				const tagData = tagify.value;
+				const tagList = [];
+				
+				
+				for(let tag of tagData){
+					tagList.push(tag["value"]);
+				}
+						
+				const tagString = JSON.stringify(tagList);			
+				
+				$("#post-hashtag").val(tagString);
+				
+				$("#postForm")[0].submit();
 			}
 		});
 		 
 	</script>
-	<%-- js 파일에서 변수를 불러오기 위한 세팅 --%>
-	<script type="text/javascript">
-	const loginMember = {
-	        userId: "${sessionScope.loginMember.userId}",
-	        userName: "${sessionScope.loginMember.userName}",
-	        userImage: "${sessionScope.loginMember.userImage}",
-	        userNickname: "${sessionScope.loginMember.userNickname}",
-	        userAddress: "${sessionScope.loginMember.userAddress}",
-	        userEmail: "${sessionScope.loginMember.userEmail}",
-	        userPhone: "${sessionScope.loginMember.userPhone}"
-	    };
+	<%-- 포로필 modal --%>
+	<script>
+	function createProfileHTML(){
+	    return `
+	    <div class="modal-backdrop-G" id="profileModalBackdrop" style="display: none;">
+	    <div class="modal-G" id="profileModal" style="display: none;">
+	        <div class="modal-content-G">
+	            <h2>프로필 편집</h2>
+
+	            <div class="modal-body-G">
+	                <div class="modal-left-G">
+	                    <div class="profile-image-container">
+	                        <img id="profileImagePreview"
+	                            alt="프로필 이미지" />
+	                    </div>
+	                    <div class="image-btn-group">
+	                        <button id="btnChangeImage" class="btn">변경</button>
+	                        <button id="btnDeleteImage" class="btn btn-delete">삭제</button>
+	                        <input type="file" id="userImage" name="userImage" accept="image/*"
+	                            style="display: none;" />
+	                    </div>
+
+	                    <div class="info-group">
+	                        <label for="userId">아이디</label>  
+	                        <input type="text" id="userId" class="modal-in" name="userId" readonly/>
+	                    </div>
+	                    <div class="info-group">
+	                        <label for="userName">이름</label>
+	                        <input type="text" id="userName" class="modal-in" name="userName" readonly/>
+	                    </div>
+	                    <button id="btnDeleteUser" class="btn btn-delete">탈퇴</button>
+	                </div>
+
+	                <div class="modal-right-G">
+	                    <div class="form-group duplication-group">
+	                        <label for="userNickname">닉네임</label>
+	                        <div class="input-with-btn">
+	                            <input type="text" class="modal-in" id="userNickname" name="userNickname" />
+	                            <button type="button" id="btnCheckNickname" class="btn btn-dup-check">
+	                                중복확인
+	                            </button>
+	                        </div>
+	                    </div>
+
+	                    <div class="form-group">
+	                        <label for="userAddress">주소</label>
+	                        <input type="text" class="modal-in" id="userAddress" name="userAddress"
+	                            placeholder="OO시 OO구"/>
+	                    </div>
+
+	                    <div class="form-group">
+	                        <label for="userEmail">이메일<span id="invalidEmail"></span></label>
+	                        <input type="email" class="modal-in" id="userEmail" name="userEmail"
+	                            placeholder="aaa@example.co.kr"/>
+	                    </div>
+
+	                    <div class="form-group duplication-group">
+	                        <label for="userPhone">전화번호<span id="invalidPhone"></span></label>
+	                        <div class="input-with-btn">
+	                            <input type="text" class="modal-in" id="userPhone" name="userPhone"
+	                                placeholder="010-0000-0000"/>
+	                            <button type="button" id="btnCheckPhone" class="btn btn-dup-check">
+	                                중복확인
+	                            </button>
+	                        </div>
+	                    </div>
+
+	                    <div class="button-area">
+	                        <button class="btn save-btn" id="saveBtn">수정</button>
+	                        <button class="btn cancel-btn" id="cancelBtn">취소</button>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	    `;
+	}
 	
-	// 기존 값 사용 시 체크할 변수
-    const currentUserPhone = "${loginMember.userPhone}";
-    const currentNickname = "${loginMember.userNickname}";
-    
+	// 업데이트 된 정보를 담을 객체 선언
+	let updMember = {
+            userId: "",
+            userName: "",
+            userImage: "",
+            userNickname: "",
+            userAddress: "",
+            userEmail: "",
+            userPhone: ""
+	};
+	
+	// 선택된 프로필 이미지 파일 보관
+	let selectedProfileImageFile = null;
+
+	function openProfileModal(){
+	    // 1. 모달 HTML 문자열 생성
+	    const modalHTML = createProfileHTML();
+
+	    // 2. 임시로 div를 만들고, 그 안에 모달 HTML을 주입
+	    const tempDiv = document.createElement('div');
+	    tempDiv.innerHTML = modalHTML.trim();
+
+	    // 3. 실제 모달 요소(overlay)를 가져오기
+	    // (tempDiv 안에 있는 첫 번째 자식이 우리가 만든 .modal-overlay)
+	    const modalOverlay = tempDiv.firstChild;
+
+	    // 4. body에 모달 요소를 추가 
+	    $('#myfeed-main').append(modalOverlay);
+	    
+	    // 5. 모달 표시	
+	    $("#profileModalBackdrop").css("display", "block");
+	    $("#profileModal").css("display", "block");
+	    
+		// user를 구분할 값
+		const currentUserPhone = "${loginMember.userPhone}";
+		const currentNickname = "${loginMember.userNickname}";
+	    
+		let updId = $("#userId");
+		let updName = $("#userName");
+		let updNickname = $("#userNickname");
+		let updAddress = $("#userAddress");
+		let updEmail = $("#userEmail");
+	    let updPhone = $("#userPhone");
+	    let updImage = $("#profileImagePreview");
+	    
+	    // 이미지 파일 변경없음과 삭제를 구분할 변수
+	    let delChk = false;	    
+
+	 	// updMember 데이터가 비어 있으면 loginMember 데이터를 기본값으로 사용
+	    updId.val(updMember.userId || "${loginMember.userId}");
+	    updName.val(updMember.userName || "${loginMember.userName}");
+	    updNickname.val(updMember.userNickname || "${loginMember.userNickname}");
+	    updAddress.val(updMember.userAddress || "${loginMember.userAddress}");
+	    updEmail.val(updMember.userEmail || "${loginMember.userEmail}");
+	    updPhone.val(updMember.userPhone || "${loginMember.userPhone}");
+	    updImage.attr("src", updMember.userImage || "${loginMember.userImage}" || "/resources/profile_file/default_profile.png");
+	    
+	    // (이벤트) 모달 바깥(배경) 클릭 시 닫기
+	    $("#profileModalBackdrop").on("click", function (event) {
+	        if (event.target === this) {
+	            closeProfileModal();
+	        }
+	    });
+
+	    // (이벤트) 취소 버튼
+	    $("#cancelBtn").on("click", closeProfileModal);
+	    
+	    // 모달 닫기 함수
+	    function closeProfileModal() {
+	        $("#profileModalBackdrop").remove(); // DOM에서 제거
+	    }
+	    
+	    // (이벤트) 이미지 변경 버튼 → file input 클릭
+	    $("#btnChangeImage").on("click", function () {
+	        $("#userImage").click();
+	    });
+	    
+	    // (이벤트) 파일 input 변경 시 → 미리보기
+	    $("#userImage").on("change", imageChange);
+
+	    // (이벤트) 이미지 삭제
+	    $("#btnDeleteImage").on("click", imageDelete);
+	    
+	     // (이벤트) 닉네임 중복확인
+	    $("#btnCheckNickname").on("click", checkNickname);
+
+	    // (이벤트) 전화번호 중복확인
+	    $("#btnCheckPhone").on("click", checkPhone);
+
+	    // (이벤트) 수정 버튼
+	    $("#saveBtn").on("click", profileUpdate);
+	    
+	    // (이벤트) 회원탈퇴 버튼
+	    $("#btnDeleteUser").on("click", deleteUser);
+	    
+	    // 이미지 변경
+	    function imageChange() {
+	        const fileInput = this;
+	        const file = fileInput.files[0];
+	        if (!file) return;
+
+	        // selectedProfileImageFile에 저장
+	        selectedProfileImageFile = file;
+
+	        // 미리보기
+	        const reader = new FileReader();
+	        reader.onload = (e) => {
+	            $("#profileImagePreview").attr("src", e.target.result);
+	        };
+	        reader.readAsDataURL(file);
+	            
+	        // 파일 선택 후 같은 파일을 다시 선택할 수 있도록 `value`를 초기화
+	        fileInput.value = "";
+	    }
+
+	    // 이미지 삭제
+	    function imageDelete() {
+	        if (!confirm("정말 이미지를 삭제하시겠습니까?")) return;
+
+	        // 기본이미지로 변경
+	        updImage.attr("src", "/resources/profile_file/default_profile.png");
+	        
+	        // 초기화
+	        selectedProfileImageFile = null;
+	        
+	        // 파일 입력 요소 초기화
+	        $("#userImage").val("");
+	        
+	        delChk = true;
+	    }
+	    
+	    // 입력 정보 체크
+	    $(document).ready(function() {
+	        chkUserEmail();
+	        chkUserPhone();
+	    });
+	    
+	    //유효성 검증 변수
+	    let phoneVal = false;
+	    let emailVal = false;
+	    
+	    //중복체크 검증 변수 - insert가 아닌 update이기 때문에 처음에 true로 선언
+	    let chkDuplNick = true;
+	    let chkDuplPhone = true;
+	    
+	    //전화번호
+	    
+	    const phMessage =$("#invalidPhone");
+	    
+	    const phRegExp = /^0\d{2}-\d{3,4}-\d{4}$/;  //전화번호 패턴
+	    
+	    function chkUserPhone(){
+	        const value = updPhone.val();
+	        
+	        if(phRegExp.test(value)){
+	            phMessage.text("");
+	            phMessage.css("color", "");
+	            phoneVal = true;
+	        }else{
+	            phMessage.text("올바른 형식이 아닙니다.");
+	            phMessage.css("color","red");
+	            phoneVal = false;
+	        }
+	    }
+	    
+	    updPhone.on("input", chkUserPhone);
+	    
+	    //이메일
+	   
+	    const emMessage =$("#invalidEmail");
+	    
+	    const emRegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;  //이메일 패턴
+	    
+	    function chkUserEmail() {
+	        const value = updEmail.val();
+	        if (emRegExp.test(value)) {
+	            emMessage.text("");
+	            emMessage.css("color", "");
+	            emailVal = true;
+	        } else {
+	            emMessage.text("올바른 형식이 아닙니다.");
+	            emMessage.css("color", "red");
+	            emailVal = false;
+	        }
+	    }
+	    
+	    updEmail.on("input", chkUserEmail);
+	    
+	    // 닉네임
+	    // 닉네임 입력 시, 중복체크 변수를 false로 변경
+	    updNickname.on('input', function(){
+	        chkDuplNick = false;
+	    });
+
+	    function checkNickname(){
+	        //입력값이 없는 경우
+	        if(!updNickname.val()){
+	            alert("닉네임을 입력해주세요");
+	            return;
+	        }
+	        
+	        $.ajax({
+	            url : "/member/nickDuplChk.kh", //중복검사 서블릿
+	            data :{ userNickname : updNickname.val()},
+	            type : "GET",
+	            
+	            success : function(res) {
+	                if(res == '1' && updNickname.val() !== currentNickname){
+	                    alert("이미 사용중인 닉네임입니다.")
+	                    chkDuplNick = false;
+	                }else{
+	                    alert("사용 가능한 닉네임입니다.")
+	                    chkDuplNick = true;
+	                }
+	            },
+	            error : function () {
+	                console.error("ajax 요청 실패!")
+	            }
+	        });
+	    }
+	    
+	    // 전화번호
+	    // 전화번호 입력 시, 중복체크 변수를 false로 변경
+	    updPhone.on('input', function(){
+	        chkDuplPhone = false;
+	    });
+	    
+	    function checkPhone(){
+	        //입력값이 없는 경우
+	        if(!updPhone.val()){
+	            alert("전화번호를 입력해주세요");
+	            return;
+	        }
+	        
+	        
+	        $.ajax({
+	            url : "/member/phoneDuplChk.kh", //중복검사 서블릿
+	            data :{ userPhone : updPhone.val()},
+	            type : "GET",
+	            
+	            success : function(res) {
+	                if(res == '1' && updPhone.val() !== currentUserPhone){
+	                    alert("이미 가입된 전화번호입니다.")
+	                    chkDuplPhone = false;
+	                }else{
+	                    alert("사용 가능한 전화번호입니다.")
+	                    chkDuplPhone = true;
+	                }
+	            },
+	            error : function () {
+	                console.error("ajax 요청 실패!")
+	            }
+	        });
+	    }
+	    
+	    // 프로필 업데이트
+	    
+	    function profileUpdate(){
+	        //빈칸 검사 - 배열 저장
+	           const inputVal = [
+	            { field: updNickname, message: "닉네임을 입력하세요." },
+	            { field: updAddress, message: "주소를 입력하세요." },
+	            { field: updEmail, message: "이메일을 입력하세요." },
+	            { field: updPhone, message: "전화번호를 입력하세요." }
+	            ];
+	        
+	        //유효성 변수
+	        let isValid = false;
+	        
+	        //빈값 확인
+	        for(let i=0; i<inputVal.length; i++){	
+	            if(!inputVal[i].field.val()){
+	                alert(inputVal[i].message);
+	                isValid = false;
+	                return;
+	            }		  
+	            isValid = true;
+	        }
+	        
+	        // 중복 검사 확인
+	        if (!chkDuplNick) {
+	            alert("닉네임 중복검사를 완료해주세요.");
+	            return;
+	        }
+	        if (!chkDuplPhone) {
+	            alert("전화번호 중복검사를 완료해주세요.");
+	            return;
+	        }
+	        
+	        //데이터 유효 검사
+	        isValid = phoneVal && 
+	                  emailVal && 
+	                  chkDuplNick && 
+	                  chkDuplPhone;
+	        
+	        //제출 - 유효성 검사가 끝난 후 
+	        if(isValid){
+	            // 전달할 데이터들을 formData에 세팅
+	            const formData = new FormData();
+	            formData.append("userId", updId.val());
+	            formData.append("userNickname", updNickname.val());
+	            formData.append("userAddress", updAddress.val());
+	            formData.append("userEmail", updEmail.val());
+	            formData.append("userPhone", updPhone.val());
+
+	            // 이미지 파일을 업로드 했을 시 formData에 세팅
+	            if(selectedProfileImageFile){
+	                formData.append("file", selectedProfileImageFile);
+	            }
+	            // 이미지 파일을 삭제 했을 시 구분 값
+	            if(delChk){
+	            	formData.append("delChk", true);
+	            }
+
+	            $.ajax({
+	                url : "/member/updateProfile.kh",
+	                type: "post",
+	                data: formData,
+	                processData: false, // 데이터를 쿼리 문자열로 변환하지 않음
+	                contentType: false, // 콘텐츠 타입을 설정하지 않음 (브라우저가 자동으로 설정)
+	                success: function(updatedMember){
+	                    if(updatedMember){
+	                    	updMember = updatedMember;
+	                    
+	                        $(".myNick").text(updatedMember.userNickname);
+	                        $(".profileImage").attr("src", updatedMember.userImage || "/resources/profile_file/default_profile.png");
+	                        updImage.attr("src", updatedMember.userImage || "/resources/profile_file/default_profile.png");
+	                        
+	                        alert("프로필이 업데이트되었습니다");
+	                    }else{
+	                        alert("프로필 업데이트에 실패했습니다.");
+	                    }
+	                    closeProfileModal();
+	                },
+	                error: function(){
+	                    console.log('ajax 통신 오류');
+	                }
+	            });
+	        }else{
+	             alert("유효하지 않은 입력값이 있습니다. 다시 확인해주세요.")
+	             return;
+	        }
+	    }
+	    
+	    // 회원탈퇴
+	    function deleteUser(){
+	        if (!confirm("정말 회원 탈퇴를 하시겠습니까?")) return;
+	        
+	        window.location.href = "/member/userUnlink.kh";
+	    }
+	}
 	</script>
-	<script type="text/javascript" src="/resources/modal_profile.js"></script>
 </body>
 </html>
