@@ -59,6 +59,20 @@
 		margin: 0;
 		padding: 0;
 	}
+	.searchRecord{
+		width: 425.2px;
+		padding: 0;
+		margin: 20px 0 0 0;
+	}
+	.searchRecord ul{
+		margin: 0;
+		padding: 0;
+	}
+	.searchRecordBox li{
+		list-style-type: none;
+		margin-bottom: 8px;
+	}
+	
 	
 	.ResultBox li {
 		list-style-type: none;
@@ -91,6 +105,32 @@
 		display: flex;
 		line-height: 31px;
 	}	
+	.result-container{
+		display: flex;
+		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
+	}
+	.result-profile{
+		font-size: 24px;
+		width: 45px;
+		height: 45px;
+		border: 1px solid gray;
+		border-radius: 50%;
+		background-color: white;
+		margin: 8px 12px 5px 0;
+		display: flex; /* Flexbox 활성화 */
+	    justify-content: center; /* 수평 가운데 정렬 */
+	    align-items: center; /* 수직 가운데 정렬 */
+	}
+	
+	.SearchName{
+		display: flex;
+	    font-weight: bold;
+	    font-size: 16px;
+	    justify-content: center; /* 수평 가운데 정렬 */
+        align-items: center;
+	    margin: 0; /* 여백 제거 */
+    	line-height: normal; /* 텍스트 높이를 기본값으로 */
+	}
 	.tag-profile{
 		font-size: 24px;
 		width: 45px;
@@ -113,6 +153,15 @@
 		display: flex;
 	    font-weight: bold;
 	    font-size: 16px;
+	    margin: 0; /* 여백 제거 */
+    	line-height: normal; /* 텍스트 높이를 기본값으로 */
+	}
+	.tagNames{
+		display: flex;
+	    font-weight: bold;
+	    font-size: 16px;
+	    justify-content: center; /* 수평 가운데 정렬 */
+        align-items: center;
 	    margin: 0; /* 여백 제거 */
     	line-height: normal; /* 텍스트 높이를 기본값으로 */
 	}
@@ -148,12 +197,54 @@
             </svg>
             <input type="search" class="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">        
         </div>
-        <div class="searchRecord" id="searchRecord">
+			<div class="searchRecord" id="searchRecord">
 				<ul class="searchRecordBox" id="searchRecordBox">
-					
+					<c:forEach var="search" items="${searchs}">
+						<c:choose>
+							<c:when test="${search.searchType == 'G'}">
+								<li class="user-result">
+									<a class="a-user" href="/member/searchHistory.kh?search=${search.keyWord}&vals=x&searchType=${search.searchType}">
+										<div class="result-container">
+											<div class="result-profile">
+												<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black" class="bi bi-search" viewBox="0 0 16 16">
+  													<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+												</svg>
+											</div>
+											<span class="SearchName">${search.keyWord}</span>
+										</div>
+									</a>
+								</li>
+							</c:when>
+							<c:when test="${search.searchType == 'H'}">
+								<li class="user-result">
+									<a class="a-user" href="/member/searchHistory.kh?hashName=${search.keyWord}&vals=x&searchType=${search.searchType}">
+										<div class="hash-container">
+											<div class="tag-profile">
+												<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black">
+                                        			<path d="m240-160 40-160H120l20-80h160l40-160H180l20-80h160l40-160h80l-40 160h160l40-160h80l-40 160h160l-20 80H660l-40 160h160l-20 80H600l-40 160h-80l40-160H360l-40 160h-80Zm140-240h160l40-160H420l-40 160Z" />
+                                    			</svg>
+											</div>
+											<span class="tagNames">${search.keyWord}</span>
+										</div>
+									</a>
+								</li>
+							</c:when>
+							<c:otherwise>
+								<li class="user-result">
+									<a class="a-user" href="/member/searchHistory.kh?userName=${search.searchUserId}&vals=x&searchType=${search.searchType}">
+										<div class="profile-container">
+											<div class="user-profile">
+											</div>
+											<span>${search.searchUserId}</span>
+										</div>
+									</a>
+								</li>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
 				</ul>
 			</div>
-        <div class="searchResults" id="searchResults">
+			<div class="searchResults" id="searchResults">
             <ul class="ResultBox" id="ResultBox">
             
             </ul>
@@ -162,42 +253,67 @@
 </main>
 
 <script>
-    let debounceTimeout = null;
-    // 디바운스 하는 이유 : 서버 과부화 최소화하기 위해    
-    function searchResults(search){
-        clearTimeout(debounceTimeout); // 이전에 설정된 타이머 제거 (중복 요청 방지)
-        debounceTimeout = setTimeout(function() {
-            var searchResultsBox = $('#ResultBox');
-            if (search.trim().length == 0 || search == '#') { // 검색어가 비었거나 '#'만 있는 경우
-                searchResultsBox.hide();
-                searchResultsBox.empty();
-                return;
-            }
-            $.ajax({
-                type: 'GET',
-                url: '/member/searchBoard.kh',
-                data: { search: search }, // 'searchStr'에서 'search'로 변경
-                success: function(response) {
-                    if ($.trim(response)) {
-                        searchResultsBox.html(response).show(); // 서버에서 받은 HTML 그대로 삽입
-                    } else {
-                        searchResultsBox.html('<li class="user-result"><span id="search-result">검색 결과가 없습니다.</span></li>').show();
-                    }
-                },
-                error: function() {
-                    searchResultsBox.html('<li class="user-result">서버 오류가 발생했습니다.</li>').show();
-                }
-            });
-        }, 300); // 사용자가 입력을 멈춘 후 300ms(0.3초)가 지나면 서버 요청 실행
-    }
 
-    // 입력을 받을때 마다 이벤트 발생 
-    $(document).ready(function() {
-        // 검색 입력란에 입력 이벤트(keyup)가 발생할 때마다 searchResults 함수 실행
-        $('#search').on('keyup', function() {
-            searchResults($(this).val()); // 입력된 검색어를 searchResults 함수에 전달
-        });
-    });    
+	//입력을 받을때 마다 이벤트 발생 
+	$(document).ready(function() {
+		// 검색 입력란에 입력 이벤트(keyup)가 발생할 때마다 searchResults 함수 실행
+		$('#search').on('keyup', function() {
+			 var searchValue = $(this).val().trim();
+	
+	            // 입력 필드에 값이 없을 때 searchRecord를 다시 보이게 함
+	            if (searchValue.length === 0) {
+	                $('#searchRecord').show();
+	                $('#ResultBox').hide(); // 검색 결과를 숨김
+	            } else {
+	                $('#searchRecord').hide();
+	                $('#ResultBox').show(); 
+		            searchResults(searchValue);
+	            }
+	
+	            // 기존의 searchResults 함수 호출
+			
+		});
+	});
+	
+	let debounceTimeout = null;
+	// 디바운스 하는 이유 : 서버 과부화 최소화하기 위해    
+	function searchResults(search) {
+		clearTimeout(debounceTimeout); // 이전에 설정된 타이머 제거 (중복 요청 방지)
+		debounceTimeout = setTimeout(
+				function() {
+					var searchResultsBox = $('#ResultBox');
+					if (search.trim().length == 0 || search == '#') { // 검색어가 비었거나 '#'만 있는 경우
+						searchResultsBox.hide();
+						searchResultsBox.empty();
+						return;
+					}
+					$
+							.ajax({
+								type : 'GET',
+								url : '/member/searchBoard.kh',
+								data : {
+									search : search
+								}, // 'searchStr'에서 'search'로 변경
+								success : function(response) {
+									if ($.trim(response)) {
+										searchResultsBox.html(response).show(); // 서버에서 받은 HTML 그대로 삽입
+									} else {
+										searchResultsBox
+												.html(
+														'<li class="user-result"><span id="search-result">검색 결과가 없습니다.</span></li>')
+												.show();
+									}
+								},
+								error : function() {
+									searchResultsBox
+											.html(
+													'<li class="user-result">서버 오류가 발생했습니다.</li>')
+											.show();
+								}
+							});
+				}, 300); // 사용자가 입력을 멈춘 후 300ms(0.3초)가 지나면 서버 요청 실행
+	}
+
 </script>
 
 </body>

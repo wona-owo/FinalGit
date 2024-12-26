@@ -45,62 +45,77 @@ public class MemberDao {
 		return sqlSession.insert("member.insertApiUser", member);
 	}
 
-	public List<Member> searchUser(String search) {
+	public List<Member> searchUser(String search) { //키워드 입력시 실시간으로 관련 유저 보여줌
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("member.userSearch", search);
 	}
 
-	public List<HashTag> searchTag(String searchStr) {
+	public List<HashTag> searchTag(String searchStr) { //키워드 입력시 실시간으로 관련 해시태그 보여줌
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("member.tagSearch", searchStr);
 	}
 	
+	public List<HashTag> searchHashTagsKeyword(String search) { //키워드와 관련된 해시태그 목록 가져오는거
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.searchHashTagsKeyword", search);
+	}
 	
-	public int updateKeyword(HashMap<String, Object> searchs) {
-		// TODO Auto-generated method stub
-		return sqlSession.update("member.updateKeyword", searchs);
+	public List<Member> searchUsersKeyword(String search) { //키워드와 관련된 유저 목록 가져오는거
+		// TODO Auto-generated method stub 
+		return sqlSession.selectList("member.searchUsersKeyword", search);
 	}
-
-	public int insertKeyword(HashMap<String, Object> insertKey) {
+	public int updateKeywordDate(HashMap<String, Object> update) {
 		// TODO Auto-generated method stub
-		return sqlSession.insert("member.insertKeyword", insertKey);
+		return sqlSession.update("member.updateKeywordDate", update);
 	}
-
-	public List<Member> searchResultUser(String search) {
+	
+	public int checkKeyword(HashMap<String, Object> check) {
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.searchResultUser", search);
+		return sqlSession.selectOne("member.selectCheckKeyword", check);
 	}
-
-	public List<HashTag> searchResultTag(String search) {
+	
+	public int insertKeyword(HashMap<String, Object> insert) {
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.searchResultTag", search);
+		return sqlSession.insert("member.insertKeyword", insert);
+	}
+	
+	public int deleteResultKeyword(HashMap<String, Object> delete) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("member.deleteResultKeyword", delete);
+	}
+	
+	public List<HashTag> selectKeywordTag(String hashName) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.keywordTag", hashName);
+	}
+	
+	public Member selectKeywordUser(String userName) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.selectKeywordUser", userName);
+	}
+	public HashTag selectTagName(String hashName) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.selectTagName", hashName);
+	}
+	public List<Search> selectSearchHistoryList(int userNo) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.selectMySearchList", userNo);
 	}
 	
 	public int userDelete(String userId) {
 		return sqlSession.delete("member.userDelete", userId);
 	}
 
-	public List<HashTag> searchHashTagsKeyword(String search) {
-		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.searchHashTagsKeyword", search);
-	}
-
-	public List<Member> searchUsersKeyword(String search) {
-		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.searchUsersKeyword", search);
-	}
-
-	public List<HashTag> selectKeywordTag(String hashName) {
-		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.selectKeywordTag", hashName);
-	}
-
-	public Member selectKeywordUser(String userName) {
-		// TODO Auto-generated method stub
-		return sqlSession.selectOne("member.selectKeywordUser", userName);
-	}
-
 	public int updateProfile(Member member) {
 		return sqlSession.update("member.updateProfile", member);
 	}
+
+	public int updateSearchHistory(HashMap<String, Object> update) {
+		// TODO Auto-generated method stub
+		return sqlSession.update("member.updateSearchHistory", update);
+	}
+
+
+
+
 }

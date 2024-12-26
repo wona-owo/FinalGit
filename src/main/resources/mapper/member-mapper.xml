@@ -133,37 +133,6 @@
         ]]>
 	</select>
 	
-	<update id="updateKeyword" parameterType="map">
-		update search
-        set 
-            keyword_date = SYSDATE,
-            <if test="resultVal != null and !&quot;x&quot;.equals(resultVal)">
-                keyword = #{keyword},		        
-            </if>
-            search_type = #{searchType},
-            search_user_id = #{userId}
-        where user_no = #{userNo}
-        <choose>
-            <when test="&quot;x&quot;.equals(resultVal)">
-                and keyword = #{keyword}
-            </when>
-            <otherwise>
-                and keyword = #{resultVal}		    	
-            </otherwise>
-        </choose>
-</update>
-	
-	<insert id="insertKeyword" parameterType="map">
-		insert into search (user_no, keyword, search_type, search_user_id)
-    	values (#{userNo}, #{keyword}, #{searchType}, #{userId})
-	</insert>
-	
-	<delete id="userDelete"
-	parameterType="string">
-	delete from tbl_user
-		  where user_id = #{_parameter}
-	</delete>
-	
 	<select id="searchHashTagsKeyword" parameterType="string" resultType="hashTag">
 		SELECT hash_name AS hashName,
        		   COUNT(post_no) AS postCount
@@ -185,6 +154,16 @@
 	       OR UPPER(user_nickname) LIKE '%' || UPPER(#{search}) || '%'
 	    ORDER BY user_name ASC
 	</select>
+	
+	<update id="updateKeywordDate" parameterType="map">
+	    UPDATE search
+	    SET keyword_date = SYSDATE,
+	        search_type = #{searchType},
+	        search_user_id = #{userId}
+	    WHERE user_no = #{userNo}
+	      AND keyword = #{keyword}
+	</update>
+	
 	<select id="selectKeywordTag" parameterType="string" resultType="hashTag">
 		select hash_no as hashNo,
 			   post_no as postNo,
@@ -205,6 +184,70 @@
 		 where user_nickname = #{userName}
 	</select>
 	
+	<!-- 검색 중복체크 -->
+	<select id="selectCheckKeyword" parameterType="map" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM search 
+	    WHERE user_no = #{userNo} 
+	    AND keyword = #{keyword}
+	</select>
+	
+	<!-- 새 키워드 삽입 -->
+	<insert id="insertKeyword" parameterType="map">
+	    insert into search (user_no, keyword, search_type, search_user_id, keyword_date)
+	    values (#{userNo}, #{keyword}, #{searchType}, #{userId}, SYSDATE)
+	</insert>
+	
+	<!-- 키워드 삭제 -->
+	<delete id="deleteResultKeyword" parameterType="map">
+	    delete from search
+	    where user_no = #{userNo}
+	    and keyword = #{keyword}
+	</delete>
+	
+	<!-- 특정 해시태그 postNo값 가져옴  -->
+	<select id="keywordTag" parameterType="string" resultType="hashTag">
+	    SELECT post_no AS postNo
+	    FROM HASHTAG
+	    WHERE hash_name = #{hashName}
+	</select>
+	<select id="selectTagName" parameterType="string" resultType="hashTag">		
+		SELECT * FROM (
+		        SELECT * FROM HASHTAG WHERE hash_name = #{hashName}
+		    ) WHERE ROWNUM = 1
+	</select>
+	
+	 <select id="selectMySearchList" parameterType="int" resultType="search">
+        SELECT * FROM (
+            SELECT 
+                user_no AS userNo,
+                keyword,
+                keyword_date AS keywordDate,
+                search_type AS searchType,
+                search_user_id AS searchUserId
+            FROM 
+                search
+            WHERE 
+                user_no = #{userNo}
+            ORDER BY 
+                keyword_date DESC
+        ) WHERE ROWNUM &lt;= 10
+    </select>
+	
+	<update id="updateSearchHistory" parameterType="map">
+		update search
+	    SET keyword_date = SYSDATE
+	    WHERE user_no = #{userNo} AND keyword = #{keyword} AND search_type = #{searchType}
+	</update>
+	
+	<delete id="userDelete"
+	parameterType="string">
+	delete from tbl_user
+		  where user_id = #{_parameter}
+	</delete>
+	
+	
+	<!-- 프로필 변경 -->
 	<update id="updateProfile" parameterType="member">
 		update tbl_user
 		   set user_nickname = #{userNickname},

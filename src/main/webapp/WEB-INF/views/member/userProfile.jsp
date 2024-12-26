@@ -19,8 +19,8 @@
 		<div class="profile" id="myfeed-profile">
 			<div class="profile-frame" id="myfeed-frame"></div>
 			 <div id="profile-text">
-				 <span id="myId">${members.userId}</span> <br>
-				 <span id="myNick">${members.userNickname}</span>
+				 <span id="myId">${member.userId}</span> <br>
+				 <span id="myNick">${member.userNickname}</span>
 				 
 				 <div id="follow-text">
 					 <span>팔로잉 00</span> <%-- 팔로워 테이블 연동 예정 --%>
@@ -30,11 +30,6 @@
 			 </div>
 		</div> 	
 		
-	    <div class="post-write">
-			<button class="write-button" id="post-button" > 일기 쓰기 </button>
-			<button class="write-button" id="story-button"> 스토리 쓰기 </button>
-	    </div>
-	    	
 	    <div class="post-container">
 	   		<c:forEach var="post" items="${post}">
 	   			<div class="post-grid">

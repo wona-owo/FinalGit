@@ -44,82 +44,94 @@ public class MemberService {
 		return memberDao.apiJoin(member);
 	}
 
-	public ArrayList<Member> searchUser(String search) {
+	public ArrayList<Member> searchUser(String search) { //키워드 입력시 실시간으로 관련 유저 보여줌
 		// TODO Auto-generated method stub
 		return (ArrayList<Member>)memberDao.searchUser(search);
 	}
 
-	public ArrayList<HashTag> searchTag(String searchStr) {
+	public ArrayList<HashTag> searchTag(String searchStr) { //키워드 입력시 실시간으로 관련 해시태그 보여줌
 		// TODO Auto-generated method stub
 		return (ArrayList<HashTag>)memberDao.searchTag(searchStr);
 	}
-
-	public int updateKeyword(int userNo,String searchType, String val, String userId, String search) {
-		// TODO Auto-generated method stub
-		System.out.println("userNo: " + userNo);
-		System.out.println("searchType: " + searchType);
-		System.out.println("userId: " + userId);
-		System.out.println("search: " + search);
-		System.out.println("resultVal: " + val);
-		
-	    HashMap<String, Object> searchs = new HashMap<>();
-	    searchs.put("userNo", userNo); // 사용자 번호
-	    searchs.put("searchType", searchType); 
-	    searchs.put("userId", userId);
-	    searchs.put("keyword", search); // 검색 키워드
-	    searchs.put("resultVal", val);
-	    
-		return memberDao.updateKeyword(searchs);
-	}
-
-	public int insertKeyword(int userNo,String searchType, String userId ,String search) {
-		HashMap<String, Object> insertKey = new HashMap<>();
-		insertKey.put("userNo", userNo); // 사용자 번호
-		insertKey.put("searchType", searchType);
-		insertKey.put("userId", userId);
-		insertKey.put("keyword", search); // 검색 키워드
-		
-		System.out.println(userId);
-	    
-		return memberDao.insertKeyword(insertKey);
-		
-	}
-
-	public ArrayList<Member> searchResultUser(String search) {
-		// TODO Auto-generated method stub
-		return (ArrayList<Member>)memberDao.searchResultUser(search);
-	}
-
-	public ArrayList<HashTag> searcResulthTag(String search) {
-		// TODO Auto-generated method stub
-		return (ArrayList<HashTag>)memberDao.searchResultTag(search);
-	}
-	
-	public int userDelete(String userId) {
-		return memberDao.userDelete(userId);
-	}
-
-	public ArrayList<HashTag> searchHashTagsKeyword(String search) {
+	public ArrayList<HashTag> searchHashTagsKeyword(String search) { //키워드와 관련된 해시태그 목록 가져오는거
 		// TODO Auto-generated method stub
 		return (ArrayList<HashTag>)memberDao.searchHashTagsKeyword(search);
 	}
-
-	public ArrayList<Member> searchUsersKeyword(String search) {
+	
+	public ArrayList<Member> searchUsersKeyword(String search) { //키워드와 관련된 유저 목록 가져오는거
 		return (ArrayList<Member>)memberDao.searchUsersKeyword(search);
 	}
-
-	public ArrayList<HashTag> selectKeywordTag(String hashName) {
-		// TODO Auto-generated method stub
-		return (ArrayList<HashTag>)memberDao.selectKeywordTag(hashName);
+	
+	public int checkKeyword(int userNo, String search) { //중복되는 값 체크
+		HashMap<String, Object> check = new HashMap<>();
+	    check.put("userNo", userNo);
+	    check.put("keyword", search);
+	    return memberDao.checkKeyword(check);
 	}
 
+	public int updateKeywordDate(int userNo, String searchType, String userId, String search) { // 날짜만 업데이트
+		HashMap<String, Object> update = new HashMap<>();
+		update.put("userNo", userNo);
+		update.put("searchType", searchType);
+		update.put("userId", userId);
+		update.put("keyword", search);
+		return memberDao.updateKeywordDate(update);
+
+	}
+	
+	public int insertKeyword(int userNo, String searchType, String userId, String search) { // 새롭게 등록
+		HashMap<String, Object> insert = new HashMap<>();
+		insert.put("userNo", userNo);
+		insert.put("searchType", searchType);
+		insert.put("userId", userId);
+		insert.put("keyword", search);
+		return memberDao.insertKeyword(insert);
+	}
+
+	public int deleteKeyword(int userNo, String keyword) { // 중복되는 값 삭제
+		HashMap<String, Object> delete = new HashMap<>();
+		delete.put("userNo", userNo);
+		delete.put("keyword", keyword);
+		return memberDao.deleteResultKeyword(delete);
+
+	}
+	
+	public ArrayList<HashTag> selectKeywordTag(String hashName) {
+		return (ArrayList<HashTag>)memberDao.selectKeywordTag(hashName);
+	}
+	
 	public Member selectKeywordUser(String userName) {
 		// TODO Auto-generated method stub
 		return memberDao.selectKeywordUser(userName);
+	}
+	
+	public HashTag selectTagName(String hashName) {
+		return memberDao.selectTagName(hashName);
+	}
+	
+	public int updateSearchHistory(int userNo, String search, String searchType) {
+		HashMap<String, Object> update = new HashMap<>();
+		update.put("userNo", userNo);
+		update.put("keyword", search);
+		update.put("searchType", searchType);
+		return memberDao.updateSearchHistory(update);
+	}
+	
+	public ArrayList<Search> selectSearchHistoryList(int userNo) {
+		// TODO Auto-generated method stub
+		return (ArrayList<Search>)memberDao.selectSearchHistoryList(userNo);
+	}
+
+	public int userDelete(String userId) {
+		return memberDao.userDelete(userId);
 	}
 
 	public int updateProfile(Member member) {
 		return memberDao.updateProfile(member);
 	}
+
+
+	
+
 
 }

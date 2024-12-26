@@ -133,7 +133,17 @@ public class MemberController {
 	}
 	// 검색 Frm
 	@GetMapping("search.kh")
-	public String searchFrm() {
+	public String searchFrm(HttpSession session, Model model) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		if (loginMember == null) {
+	        return "redirect:/"; // 로그인 안 된 경우
+	    }
+		int userNo = loginMember.getUserNo();
+
+	    ArrayList<Search> searchHistory = memberService.selectSearchHistoryList(userNo);
+	    	
+	    model.addAttribute("searchs", searchHistory);
+		
 		return "member/search";
 	}
 	
@@ -149,6 +159,47 @@ public class MemberController {
 		return "member/mainFeed";
 	}
 	
+	@GetMapping("searchHistory.kh")
+	public String searchHistory(HttpSession session,String searchType, String search,String hashName, String userName, String vals, Model model) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		if (loginMember == null) {
+	        return "redirect:/"; // 로그인 안 된 경우
+	    }
+		int userNo = loginMember.getUserNo();
+		if(search != null) {
+			memberService.updateSearchHistory(userNo,searchType,search);
+			
+	        model.addAttribute("search", search); // 검색어를 모델에 추가
+	        
+	        // 검색 결과 페이지로 이동
+	        return "member/searchResult"; // 검색 결과 페이지로 이동
+			
+		}else if(hashName != null) {
+			 // 해시태그를 사용하여 검색 기록을 업데
+	        memberService.updateSearchHistory(userNo,searchType,hashName); // 해시태그 기록 업데이트 메소드 호출
+	       
+	        HashTag hashTag = memberService.selectTagName(hashName);
+			ArrayList<HashTag> hashPosts = memberService.selectKeywordTag(hashName); 
+			model.addAttribute("hashPosts", hashPosts);
+			model.addAttribute("hashTag", hashTag);
+	        // 해시태그 페이지로 이동
+	        return "member/hashTagPostList"; // 해시태그 페이지로 이동
+	        
+		}else if(userName!= null) {
+			 // 사용자 이름을 사용하여 검색 기록을 업데이트
+	        memberService.updateSearchHistory(userNo, searchType,userName); // 사용자 이름 기록 업데이트 메소드 호출
+	        
+	        Member member = memberService.selectKeywordUser(userName);
+			model.addAttribute("member", member);
+	        // 사용자 프로필 페이지로 이동
+	        return "member/userProfile"; // 사용자 프로필 페이지로 이동
+	        
+		}else {
+			return "redirect:/"; // 기본 페이지로 리다이렉트
+		}
+		
+	}
+	
 	// 실시간 검색
 	// value랑 produces 안해주면 인코딩 문제생김
 	@GetMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8") 
@@ -156,8 +207,6 @@ public class MemberController {
 	public String inputSearch(@RequestParam("search") String search) {
 	    ArrayList<Member> users = memberService.searchUser(search);
 	    ArrayList<HashTag> tags;
-	    
-	    
 	    
 	    //#으로 시작하고 #뒤에 값이 없으면 
 	    if(search.charAt(0) == '#' && "#".equals(search)) { 
@@ -236,35 +285,30 @@ public class MemberController {
 	@GetMapping(value = "keywordSearch.kh", produces = "text/html; charset=UTF-8")
 	public String searchPage(@RequestParam("search") String search, Model model, HttpSession session,
 			@RequestParam(value = "vals", required = false) String vals) {//검색 결과에서 원하는 검색 값을 a태그로 이동했을때 값이 담겨있고 아닌경우 x로 표시 
-
 		Member loginMember = (Member) session.getAttribute("loginMember");
 
-		int userNo = loginMember.getUserNo();
+	    if (loginMember == null) {
+	        return "redirect:/"; // 로그인 안 된 경우
+	    }
 
-		int insertKeyword = 0; //등록 확인
-		String searchType = "G"; //검색일 경우 G
-		String userId = null; 
-		String val = null;
-		if (vals == null || vals.isEmpty()) { // 검색 결과 페이지로 이돟한 경우 null값이거나 비어있음
-			val = "x"; //강제로 문자열 X라는 값 부여
-		}
+	    int userNo = loginMember.getUserNo();
+	    String searchType = "G"; // 일반 검색
+	    String userId = null;
 
-		int updateResult = memberService.updateKeyword(userNo, searchType, val, userId, search); //검색 날짜 최신으로 업데이트
-		if (updateResult == 0) {
-			insertKeyword = memberService.insertKeyword(userNo, searchType, userId, search); // 검색한 값이 처음인 경우 새롭게 등록
+	    // 검색어가 이미 존재하는지 체크
+	    int exists = memberService.checkKeyword(userNo, search);
+	    if (exists > 0) {
+	        // 이미 존재하면 날짜만 업데이트
+	        memberService.updateKeywordDate(userNo, searchType, userId, search);
+	    } else {
+	        // 존재하지 않으면 새로 삽입
+	        memberService.insertKeyword(userNo, searchType, userId, search);
+	    }
 
-			if (insertKeyword == 0) {
-				throw new RuntimeException("키워드 삽입에 실패했습니다."); // 확인용
-			}
-		}
 	    model.addAttribute("search", search);
 
 	    // 검색 결과 페이지로 이동
 	    return "member/searchResult";
-	}
-	@GetMapping("userProfile.kh")
-	public String userProfile() {
-		return "member/userProfile";
 	}
 	
 	// API 연동 끊기 및 탈퇴 메소드 호출
@@ -294,7 +338,8 @@ public class MemberController {
 			return "member/deleteFail";
 		}
 	}
-
+	
+	//결과 페이지에서 사용자가 원하는 검색만 보기 위한 필터
 	@GetMapping(value = "filterResults.kh", produces = "text/html; charset=UTF-8")
 	@ResponseBody
 	public String filterResults(@RequestParam("filterType") String filterType,
@@ -375,103 +420,74 @@ public class MemberController {
 	//검색 창에서 a 링크 클릭 시 기록 남기는 용도(이거 안쓰면 피드에서 a 링크 눌러도 검색 기록으로 처리됨)
 	//required
 	@GetMapping("keywordResult.kh")
-	@ResponseBody
 	public String keywordResult( 
 			@RequestParam(value = "hashName", required = false) String hashName,
 	        @RequestParam(value = "userName", required = false) String userName, //유저 이름
 	        @RequestParam(value = "vals", required = false) String vals, //검색 결과에서 원하는 검색 값을 a태그로 이동했을때 값이 담겨있고 아닌경우 x로 표시 
 	        HttpSession session, Model model) {
+
 		Member loginMember = (Member) session.getAttribute("loginMember");
-		int userNo = loginMember.getUserNo();
-		
-		String searchType = null; //이게 User검색인지 HashTag 검색인지 일반 검색인지 구분해주는 값
-		String userId = null; //user Name값
-		String val = null;
-		Member member = memberService.selectKeywordUser(userName);
-		
-		ArrayList<HashTag> hash = memberService.selectKeywordTag(hashName); //어차피 a태그 눌렀을때 검색 기록 등록 수정 목적으로 하는거라 여기에 선언함
-		
-		int result = 0; //값 정상적으로 들어갔나 확인용
-		
-		if (hashName != null && !hashName.isEmpty() && "x".equals(vals)) { //해시태그 값이 있고 실시간 검색에서 a태그로 페이지를 이동한 경우
-			searchType = "H";
-			val = vals;
-			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,hashName);
-			if(updateResult == 0) {
-				result = memberService.insertKeyword(userNo, searchType, userId, hashName);
-				
-				if(result == 1) {
-					model.addAttribute("hashtags", hash);
-					return "member/hashTag";
-				}else {
-					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
-				}
-			}else {
-				model.addAttribute("hashtags", hash);
-				return "member/hashTag";
-			}
-		}else if(hashName != null && !hashName.isEmpty() && !"x".equals(vals)) {//해시태그 값이 있고 검색 결과 페이지에서 a태그로 페이지를 이동한 경우
-			searchType = "H";
-			val = vals;
-			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,hashName);
-			if(updateResult == 0) {
-				result = memberService.insertKeyword(userNo, searchType, userId, hashName);
-				
-				if(result == 1) {
-					model.addAttribute("hashtags", hash);
-					return "member/hashTag";
-				}else {
-					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
-				}
-			}else {
-				model.addAttribute("hashtags", hash);
-				return "member/hashTag";
-			}
-		}else if (userName != null && !userName.isEmpty()&& "x".equals(vals)) { //유저 이름 값이 있고 실시간 검색에서 a태그로 페이지를 이동한 경우
-			searchType = "U"; 
-			userId = userName;
-			val = vals;
-			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,userName);
-			
-			if(updateResult == 0) {
-				result = memberService.insertKeyword(userNo, searchType, userId, userName);
 
-				if (result == 1) {
-					model.addAttribute("members", member);
-					return "member/userProfile";
-				} else {
-					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
-				}
-			}else {
-				model.addAttribute("members", member);
-				return "member/userProfile";
-			}
-		}else if(userName != null && !userName.isEmpty()&& !"x".equals(vals)) { //유저 이름 값이 있고 검색 결과 페이지에서 a태그로 페이지를 이동한 경우
-			searchType = "U"; 
-			userId = userName;
-			val = vals;
-			int updateResult  = memberService.updateKeyword(userNo,searchType,val,userId,userName);
-			
-			if(updateResult == 0) {
-				result = memberService.insertKeyword(userNo, searchType, userId, userName);
-
-				if (result == 1) {
-					model.addAttribute("members", member);
-					return "member/userProfile";
-				} else {
-					return "redirect:/"; // 로그아웃 상태일떄나 등록 실패인 경우
-				}
-			}else {
-				model.addAttribute("members", member);
-				return "member/userProfile";
-			}
-			
-		}else {
-			System.out.println("검색 a 태그 이동 실패 keywordResult.kh으로 매핑 선언한 부분 오류남");
-			return "redirect:/"; // 로그아웃 상태일떄 등록, 업데이트 실패인경우 
+		if (loginMember == null) {
+			return "redirect:/"; // 로그인 안 된 경우
 		}
+
+		int userNo = loginMember.getUserNo();
+
+		String searchType = null; // 이게 User검색인지 HashTag 검색인지 일반 검색인지 구분해주는 값
+		String userId = null; // user Name값
+		String keyword = null;
 		
+		/*
+		if ("x".equals(vals)) {
+			val = "x";
+		} else {
+			val = vals;
+		}
+	    */
+		
+		if (hashName != null && !hashName.isEmpty()) {
+			searchType = "H";
+			keyword = hashName; // 해시태그
+		} else if (userName != null && !userName.isEmpty()) {
+			searchType = "U";
+			userId = userName;
+			keyword = userName; // 유저 닉네임으로 검색
+		} else {
+			return "redirect:/member/search";
+		}
+		 // 1. 새로운 키워드가 이미 존재하는지 체크
+	    int exists = memberService.checkKeyword(userNo, keyword);
+	    if(exists > 0) {
+	        // 이미 존재하면 삭제
+	        memberService.deleteKeyword(userNo, keyword);
+	    }
+
+	    // 2. 기존 검색어(vals)가 있는 경우 삭제
+	    if(vals != null && !"x".equals(vals)) {
+	        memberService.deleteKeyword(userNo, vals);
+	    }
+	    // 3. 새로운 키워드 insert
+	    int result = memberService.insertKeyword(userNo, searchType, userId, keyword);
+		
+		if("H".equals(searchType)) { //타입이 해시태그(H)일때
+			HashTag hashTag = memberService.selectTagName(hashName);
+			ArrayList<HashTag> hashPosts = memberService.selectKeywordTag(hashName); 
+			model.addAttribute("hashPosts", hashPosts);
+			model.addAttribute("hashTag", hashTag);
+			return "member/hashTagPostList";
+			
+		}else if("U".equals(searchType)){ //타입이 유저(U)일때
+			Member member = memberService.selectKeywordUser(userName);
+			model.addAttribute("member", member);
+			return "member/userProfile";
+			
+		}else { // 둘다 해당 안될때
+			return "redirect:/"; // 로그인 안 된 경우
+		}
 	}
+	
+	
 	
 	// 프로필 수정
 	@PostMapping(value="updateProfile.kh", produces="text/html; charset=utf-8")
