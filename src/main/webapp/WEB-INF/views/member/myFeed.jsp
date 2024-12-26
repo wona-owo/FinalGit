@@ -279,7 +279,8 @@ margin-top:16px;
 	    <div class="post-modal">
 	    	<div class="modal-place">
 	    	
-	    	<form action="/post/write.kh" method="post" enctype="multipart/form-data">
+	    	<form id="postForm" action="/post/write.kh" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="userNo" value="${sessionScope.loginMember.userNo}">
 	    	<div class="modal-body">
 			    <div class="top">
 			   		 <span class="modal-title">일기쓰기</span>
@@ -288,17 +289,17 @@ margin-top:16px;
 			
 			   <div>
 			   		<span class="modal-title">이미지, 영상파일 추가</span> <br>
-			   		<input type="file" id="post-input" accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
+			   		<input name="files" type="file" id="post-input" accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
 			   </div>
 			   
 			   <div>
 				   <span>내용 추가</span> <br>
-				   <textarea rows="10" cols="55" style="resize: none;"></textarea> 
+				   <textarea name="content" rows="10" cols="55" style="resize: none;"></textarea> 
 			   </div>
 			   
 			   <div>
 			  	   <span>태그 추가</span> <br>
-			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag">
+			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag" type="hidden">
 			   </div>
 			   
 			    <div>
@@ -369,15 +370,28 @@ margin-top:16px;
 		 const imageCk = $("#post-input");
 		 const submit = $("#post-submit");
 		 
-		 submit.on("click",function(){
+		 submit.on("click",function(event){
 				
 			//기본 제출 동작 방지
 			event.preventDefault();
 				 
-			if(!imageCk.val()){
+			if(!imageCk[0].files.length){
 				alert("1개 이상의 이미지를 등록해야 합니다!");
 			}else{
-				this.submit();
+				
+				const tagData = tagify.value;
+				const tagList = [];
+				
+				
+				for(let tag of tagData){
+					tagList.push(tag["value"]);
+				}
+						
+				const tagString = JSON.stringify(tagList);			
+				
+				$("#post-hashtag").val(tagString);
+				
+				$("#postForm")[0].submit();
 			}
 		});
 		 

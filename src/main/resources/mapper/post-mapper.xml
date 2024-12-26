@@ -19,7 +19,7 @@
 	
 	<!-- 게시글 코드(시퀀스) 생성 -->	
 	<select id="getPostId" resultType="_int">
-		select post_seq.nextval from dual
+		select seq_post.nextval from dual
 	</select>
 	
 	<!-- 게시글 생성 -->
@@ -35,7 +35,16 @@
 		insert into post_file
 		(post_file_no, post_no, post_file_name)
 		values
-		(post_file_seq.nextval, #{postNo}, #{postFileName})
+		(seq_post_file.nextval, #{postNo}, #{postFileName})
 	</insert>
+	
+	<!-- 해시태그 삽입 -->
+	<insert id="hashTag" parameterType="map">	
+		insert into hashtag
+		(hash_no, post_no, hash_name)
+		values
+        (seq_hashtag.nextval, #{postNo}, #{tag})  	
+	</insert>
+	
 	
 </mapper>

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -15,10 +17,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.service.PostService;
@@ -44,21 +52,34 @@ public class PostController {
 		model.addAttribute("post",imgList);
 		
 		return "member/myFeed";
+
 	}
+
 	
 	//post 작성
 	@PostMapping("write.kh")
-	public String savePost(HttpServletRequest request, Post post, MultipartFile [] files) {
+	public String savePost(@RequestParam("userNo") int userNo, Model model, HttpServletRequest request, @RequestParam("content") String content , @RequestParam("files") MultipartFile [] files, @RequestParam("hashtag") String tagString) {
 		
 		//1. 미리 시퀀스 세팅
 		int postNo = postService.postNo();
+		Post post = new Post();
+		
+		//post 객체 세팅
 		post.setPostNo(postNo);
+		post.setPostContent(content);
+		post.setUserNo(userNo);
 		
 		//2. 게시글 생성(여부 확인)
 		int resWr = postService.write(post);
 		   
 		//3. 사진 폴더 삽입 + 이름 세팅, 이름 객체에 저장
-
+		   System.out.println("메서드 진입: 파일 처리 시작");
+		   
+		   if (files == null || files.length == 0) {
+			    System.out.println("업로드된 파일이 없습니다.");
+			    return "member/myFeed";
+			}
+		   
 		   for(int i=0; i<files.length; i++) {
 			   
 			   MultipartFile file = files[i];
@@ -81,6 +102,7 @@ public class PostController {
 			   //파일 경로 세팅
 			   savePath += fileName;
 			   
+			   
 			   try {				   
 				//파일 저장
 				file.transferTo(new File(savePath));
@@ -97,14 +119,38 @@ public class PostController {
 			   post.setPostFileName(fileName);
 			   postService.image(post);
 		    }
-				
-		//5. 해시태그 삽입 - hashmap으로 json을 받아서 list로 변환
-		int resHs = postService.hashtag();
+
+		   
+		//5. 해시태그 삽입 - json을 String으로 받아서 array로 변환
+		ObjectMapper objMap = new ObjectMapper();   
+		int resHs = 0;  
+		ArrayList<String> tagArr;
 		
-		return null;								
+		try {
+			
+			tagArr = objMap.readValue(tagString, new TypeReference<ArrayList<String>>() {});	
+			//태그 array 전달
+			resHs = postService.hashtag(tagArr, postNo);			
+			
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}							
+		
+		//성공시 피드 랜딩
+		if(resHs > 0 && resWr > 0) {			
+			return "member/myFeed";								
+		}else {
+			model.addAttribute("message", "작업에 실패했습니다. 다시 시도해주세요.");
+		    model.addAttribute("url", "/member/myFeed");
+		    return "common/alert";
+		}
 		
 	}
 	
 
-	
-}
+}	
+
