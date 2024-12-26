@@ -474,12 +474,12 @@ public class MemberController {
 	}
 	
 	// 프로필 수정
-	@PostMapping(value="updateProfile.kh", produces="text/html; charset=utf-8")
+	@PostMapping(value="updateProfile.kh", produces="application/json; charset=utf-8")
 	@ResponseBody
-	public Member updateProfile(HttpServletRequest request, MultipartFile file, Member member) {
+	public Member updateProfile(HttpServletRequest request, MultipartFile file, Member member, HttpSession session) {
 		
 		if (file != null && !file.isEmpty()) {
-			String savePath = "/resources/profile_file/";
+			String savePath = request.getSession().getServletContext().getRealPath("/resources/profile_file/");
 			String originalFileName = file.getOriginalFilename();
 			String fileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
 			String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
@@ -489,7 +489,7 @@ public class MemberController {
 			String filePath = fileName + "_" + toDay + "_" + ranNum + extension;
 
 			savePath += filePath;
-			member.setUserImage(savePath);
+			member.setUserImage("/resources/profile_file/" + filePath);
 
 			// 파일 업로드를 위한 보조스트림
 			BufferedOutputStream bos = null;
@@ -511,13 +511,20 @@ public class MemberController {
 					e.printStackTrace();
 				}
 			}
+		}else {
+			member.setUserImage("");
 		}
+		
+		Member loginMember =  (Member) session.getAttribute("loginMember");
+		member.setUserPw(loginMember.getUserPw());
+		
 		int result = memberService.updateProfile(member);
 		
 		if (result > 0) {
 			// 업데이트 성공 시, 최신 회원 정보를 반환
 			Member updatedMember = memberService.memberLogin(member);
-			request.getSession().setAttribute("loginMember", updatedMember); // 세션 업데이트
+			
+			session.setAttribute("loginMember", updatedMember); // 세션 업데이트
 			return updatedMember;
 		} else {
 			return null;
