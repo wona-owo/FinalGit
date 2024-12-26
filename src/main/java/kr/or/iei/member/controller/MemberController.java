@@ -476,7 +476,8 @@ public class MemberController {
 	// 프로필 수정
 	@PostMapping(value="updateProfile.kh", produces="application/json; charset=utf-8")
 	@ResponseBody
-	public Member updateProfile(HttpServletRequest request, MultipartFile file, Member member, HttpSession session) {
+	public Member updateProfile(HttpServletRequest request, MultipartFile file, Member member,
+			HttpSession session, @RequestParam(required = false) boolean delChk) {
 		
 		if (file != null && !file.isEmpty()) {
 			String savePath = request.getSession().getServletContext().getRealPath("/resources/profile_file/");
@@ -511,7 +512,9 @@ public class MemberController {
 					e.printStackTrace();
 				}
 			}
-		}else {
+		}
+		
+		if(delChk) {
 			member.setUserImage("");
 		}
 		

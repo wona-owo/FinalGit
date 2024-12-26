@@ -520,6 +520,9 @@ margin-top:16px;
 		let updEmail = $("#userEmail");
 	    let updPhone = $("#userPhone");
 	    let updImage = $("#profileImagePreview");
+	    
+	    // 이미지 파일 변경없음과 삭제를 구분할 변수
+	    let delChk = false;	    
 
 	 	// updMember 데이터가 비어 있으면 loginMember 데이터를 기본값으로 사용
 	    updId.val(updMember.userId || "${loginMember.userId}");
@@ -528,7 +531,7 @@ margin-top:16px;
 	    updAddress.val(updMember.userAddress || "${loginMember.userAddress}");
 	    updEmail.val(updMember.userEmail || "${loginMember.userEmail}");
 	    updPhone.val(updMember.userPhone || "${loginMember.userPhone}");
-	    updImage.attr("src", updMember.userImage || "${loginMember.userImage}");
+	    updImage.attr("src", updMember.userImage || "${loginMember.userImage}" || "/resources/profile_file/default_profile.png");
 	    
 	    // (이벤트) 모달 바깥(배경) 클릭 시 닫기
 	    $("#profileModalBackdrop").on("click", function (event) {
@@ -600,6 +603,8 @@ margin-top:16px;
 	        
 	        // 파일 입력 요소 초기화
 	        $("#userImage").val("");
+	        
+	        delChk = true;
 	    }
 	    
 	    // 입력 정보 체크
@@ -780,6 +785,10 @@ margin-top:16px;
 	            if(selectedProfileImageFile){
 	                formData.append("file", selectedProfileImageFile);
 	            }
+	            // 이미지 파일을 삭제 했을 시 구분 값
+	            if(delChk){
+	            	formData.append("delChk", true);
+	            }
 
 	            $.ajax({
 	                url : "/member/updateProfile.kh",
@@ -793,7 +802,7 @@ margin-top:16px;
 	                    
 	                        $(".myNick").text(updatedMember.userNickname);
 	                        $(".profileImage").attr("src", updatedMember.userImage || "/resources/profile_file/default_profile.png");
-							updImage.attr("src", updatedMember.userImage || "/resources/profile_file/default_profile.png");
+	                        updImage.attr("src", updatedMember.userImage || "/resources/profile_file/default_profile.png");
 	                        
 	                        alert("프로필이 업데이트되었습니다");
 	                    }else{
