@@ -98,7 +98,7 @@
 		 #{userPhone},
 		 #{userType})
 	</insert>
-	
+	<!-- 실시간 유저 검색 -->
 	<select id="userSearch" parameterType="string" resultType="member">
 		<![CDATA[
 	        SELECT * FROM (
@@ -116,7 +116,7 @@
 	        WHERE ROWNUM <= 5
     	]]>
 	</select>
-	
+	<!-- 실시간 태그 검색 -->
 	<select id="tagSearch" parameterType="string" resultType="hashTag">
 		 <![CDATA[
             SELECT * FROM (
@@ -132,7 +132,7 @@
             WHERE ROWNUM <= 5
         ]]>
 	</select>
-	
+	<!-- 해시태그 검색 결과 -->
 	<select id="searchHashTagsKeyword" parameterType="string" resultType="hashTag">
 		SELECT hash_name AS hashName,
        		   COUNT(post_no) AS postCount
@@ -141,7 +141,7 @@
 		GROUP BY hash_name
 		ORDER BY COUNT(post_no)DESC
 	</select>
-	
+	<!-- 유저 검색 결과 -->
 	<select id="searchUsersKeyword" parameterType="string" resultType="member">
 		SELECT user_no AS userNo,
 	           user_id AS userId,
@@ -154,7 +154,7 @@
 	       OR UPPER(user_nickname) LIKE '%' || UPPER(#{search}) || '%'
 	    ORDER BY user_name ASC
 	</select>
-	
+	<!-- 검색 기록 최신화 -->
 	<update id="updateKeywordDate" parameterType="map">
 	    UPDATE search
 	    SET keyword_date = SYSDATE,
@@ -163,7 +163,7 @@
 	    WHERE user_no = #{userNo}
 	      AND keyword = #{keyword}
 	</update>
-	
+	<!-- 해시태그 검색 -->
 	<select id="selectKeywordTag" parameterType="string" resultType="hashTag">
 		select hash_no as hashNo,
 			   post_no as postNo,
@@ -172,6 +172,7 @@
 		 where hash_name = #{hashName}
 	</select>
 	
+	<!-- 유저 검색 -->
 	<select id="selectKeywordUser" parameterType="string" resultType="member">
 		select user_no as userNo,
 		       user_id as userId,
@@ -211,12 +212,14 @@
 	    FROM HASHTAG
 	    WHERE hash_name = #{hashName}
 	</select>
+	<!-- 태그 이름 -->
 	<select id="selectTagName" parameterType="string" resultType="hashTag">		
 		SELECT * FROM (
 		        SELECT * FROM HASHTAG WHERE hash_name = #{hashName}
 		    ) WHERE ROWNUM = 1
 	</select>
 	
+	<!-- 검색 기록 -->
 	 <select id="selectMySearchList" parameterType="int" resultType="search">
         SELECT * FROM (
             SELECT 
@@ -233,12 +236,24 @@
                 keyword_date DESC
         ) WHERE ROWNUM &lt;= 10
     </select>
-	
+	<!-- 검색 날짜 최신화 -->
 	<update id="updateSearchHistory" parameterType="map">
 		update search
 	    SET keyword_date = SYSDATE
 	    WHERE user_no = #{userNo} AND keyword = #{keyword} AND search_type = #{searchType}
 	</update>
+	<!-- 검색 기록 삭제 -->
+	<delete id="deleteSearchHistory" parameterType="map">
+		delete from search
+		where user_no = #{userNo}
+		and keyword = #{search}
+		and search_type = #{searchType} 
+	</delete>
+	
+	<delete id="deleteAllSearchHistory" parameterType="int">
+	    DELETE FROM search
+	    WHERE user_no = #{userNo}
+	</delete>
 	
 	<delete id="userDelete"
 	parameterType="string">

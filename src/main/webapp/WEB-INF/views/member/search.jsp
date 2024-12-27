@@ -48,7 +48,15 @@
 	.searchInputBox input[type="search"]::placeholder {
 		color: #aaa;
 	}
-	
+	.dropdown-bottom-line{
+	    border-color: gray;
+	    height: 0;
+	    width:425px;
+	    margin: .5rem 0;
+	    overflow: hidden;
+	    border-top: 1px solid gray;
+	    border-top-color: gray;
+	}
 	.searchResults {
 		width: 425.2px;
 		padding: 0;
@@ -81,8 +89,14 @@
 	
 	.user-result {
 		width: 100%;
+		display: flex;
+		justify-content: space-between; /* 아이템 간의 공간을 균등하게 배분 */
+    	align-items: center; /* 수직 중앙 정렬 */
 		font-size: 16px;
 		height: 62px;
+	}
+	.user-result:hover {
+		background-color: #E6E6E6;
 	}
 	
 	.a-user {
@@ -90,12 +104,14 @@
 		width: 100%; /* 부모 요소의 너비만큼 클릭 가능 */
 		height: 100%;
 		text-decoration: none; /* 밑줄 제거 */
+		margin-left: 10px;
 	}
-	
-	.a-user:hover {
-		background-color: #E6E6E6;
+	.delete-search {
+	    display: flex; /* Flexbox 활성화 */
+	    justify-content: center; /* 수평 중앙 정렬 */
+	    align-items: center; /* 수직 중앙 정렬 */
+	    margin-right: 10px; /* 왼쪽으로 약간 이동 */
 	}
-	
 	.profile-container {
 		display: flex;
 		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
@@ -197,7 +213,13 @@
             </svg>
             <input type="search" class="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">        
         </div>
+        <br>
+        <div class="dropdown-bottom-line"></div>
 			<div class="searchRecord" id="searchRecord">
+				<div>
+					<div>최근 검색 항목</div>
+					<div><a  class="resultAllDelete">모두 지우기</a></div>
+				</div>
 				<ul class="searchRecordBox" id="searchRecordBox">
 					<c:forEach var="search" items="${searchs}">
 						<c:choose>
@@ -213,6 +235,11 @@
 											<span class="SearchName">${search.keyWord}</span>
 										</div>
 									</a>
+									<a href="#" class="delete-search" data-keyword="${search.keyWord}" data-search-type="${search.searchType}">
+										<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="gray" class="bi bi-x-lg" viewBox="0 0 16 16">
+  											<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+										</svg>
+									</a>
 								</li>
 							</c:when>
 							<c:when test="${search.searchType == 'H'}">
@@ -227,6 +254,11 @@
 											<span class="tagNames">${search.keyWord}</span>
 										</div>
 									</a>
+									<a href="#" class="delete-search" data-keyword="${search.keyWord}" data-search-type="${search.searchType}">
+										<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="gray" class="bi bi-x-lg" viewBox="0 0 16 16">
+  											<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+										</svg>
+									</a>
 								</li>
 							</c:when>
 							<c:otherwise>
@@ -234,9 +266,15 @@
 									<a class="a-user" href="/member/searchHistory.kh?userName=${search.searchUserId}&vals=x&searchType=${search.searchType}">
 										<div class="profile-container">
 											<div class="user-profile">
+											<img class="profileImage" src="${not empty member.userImage ? member.userImage : '/resources/profile_file/default_profile.png'}"alt="프로필 이미지" />
 											</div>
 											<span>${search.searchUserId}</span>
 										</div>
+									</a>
+									<a href="#" class="delete-search" data-keyword="${search.searchUserId}" data-search-type="${search.searchType}">
+										<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="gray" class="bi bi-x-lg" viewBox="0 0 16 16">
+  											<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+										</svg>
 									</a>
 								</li>
 							</c:otherwise>
@@ -258,23 +296,23 @@
 	$(document).ready(function() {
 		// 검색 입력란에 입력 이벤트(keyup)가 발생할 때마다 searchResults 함수 실행
 		$('#search').on('keyup', function() {
-			 var searchValue = $(this).val().trim();
-	
-	            // 입력 필드에 값이 없을 때 searchRecord를 다시 보이게 함
-	            if (searchValue.length === 0) {
-	                $('#searchRecord').show();
-	                $('#ResultBox').hide(); // 검색 결과를 숨김
-	            } else {
-	                $('#searchRecord').hide();
-	                $('#ResultBox').show(); 
-		            searchResults(searchValue);
-	            }
-	
-	            // 기존의 searchResults 함수 호출
-			
+			var searchValue = $(this).val().trim();
+
+			// 입력 필드에 값이 없을 때 searchRecord를 다시 보이게 함
+			if (searchValue.length === 0) {
+				$('#searchRecord').show();
+				$('#ResultBox').hide(); // 검색 결과를 숨김
+			} else {
+				$('#searchRecord').hide();
+				$('#ResultBox').show();
+				searchResults(searchValue);
+			}
+
+			// 기존의 searchResults 함수 호출
+
 		});
 	});
-	
+
 	let debounceTimeout = null;
 	// 디바운스 하는 이유 : 서버 과부화 최소화하기 위해    
 	function searchResults(search) {
@@ -313,7 +351,50 @@
 							});
 				}, 300); // 사용자가 입력을 멈춘 후 300ms(0.3초)가 지나면 서버 요청 실행
 	}
+	// 삭제 링크 클릭 이벤트
+	$(document).on('click', '.delete-search', function(e) {
+		e.preventDefault(); // 기본 링크 동작 방지
+		var keyword = $(this).data('keyword'); // 삭제할 검색어 가져오기
+		var searchType = $(this).data('search-type'); // 삭제할 검색 타입 가져오기
+		var $listItem = $(this).closest('li'); // 삭제할 항목의 li 요소
 
+		$.ajax({
+			type : 'POST',
+			url : '/member/deleteSearchHistory.kh', // 삭제 요청 URL
+			data : {
+				search : keyword,
+				searchType : searchType
+			}, // 검색어와 검색 타입 전송
+			success : function(response) {
+				// 삭제 성공 시 해당 항목을 DOM에서 제거
+				$listItem.remove(); // 삭제된 항목을 DOM에서 제거
+			},
+			error : function() {
+				console.log('서버 오류가 발생했습니다.');
+			}
+		});
+	});
+	
+	// 전체 삭제 버튼 클릭 이벤트
+	$(document).on('click', '.resultAllDelete', function(e) {
+		e.preventDefault(); // 기본 링크 동작 방지
+
+	    // AJAX 요청
+	    $.ajax({
+	        type: 'POST',
+	        url: '/member/deleteSearchHistory.kh', // 삭제 요청 URL
+	        data: {
+	            search: 'all', // 전체 삭제를 위한 파라미터
+	            searchType: null // 필요하지 않음
+	        },
+	        success: function(response) {
+	        	location.reload(); // 페이지 새로고침
+	        },
+	        error: function() {
+	            console.log('서버 오류가 발생했습니다.');
+	        }
+	    });
+	});
 </script>
 
 </body>

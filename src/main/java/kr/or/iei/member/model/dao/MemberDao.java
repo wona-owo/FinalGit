@@ -101,6 +101,15 @@ public class MemberDao {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("member.selectMySearchList", userNo);
 	}
+	public int updateSearchHistory(HashMap<String, Object> update) {
+		// TODO Auto-generated method stub
+		return sqlSession.update("member.updateSearchHistory", update);
+	}
+	
+	public int deleteSearchHistory(HashMap<String, Object> delete) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("member.deleteSearchHistory", delete);
+	}
 	
 	public int userDelete(String userId) {
 		return sqlSession.delete("member.userDelete", userId);
@@ -110,10 +119,11 @@ public class MemberDao {
 		return sqlSession.update("member.updateProfile", member);
 	}
 
-	public int updateSearchHistory(HashMap<String, Object> update) {
+	public int deleteAllSearchHistory(int userNo) {
 		// TODO Auto-generated method stub
-		return sqlSession.update("member.updateSearchHistory", update);
+		return sqlSession.delete("member.deleteAllSearchHistory", userNo);
 	}
+
 
 
 
