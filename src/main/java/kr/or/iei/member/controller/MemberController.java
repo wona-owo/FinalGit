@@ -159,6 +159,7 @@ public class MemberController {
 		return "member/mainFeed";
 	}
 	
+	//검색 기록
 	@GetMapping("searchHistory.kh")
 	public String searchHistory(HttpSession session,String searchType, String search,String hashName, String userName, String vals, Model model) {
 		Member loginMember = (Member) session.getAttribute("loginMember");
@@ -175,7 +176,7 @@ public class MemberController {
 	        return "member/searchResult"; // 검색 결과 페이지로 이동
 			
 		}else if(hashName != null) {
-			 // 해시태그를 사용하여 검색 기록을 업데
+			 // 해시태그를 사용하여 검색 기록을 업데이트
 	        memberService.updateSearchHistory(userNo,searchType,hashName); // 해시태그 기록 업데이트 메소드 호출
 	       
 	        HashTag hashTag = memberService.selectTagName(hashName);
@@ -200,20 +201,45 @@ public class MemberController {
 		
 	}
 	
+	@PostMapping("deleteSearchHistory.kh")
+	@ResponseBody
+	public String deleteSearchHistory(String search, String searchType, HttpSession session) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+
+	    if (loginMember == null) {
+	    	return "redirect:/"; // 로그인 안 된 경우
+	    }
+	    
+	    int result = 0;
+	    
+	    int userNo = loginMember.getUserNo();
+	    if ("all".equals(search)) {
+	    	result = memberService.deleteAllSearchHistory(userNo);
+	    }else {
+	    	result = memberService.deleteSearchHistory(userNo, search, searchType); // 검색 기록 삭제 메서드 호출	    	
+	    }
+	    
+	    if(result > 0) {
+	    	return "redirect:/member/search";
+	    }else {
+	    	return "redirect:/"; // 로그인 안 된 경우
+	    }
+	}
+	
+	
+	
 	// 실시간 검색
 	// value랑 produces 안해주면 인코딩 문제생김
 	@GetMapping(value = "searchBoard.kh", produces = "text/html; charset=UTF-8") 
 	@ResponseBody
-	public String inputSearch(@RequestParam("search") String search) {
+	public String inputSearch(@RequestParam("search") String search, Model model) {
 	    ArrayList<Member> users = memberService.searchUser(search);
 	    ArrayList<HashTag> tags;
 	    
 	    //#으로 시작하고 #뒤에 값이 없으면 
-	    if(search.charAt(0) == '#' && "#".equals(search)) { 
-	    	tags = new ArrayList<>(); // 빈 리스트로 초기화
-	    	
-	    } else if(search.charAt(0) == '#' && search.length() > 1) { // #으로 시작하고 #뒤에 값이 있으면
-	    	tags = memberService.searchTag(search);
+	    if(search.charAt(0) == '#' && search.length() > 1) { // #으로 시작하고 #뒤에 값이 있으면
+	    	String searchStr = search.replace("#", ""); // # 제거
+	    	tags = memberService.searchTag(searchStr);
 	    	
 	    } else {
 	    	 tags = new ArrayList<>(); // 검색어가 #으로 시작하지 않으면 태그 검색 안함
@@ -231,10 +257,9 @@ public class MemberController {
         	
             for (HashTag tag : tags) {
             	//#은 페이지 내 위치를 나타내는 특수문자라 서버로 전달되지 않기때문에 enconding 해줘야됨
-            	String encodedHashName = URLEncoder.encode(tag.getHashName(), StandardCharsets.UTF_8);
                 html.append("<li class='user-result'>")
                     .append("<a class='a-user' href='/member/keywordResult.kh?hashName=")
-                    .append(encodedHashName) // HashTag 객체의 hashName 사용
+                    .append(tag.getHashName()) // HashTag 객체의 hashName 사용
                     .append("&vals=x")
                     .append("'>")
                     .append("<div class='hash-container'>")
@@ -265,6 +290,9 @@ public class MemberController {
 		            .append("'>")
 		            .append("<div class='profile-container'>")
 		            .append("<div class='user-profile'>")
+		            .append("<img class='profileImage' src='")
+		            .append((m.getUserImage() != null && !m.getUserImage().isEmpty()) ? m.getUserImage() : "/resources/profile_file/default_profile.png")
+		            .append("' alt='프로필 이미지' />")
 		            .append("</div>")
 		            .append("<span>")
 		            .append(m.getUserNickname())
@@ -281,6 +309,7 @@ public class MemberController {
 	    return html.toString(); // HTML 문자열 반환
 	}
 	
+
 	//검색 결과(검색 기록 업데이트 및 등록)
 	@GetMapping(value = "keywordSearch.kh", produces = "text/html; charset=UTF-8")
 	public String searchPage(@RequestParam("search") String search, Model model, HttpSession session,
@@ -306,7 +335,7 @@ public class MemberController {
 	    }
 
 	    model.addAttribute("search", search);
-
+	    model.addAttribute("m", vals);
 	    // 검색 결과 페이지로 이동
 	    return "member/searchResult";
 	}
@@ -343,7 +372,7 @@ public class MemberController {
 	@GetMapping(value = "filterResults.kh", produces = "text/html; charset=UTF-8")
 	@ResponseBody
 	public String filterResults(@RequestParam("filterType") String filterType,
-			@RequestParam("search") String search) {
+			@RequestParam("search") String search, Model model) {
 		StringBuilder html = new StringBuilder();
 
 		switch (filterType) {
@@ -359,10 +388,9 @@ public class MemberController {
 			// 해시태그 데이터 가져오기
 			ArrayList<HashTag> hashtags = memberService.searchHashTagsKeyword(search);
 			for (HashTag tag : hashtags) {
-				String encodedHashName = URLEncoder.encode(tag.getHashName(), StandardCharsets.UTF_8);
 				html.append("<li class='user-result'>")
 	                .append("<a class='a-user' href='/member/keywordResult.kh?hashName=")
-	                .append(encodedHashName) // HashTag 객체의 hashName 사용
+	                .append(tag.getHashName()) // HashTag 객체의 hashName 사용
 	                .append("&vals=")
 		            .append(search)
 	                .append("'>")
@@ -398,6 +426,9 @@ public class MemberController {
 		            .append("'>")
 		            .append("<div class='profile-container'>")
 		            .append("<div class='user-profile'>")
+		            .append("<img class='profileImage' src='")
+		            .append((user.getUserImage() != null && !user.getUserImage().isEmpty()) ? user.getUserImage() : "/resources/profile_file/default_profile.png")
+		            .append("' alt='프로필 이미지' />")
 		            .append("</div>")
 		            .append("<span>")
 		            .append(user.getUserNickname())

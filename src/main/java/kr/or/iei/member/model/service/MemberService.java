@@ -109,7 +109,7 @@ public class MemberService {
 		return memberDao.selectTagName(hashName);
 	}
 	
-	public int updateSearchHistory(int userNo, String search, String searchType) {
+	public int updateSearchHistory(int userNo, String searchType, String search) {
 		HashMap<String, Object> update = new HashMap<>();
 		update.put("userNo", userNo);
 		update.put("keyword", search);
@@ -121,6 +121,18 @@ public class MemberService {
 		// TODO Auto-generated method stub
 		return (ArrayList<Search>)memberDao.selectSearchHistoryList(userNo);
 	}
+	public int deleteSearchHistory(int userNo, String search, String searchType) {
+		HashMap<String, Object> delete = new HashMap<>();
+		delete.put("userNo", userNo);
+		delete.put("search", search);
+		delete.put("searchType", searchType);
+		return memberDao.deleteSearchHistory(delete);
+	}
+	
+	public int deleteAllSearchHistory(int userNo) {
+		// TODO Auto-generated method stub
+		 return memberDao.deleteAllSearchHistory(userNo); // DAO 호출
+	}
 
 	public int userDelete(String userId) {
 		return memberDao.userDelete(userId);
@@ -129,6 +141,7 @@ public class MemberService {
 	public int updateProfile(Member member) {
 		return memberDao.updateProfile(member);
 	}
+
 
 
 	
