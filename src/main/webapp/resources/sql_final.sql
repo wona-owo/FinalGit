@@ -29,6 +29,9 @@ create table tbl_user(
        user_image varchar2(50)
 );
 
+alter table tbl_user modify user_image varchar2(200);
+commit; 
+
 -- 관리자 계정
 insert into tbl_user (user_no, user_id, user_pw, user_nickname, user_name, user_address, user_email, user_phone, acct_level) 
               values (seq_user.nextval, 'admin', '1234','관리자','관리자', '서울시 강남구', 'admin@naver.com', '010-0000-0000', 1);
@@ -54,9 +57,13 @@ create table mypet(
 );
 
 -- 검색 테이블
-create table search(
+CREATE TABLE search (
     user_no number references tbl_user(user_no) on delete cascade,
-    keyword varchar2(100) not null
+    keyword varchar2(100) not null,
+    keyword_date date default sysdate not null,
+    search_type char(1)DEFAULT 'G' not null check(search_type in ('G','U','H')), -- G는 검색 U는 userId값 H는 HashTagName값
+    search_user_id VARCHAR2(30), -- user 검색시 userId로 
+    unique (user_no, keyword) -- user_no가 중복된 키워드 입력할때 새롭게 insert되는거 방지
 );
 
 -- 밴목록 테이블
@@ -106,7 +113,7 @@ create table post_file(
 create table hashtag(
     hash_no number primary key,
     post_no number not null references post(post_no) on delete cascade,
-    hash_name varchar2(100) not null
+    hash_name varchar2(100) not null unique
 );
 
 -- 댓글 테이블
