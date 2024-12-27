@@ -142,10 +142,10 @@ public class PostController {
 		
 		//성공시 피드 랜딩
 		if(resHs > 0 && resWr > 0) {			
-			return "member/myFeed";								
+			return "redirect:myFeedFrm.kh";								
 		}else {
 			model.addAttribute("message", "작업에 실패했습니다. 다시 시도해주세요.");
-		    model.addAttribute("url", "/member/myFeed");
+		    model.addAttribute("url", "redirect:myFeedFrm.kh");
 		    return "common/alert";
 		}
 		

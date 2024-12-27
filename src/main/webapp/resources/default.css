@@ -368,7 +368,7 @@ main {
 .post-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개 */
-    gap: 30px; 
+    gap: 10px; 
     margin-left: 50px;
     margin-top: 10px;
 }
