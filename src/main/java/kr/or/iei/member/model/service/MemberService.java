@@ -142,7 +142,9 @@ public class MemberService {
 		return memberDao.updateProfile(member);
 	}
 
-
+	public int updatePassword(Member chkMember) {
+		return memberDao.updatePassword(chkMember);
+	}
 
 	
 

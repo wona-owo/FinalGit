@@ -16,188 +16,203 @@
 <style>
 /* ===== 모달 배경 ===== */
 .modal-backdrop-G {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* 어두운 반투명 */
-  z-index: 9998;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4); /* 어두운 반투명 */
+	z-index: 9990;
 }
 
 /* ===== 모달 창 ===== */
 .modal-G {
-  position: absolute; /* 혹은 fixed */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  min-width: 601px;
-  max-width: 90%;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  z-index: 9999;
+	position: absolute; /* 혹은 fixed */
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	min-width: 601px;
+	max-width: 90%;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+	z-index: 9991;
 }
 
 .modal-content-G {
-  padding: 20px;
-  position: relative;
+	padding: 20px;
+	position: relative;
 }
 
 .modal-content-G h2 {
-  margin: 0 0 1rem;
-  font-size: 1.25rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+	margin: 0 0 1rem;
+	font-size: 1.25rem;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
 }
 
 /* ===== 모달 내부 레이아웃 ===== */
 .modal-body-G {
-  display: flex; /* 좌우 배치 */
-  gap: 20px;
+	display: flex; /* 좌우 배치 */
+	gap: 20px;
 }
 
 /* 왼쪽 영역 */
 .modal-left-G {
-  flex: 0 0 260px; /* 고정너비 (예시) */
-  border-right: 1px solid #f0f0f0;
-  padding-right: 20px;
+	flex: 0 0 260px; /* 고정너비 (예시) */
+	border-right: 1px solid #f0f0f0;
+	padding-right: 20px;
 }
 
 /* 오른쪽 영역 */
 .modal-right-G {
-  flex: 1; /* 나머지 공간 */
+	flex: 1; /* 나머지 공간 */
 }
 
 /* ===== 프로필 이미지 ===== */
 .profile-image-container {
-  width: 150px;
-  height: 150px;
-  margin-left: 55px;
-  border-radius: 50%;
-  overflow: hidden; /* 둥글게 잘림 */
-  background-color: #f5f5f5;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	width: 150px;
+	height: 150px;
+	margin-left: 55px;
+	border-radius: 50%;
+	overflow: hidden; /* 둥글게 잘림 */
+	background-color: #f5f5f5;
+	margin-bottom: 1rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 #profileImagePreview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 50%;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: 50% 50%;
 }
 
 /* 이미지 변경/삭제 버튼 영역 */
 .image-btn-group {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  justify-content: center;
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+	justify-content: center;
 }
 
 /* ===== 아이디/이름 (읽기전용) ===== */
 .info-group {
-  margin-bottom: 0.75rem;
+	margin-bottom: 0.75rem;
 }
 .info-group label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-weight: bold;
+	display: block;
+	margin-bottom: 0.25rem;
+	font-weight: bold;
 }
 .info-group input[readonly] {
-  background-color: #eee;
-  color: #666;
-  outline: none;
-  cursor: default;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 94%;
+	background-color: #eee;
+	color: #666;
+	outline: none;
+	cursor: default;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	width: 94%;
 }
 
 /* ===== 오른쪽 폼 ===== */
 .form-group {
-  margin-bottom: 0.75rem;
-  display: flex;
-  flex-direction: column;
+	margin-bottom: 0.75rem;
+	display: flex;
+	flex-direction: column;
 }
 .form-group label {
-  margin-bottom: 0.25rem;
-  font-weight: bold;
+	margin-bottom: 0.25rem;
+	font-weight: bold;
 }
 .modal-in {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 94%;
+	padding: 0.5rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	width: 94%;
 }
-.form-group label{
-display: flex;
-justify-content: space-between;
+.form-group label {
+	display: flex;
+	justify-content: space-between;
 }
+
 /* 닉네임/전화번호 중복체크 버튼 나란히 배치 */
 .duplication-group .input-with-btn {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
 }
 
 /* ===== 버튼 기본 ===== */
 .btn {
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-  color: #333;
-  font-size: 0.9rem;
-  cursor: pointer;
+	padding: 0.5rem 0.75rem;
+	border: none;
+	border-radius: 4px;
+	background-color: #f0f0f0;
+	color: #333;
+	font-size: 0.9rem;
+	cursor: pointer;
 }
-
 .btn:hover {
-  background-color: #e0e0e0;
+	background-color: #e0e0e0;
 }
 
 /* 삭제 버튼 */
 .btn-delete {
-  background-color: #f7d3d3;
-  color: #a33;
+	background-color: #f7d3d3;
+	color: #a33;
 }
 .btn-delete:hover {
-  background-color: #f5bcbc;
+	background-color: #f5bcbc;
 }
 
 /* 중복확인 버튼 */
 .btn-dup-check {
-  background-color: #ffdd66;
+	background-color: #ffdd66;
 }
 .btn-dup-check:hover {
-  background-color: #ffc107;
+	background-color: #ffc107;
 }
 
 /* 수정/취소 버튼 (오른쪽 정렬) */
 .button-area {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+	margin-top: 1rem;
+	display: flex;
+	justify-content: center;
+	gap: 0.5rem;
 }
 .save-btn {
-  background-color: #4078c0;
-  color: #fff;
+	background-color: #4078c0;
+	color: #fff;
 }
 .save-btn:hover {
-  background-color: #33629a;
+	background-color: #33629a;
 }
 .cancel-btn {
-  background-color: #ccc;
+	background-color: #ccc;
 }
 .cancel-btn:hover {
-  background-color: #bbb;
+	background-color: #bbb;
+}
+#btnDeleteUser {
+	margin-top: 16px;
 }
 
-#btnDeleteUser{
-margin-top:16px;
+/* === 비밀번호 변경 === */
+#updatePwModal {
+	min-width: 300px;
+	max-width: 350px;
+	z-index: 9992;
+}
+#updatePwBody {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.modal-in-pw {
+	padding: 0.2rem;
+	width: 97%;
 }
 </style>
 </head>
@@ -436,6 +451,7 @@ margin-top:16px;
 	                        <input type="text" id="userName" class="modal-in" name="userName" readonly/>
 	                    </div>
 	                    <button id="btnDeleteUser" class="btn btn-delete">탈퇴</button>
+	                    <button id="btnUpdataPw" class="btn">비밀번호 변경</button>
 	                </div>
 
 	                <div class="modal-right-G">
@@ -578,6 +594,9 @@ margin-top:16px;
 	    
 	    // (이벤트) 회원탈퇴 버튼
 	    $("#btnDeleteUser").on("click", deleteUser);
+	    
+	 	// (이벤트) 비밀번호 변경 버튼
+	    $("#btnUpdataPw").on("click", openPasswordModal);
 	    
 	    // 이미지 변경
 	    function imageChange() {
@@ -833,6 +852,158 @@ margin-top:16px;
 	        if (!confirm("정말 회원 탈퇴를 하시겠습니까?")) return;
 	        
 	        window.location.href = "/member/userUnlink.kh";
+	    }
+	    
+		// 비밀번호 변경
+	    function createPasswordHTML(){
+		    return `
+	    	<div class="modal-G" id="updatePwModal" style="display: none;">
+	        	<div class="modal-content-G" id="updatePwContent">
+	            	<h2>비밀번호 변경</h2>
+	            	
+		            <div class="modal-body-G" id="updatePwBody">
+	                    <div class="form-group">
+	   	                    <label for="currentPw">현재 비밀번호</label>
+           	                <input type="password" class="modal-in-pw" id="currentPw" name="currentPw" />
+		                    
+	                        <label for="newPw">새 비밀번호<span id="invalidNewPw"></label>
+    	                    <input type="password" class="modal-in-pw" id="newPw" name="newPw" placeholder="영어+숫자 5~16글자 이내" />
+	            	        
+	                        <label for="cofirmNewPw">새 비밀번호 확인<span id="invalidConPw"></span></label>
+       	                    <input type="password" class="modal-in-pw" id="cofirmNewPw" name="cofirmNewPw" />
+            	        </div>
+                       	
+	                    <div class="button-area">
+	                        <button class="btn save-btn" id="savePwBtn">수정</button>
+    	                    <button class="btn cancel-btn" id="cancelPwBtn">취소</button>
+        	            </div>
+	            	</div>
+	    	    </div>
+		    </div>
+		    `;
+		}
+	    
+	    function openPasswordModal(){
+	    	// 1. 모달 HTML 문자열 생성
+		    const modalHTML = createPasswordHTML();
+
+		    // 2. 임시로 div를 만들고, 그 안에 모달 HTML을 주입
+		    const tempDiv = document.createElement('div');
+		    tempDiv.innerHTML = modalHTML.trim();
+
+		    // 3. 실제 모달 요소(overlay)를 가져오기
+		    // (tempDiv 안에 있는 첫 번째 자식이 우리가 만든 .modal-overlay)
+		    const modalOverlay = tempDiv.firstChild;
+
+		    // 4. body에 모달 요소를 추가 
+		    $('#profileModalBackdrop').append(modalOverlay);
+		    
+		    // 5. 모달 표시	
+		    $("#updatePwModal").css("display", "block");
+		    
+		    
+		 	// (이벤트) 패스워드 취소 버튼
+			$("#cancelPwBtn").on("click", closePassWordModal);
+		    
+		    // (이벤트) 패스워드 수정 버튼
+		    $("#savePwBtn").on("click", passwordUpdate);
+		    
+		    // 패스워드 모달 닫기 함수
+		    function closePassWordModal() {
+		        $("#updatePwModal").remove(); // DOM에서 제거
+		    }
+		    
+		    
+		 	// 유효성 검증 변수
+			let isValid = false;
+			let newPwConfirm = false;
+			let newPwChk = false;
+		    
+			//비밀번호 형식 검증
+			const currPw = $("#currentPw");
+			const newPw = $("#newPw");
+			const newPwMessage = $("#invalidNewPw");
+			
+			const newPwRegExp = /^[a-zA-Z0-9]{5,16}$/;  //5~16 글자 이내
+			
+			newPw.on("input", function(){
+				const value = $(this).val();
+					newPwMessage.text("*현재 비밀번호와 동일");
+					newPwMessage.css("color","red");
+					newPwConfirm = false;
+				if(currPw.val() === newPw.val()){
+					
+				}else if(newPwRegExp.test(value)){
+					newPwMessage.text("");
+					newPwMessage.css("color", "");
+					newPwConfirm = true;
+				}else{
+					newPwMessage.text("*영어+숫자 5~16글자");
+					newPwMessage.css("color","red");
+					newPwConfirm = false;
+				}
+				updateValidity();
+			});
+			
+			//비밀번호 확인
+			const cofirmNewPw = $("#cofirmNewPw");
+			const conPwMessage = $("#invalidConPw");
+			
+			cofirmNewPw.on("input",function(){
+				
+				if(cofirmNewPw.val() == newPw.val()){
+					conPwMessage.text("비밀번호 일치");
+					conPwMessage.css("color", "gray");
+					newPwChk = true;
+				}else{
+					conPwMessage.text("비밀번호 불일치");
+					conPwMessage.css("color", "red");
+					newPwChk = false;
+				}
+				updateValidity();
+			});
+		    
+			// 유효성 업데이트 변수
+			function updateValidity(){
+			isValid = newPwConfirm && newPwChk;
+			}
+			
+		    // 패스워드 수정 함수
+		    function passwordUpdate(){
+		    	if(isValid){
+		    		// 전달할 데이터들을 formData에 세팅
+		            const formData = new FormData();
+		            formData.append("userPw", currPw.val());
+		            formData.append("userNewPw", newPw.val());
+		    		
+		    		$.ajax({
+		                url : "/member/updatePassword.kh",
+		                type: "post",
+		                data: formData,
+		                processData: false, // 데이터를 쿼리 문자열로 변환하지 않음
+		                contentType: false, // 콘텐츠 타입을 설정하지 않음 (브라우저가 자동으로 설정)
+		                success: function(res){
+		                    if(res == 2){
+		                        alert("비밀번호가 변경되었습니다. 재로그인 부탁드립니다.");
+		                        
+		                        window.location.href = "/";
+		                    }else if(res == 1){
+		                    	alert("비밀번호 변경 실패했습니다.");
+		                        return;
+		                	}else{
+		                        alert("비밀번호가 일치하지 않습니다.");
+		                        return;
+		                    }
+		                },
+		                error: function(){
+		                    console.log('ajax 통신 오류');
+		                }
+		            });
+		    	}else{
+		    		alert("유효하지 않은 입력값이 있습니다. 다시 확인해주세요.")
+				 	return;
+		    	}
+		    }
 	    }
 	}
 	</script>

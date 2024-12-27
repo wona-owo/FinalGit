@@ -124,7 +124,9 @@ public class MemberDao {
 		return sqlSession.delete("member.deleteAllSearchHistory", userNo);
 	}
 
-
+	public int updatePassword(Member chkMember) {
+		return sqlSession.update("member.updatePassword", chkMember);
+	}
 
 
 

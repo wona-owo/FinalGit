@@ -580,4 +580,32 @@ public class MemberController {
 			return null;
 		}
 	}
+	
+	// 비밀번호 수정
+	@PostMapping(value="updatePassword.kh", produces="application/json; charset=utf-8")
+	@ResponseBody
+	public int updatePassword(HttpSession session, Member member,
+			@RequestParam(required = false) String userNewPw) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		loginMember.setUserPw(member.getUserPw());
+		
+		// 입력받은 비밀번호와 일치하는 회원 존재 여부 확인
+		Member chkMember = memberService.memberLogin(loginMember);
+		
+		if(chkMember != null) {
+			// chkMember에 새 비밀번호 세팅
+			chkMember.setUserPw(userNewPw);
+			// 일치하는 회원 존재 비밀번호 업데이트
+			int result = memberService.updatePassword(chkMember);
+			
+			if(result > 0) {
+				session.invalidate();
+				return 2;
+			}else {
+				return 1;
+			}
+		}else {
+			return 0;
+		}
+	}
 }

@@ -274,4 +274,11 @@
 			   </if>
 		 where user_id = #{userId}
 	</update>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="updatePassword" parameterType="member">
+		update tbl_user
+		   set user_pw = #{userPw}
+		 where user_id = #{userId}
+	</update>
 </mapper>
