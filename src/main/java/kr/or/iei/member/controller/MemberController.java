@@ -213,13 +213,13 @@ public class MemberController {
 	    int result = 0;
 	    
 	    int userNo = loginMember.getUserNo();
-	    if ("all".equals(search)) {
+	    if ("all".equals(search)) { //전체 삭제 눌렀을때
 	    	result = memberService.deleteAllSearchHistory(userNo);
 	    }else {
 	    	result = memberService.deleteSearchHistory(userNo, search, searchType); // 검색 기록 삭제 메서드 호출	    	
 	    }
 	    
-	    if(result > 0) {
+	    if(result > 0) { 
 	    	return "redirect:/member/search";
 	    }else {
 	    	return "redirect:/"; // 로그인 안 된 경우

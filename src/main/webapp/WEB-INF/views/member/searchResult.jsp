@@ -48,7 +48,15 @@
 	.searchInputBox input[type="search"]::placeholder {
 		color: #aaa;
 	}
-	
+	.dropdown-bottom-line{
+	    border-color: gray;
+	    height: 0;
+	    width:425px;
+	    margin: .5rem 0;
+	    overflow: hidden;
+	    border-top: 1px solid gray;
+	    border-top-color: gray;
+	}
 	.searchResults {
 		width: 425.2px;
 		padding: 0;
@@ -59,6 +67,20 @@
 		margin: 0;
 		padding: 0;
 	}
+	.searchRecord{
+		width: 425.2px;
+		padding: 0;
+		margin: 20px 0 0 0;
+	}
+	.searchRecord ul{
+		margin: 0;
+		padding: 0;
+	}
+	.searchRecordBox li{
+		list-style-type: none;
+		margin-bottom: 8px;
+	}
+	
 	
 	.ResultBox li {
 		list-style-type: none;
@@ -67,8 +89,14 @@
 	
 	.user-result {
 		width: 100%;
+		display: flex;
+		justify-content: space-between; /* 아이템 간의 공간을 균등하게 배분 */
+    	align-items: center; /* 수직 중앙 정렬 */
 		font-size: 16px;
 		height: 62px;
+	}
+	.user-result:hover {
+		background-color: #E6E6E6;
 	}
 	
 	.a-user {
@@ -76,12 +104,14 @@
 		width: 100%; /* 부모 요소의 너비만큼 클릭 가능 */
 		height: 100%;
 		text-decoration: none; /* 밑줄 제거 */
+		margin-left: 10px;
 	}
-	
-	.a-user:hover {
-		background-color: #E6E6E6;
+	.delete-search {
+	    display: flex; /* Flexbox 활성화 */
+	    justify-content: center; /* 수평 중앙 정렬 */
+	    align-items: center; /* 수직 중앙 정렬 */
+	    margin-right: 10px; /* 왼쪽으로 약간 이동 */
 	}
-	
 	.profile-container {
 		display: flex;
 		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
@@ -91,6 +121,32 @@
 		display: flex;
 		line-height: 31px;
 	}	
+	.result-container{
+		display: flex;
+		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
+	}
+	.result-profile{
+		font-size: 24px;
+		width: 45px;
+		height: 45px;
+		border: 1px solid gray;
+		border-radius: 50%;
+		background-color: white;
+		margin: 8px 12px 5px 0;
+		display: flex; /* Flexbox 활성화 */
+	    justify-content: center; /* 수평 가운데 정렬 */
+	    align-items: center; /* 수직 가운데 정렬 */
+	}
+	
+	.SearchName{
+		display: flex;
+	    font-weight: bold;
+	    font-size: 16px;
+	    justify-content: center; /* 수평 가운데 정렬 */
+        align-items: center;
+	    margin: 0; /* 여백 제거 */
+    	line-height: normal; /* 텍스트 높이를 기본값으로 */
+	}
 	.tag-profile{
 		font-size: 24px;
 		width: 45px;
@@ -116,6 +172,15 @@
 	    margin: 0; /* 여백 제거 */
     	line-height: normal; /* 텍스트 높이를 기본값으로 */
 	}
+	.tagNames{
+		display: flex;
+	    font-weight: bold;
+	    font-size: 16px;
+	    justify-content: center; /* 수평 가운데 정렬 */
+        align-items: center;
+	    margin: 0; /* 여백 제거 */
+    	line-height: normal; /* 텍스트 높이를 기본값으로 */
+	}
 	.tagPostCount {
 		display: block; /* block으로 설정하여 아래로 이동 */
 	    color: #666;
@@ -136,6 +201,76 @@
 		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
 		text-align: center; /* 가로 중앙 정렬 */
 	}
+	.profileImage{
+		background-color: #E6E6E6;
+		height: 100%;
+		width: 100%;
+		border-radius: 50%;
+		overflow: hidden; /*나중에 사진 들어가면 깔끔하게 잘리게*/
+	}
+	#ResultCategory{
+		font-weight: bold;
+		font-size: 18px;
+		margin-left: 12px;
+	}
+	.ResultBtnBox{
+		display: flex; /* Flexbox 활성화 */
+		justify-content: space-between; /* 양쪽 끝으로 정렬 */
+		align-items: center; /* 수직 중앙 정렬 */
+		height: 42px;
+	}
+	.resultAllDelete{
+		color: #0095F6;
+	}
+	.resultAllDelete:hover{
+		color: black;
+	}
+	.user-profile{
+		border: 1px solid gray;
+	}
+	.filterResultsBtnContainer {
+		width: 425px;
+		height: 50px; /* 높이 설정 */
+		padding: 0;
+		margin: 0;
+		display: flex; /* Flexbox 활성화 */
+		justify-content: center; /* 수평 중앙 정렬 */
+		align-items: center; /* 수직 중앙 정렬 */
+	}
+
+	.filterResultsBtn {
+		display: flex; /* Flexbox 활성화 */
+		justify-content: space-between; /* 버튼 사이에 공간을 균등하게 배분 */
+		width: 100%; /* 부모 요소의 너비를 차지하도록 설정 */
+		padding: 0; /* 패딩 제거 */
+		margin: 0; /* 마진 제거 */
+	}
+
+	.filterResultsBtn li {
+		flex: 1; /* 각 버튼이 동일한 너비를 가지도록 설정 */
+		text-align: center; /* 텍스트 중앙 정렬 */
+		padding: 0; /* 패딩 제거 */
+		margin: 0; /* 마진 제거 */
+		list-style: none; /* 기본 리스트 스타일 제거 */
+	}
+	.filterResultsBtn li:hover{
+		background-color: gray; 
+	}
+	.filterBtns {
+		display: flex; /* Flexbox 활성화 */
+		align-items: center; /* 수직 중앙 정렬 */
+		justify-content: center; /* 수평 중앙 정렬 */
+		padding: 10px 0; /* 위아래 패딩 추가 */
+		width: 100%;
+		cursor: pointer;
+	}
+	.filterResultsBtn li:first-child {
+		border-right: 1px solid black; /* 첫 번째 li의 오른쪽에 테두리 추가 */
+	}
+
+	.filterResultsBtn li:last-child {
+		border-left: 1px solid black; /* 마지막 li의 왼쪽에 테두리 추가 */
+	}
 </style>
 </head>
 <body>
@@ -148,19 +283,24 @@
 	            </svg>
 	            <input type="search" class="search" name="search" id="search" placeholder="아이디/이름 검색하기" autocomplete="off" onkeyup="searchResults(this.value)">        
 	        </div>
-	        <div >
-		    	<ul>
+	        <br>
+	        <div class="dropdown-bottom-line"></div>
+	        <div class="filterResultsBtnContainer">
+		    	<ul class="filterResultsBtn">
 		    		<li>
-		    			<a onclick="filterResults('post')">게시글</a>
+		    			<a class="filterBtns" onclick="filterResults('post')">게시글</a>
 		    		</li>
+		    		
 		    		<li>
-		    			<a onclick="filterResults('hashtag')">해시태그</a>
+		    			<a class="filterBtns" onclick="filterResults('hashtag')">해시태그</a>
 		    		</li>
+		    		
 		    		<li>
-		    			<a onclick="filterResults('user')">사용자</a>
+		    			<a class="filterBtns" onclick="filterResults('user')">사용자</a>
 		    		</li>
 		    	</ul>
 		    </div>
+		    <div class="dropdown-bottom-line"></div>
 	        <div class="searchResults" id="searchResults">
 	            <ul class="ResultBox" id="ResultBox">
 	            
@@ -210,6 +350,23 @@
                 }
             });
         }
+		
+		let lastClicked = null; // 마지막으로 클릭된 li 요소를 저장할 변수
+
+		$(document).ready(function() {
+			$('.filterResultsBtn li').on('click', function() {
+				// 이전에 클릭된 요소가 있다면 원래 색으로 되돌리기
+				if (lastClicked) {
+					$(lastClicked).css('background-color', ''); // 원래 색으로 되돌리기
+				}
+
+				// 현재 클릭된 요소의 배경색을 gray로 변경
+				$(this).css('background-color', 'gray');
+
+				// 현재 클릭된 요소를 lastClicked에 저장
+				lastClicked = this;
+			});
+		});
 	</script>
 </body>
 </html>

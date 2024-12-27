@@ -201,6 +201,33 @@
 		line-height: 62px; /* 세로 중앙 정렬 (li의 높이와 동일하게 설정) */
 		text-align: center; /* 가로 중앙 정렬 */
 	}
+	.profileImage{
+		background-color: #E6E6E6;
+		height: 100%;
+		width: 100%;
+		border-radius: 50%;
+		overflow: hidden; /*나중에 사진 들어가면 깔끔하게 잘리게*/
+	}
+	#ResultCategory{
+		font-weight: bold;
+		font-size: 18px;
+		margin-left: 12px;
+	}
+	.ResultBtnBox{
+		display: flex; /* Flexbox 활성화 */
+		justify-content: space-between; /* 양쪽 끝으로 정렬 */
+		align-items: center; /* 수직 중앙 정렬 */
+		height: 42px;
+	}
+	.resultAllDelete{
+		color: #0095F6;
+	}
+	.resultAllDelete:hover{
+		color: black;
+	}
+	.user-profile{
+		border: 1px solid gray;
+	}
 </style>
 </head>
 <body>
@@ -216,9 +243,9 @@
         <br>
         <div class="dropdown-bottom-line"></div>
 			<div class="searchRecord" id="searchRecord">
-				<div>
-					<div>최근 검색 항목</div>
-					<div><a  class="resultAllDelete">모두 지우기</a></div>
+				<div class="ResultBtnBox">
+					<div id="ResultCategory">최근 검색 항목</div>
+					<div><a href="#" class="resultAllDelete">모두 지우기</a></div>
 				</div>
 				<ul class="searchRecordBox" id="searchRecordBox">
 					<c:forEach var="search" items="${searchs}">
