@@ -221,7 +221,7 @@ margin-top:16px;
 					 <span>팔로잉 00</span> <%-- 팔로워 테이블 연동 예정 --%>
 					 <span>팔로워 00</span>
 				 </div>
-				 
+																									 
 				 <div> <%--구현안된 페이지는 홈으로 랜딩 --%>
 				 	<button class="profile-button" onclick="openProfileModal()"> 프로필 편집 </button>
 				 	<button class="profile-button" id="updPet" onclick="location.href='/member/mainFeed.kh'"> 마이펫 편집 </button>
@@ -232,16 +232,16 @@ margin-top:16px;
 				 </div>			 
 			 </div>
 		</div> 	
-		
+	
 	    <div class="post-write">
 			<button class="write-button" id="post-button" > 일기 쓰기 </button>
 			<button class="write-button" id="story-button"> 스토리 쓰기 </button>
 	    </div>
-	    	
+    	
 	    <div class="post-container">
 	   		<c:forEach var="post" items="${post}">
 	   			<div class="post-grid">
-	   				<img src="/resources/post_file/${post.postFileName}" alt="thumbnail" class="feed-thumbnail">
+	   				<img class="feed-thumbnail" src="/resources/post_file/${post.postFileName}" alt="thumbnail">
 	   				<p class="hidden-post-content" style="display: none;">${post.postContent}</p>
 	   			</div>
 	   		</c:forEach>
@@ -249,32 +249,32 @@ margin-top:16px;
 	    
 	    <%-- 콘텐츠 모달창 --%>
 	    <div class="modal">
-	    	<div class="modal-place">
-		    <div class="modal-contents"> 		     
-			    <div class="modal-image">
-		    	  <c:forEach var="post" items="${post}">
-		    	    <img src="/resources/post_file/${post.postFileName}" alt="thumbnail">
-		    	  </c:forEach>
-			    </div>
-			    
-		     	 <div class="modal-body">
-		     	  	<div class="top">
-			    	   <div class="modal-user">
-			    	   	<div class="profile-frame" id="modal-profile"></div>
-			    	    <p>${loginMember.userNickname}</p>
-			    	   </div>
-			    	   <a href="#" class="modal-close">X</a>
-			    	 </div>
-			    	 
-			    	 <div class="post-content">
-			    	 	<div class="post-content-text"></div>
-			    	 </div>		
-			    	     	 
-			    	 <%-- 나중에 댓글 넣기 --%>
-		        </div>		        
+		    <div class="modal-place">
+		        <div class="modal-contents">
+		            <div class="modal-image">
+		                <%-- 클릭한 게시글의 이미지를 동적으로 삽입 --%>
+		            </div>
+										   
+		            <div class="modal-body">
+		                <div class="top">
+		                    <div class="modal-user">
+		                        <div class="profile-frame" id="modal-profile"></div>
+		                        <p>${loginMember.userNickname}</p>
+		                    </div>
+		                    <a href="#" class="modal-close">X</a>
+		                </div>
+					
+		                <div class="post-content">
+		                    <div class="post-content-text"></div>
+		                    <div class="post-content-hashtag"></div>
+		                </div>
+				
+		                <%-- 나중에 댓글 조회 추가 영역 --%>
+		            </div>
+		        </div>
 		    </div>
-		    </div>   	        
-	    </div>
+		</div>
+
 	    
 	     <%-- 포스트 작성 모달창 --%>
 	    <div class="post-modal">
@@ -302,10 +302,10 @@ margin-top:16px;
 			  	   <span>태그 추가</span> <br>
 			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag" type="hidden">
 			   </div>
-			   
+		   
 			    <div>
 				    <input type="submit" value="작성" id="post-submit">
-				</div>
+			    </div>
 					
 	    	</div>
 	    </form>	
@@ -317,23 +317,31 @@ margin-top:16px;
 	
 	<script>
 	
-		//모달창 노출
-		const modal = $(".modal");
-		
-		const postText = $(".post-content-text");
-		const postCon = $(".hidden-post-content").text();
-		
-		$(".feed-thumbnail").on("click",function(){
-			modal.css("display","block");
+	    // 콘텐츠 모달 내용 업데이트
+		$(".feed-thumbnail").on("click", function () {
+		    const postGrid = $(this).closest(".post-grid"); // 클릭된 썸네일의 부모 요소
+		    const postId = postGrid.data("id"); // 게시글 ID
+		    const postContent = postGrid.find(".hidden-post-content").text(); // 숨겨진 콘텐츠 가져오기
+		    const postImage = $(this).attr("src"); // 썸네일 이미지 가져오기
 			
-			//콘텐츠 노출
-			postText.text(postCon);
-			
+		    console.log(postImage);
+		    console.log(`Post Image: ${postImage}`);
+
+		  
+		    $(".modal").css("display", "block");
+		    $(".modal .modal-image").html("<img src=" + postImage + " alt=Post File>"); // 이미지 업데이트
+		    $(".modal .post-content-text").text(postContent); // 내용 업데이트
 		});
+	
+		// 모달 닫기
+		$(".modal-close").on("click", function () {
+		    $(".modal").css("display", "none");
+		});
+
 		
 		//모달창 닫기
 		$(".modal-close").on("click", function(){
-			modal.css("display", "none");
+			$(".modal").css("display", "none");
 		})
 		
 		
