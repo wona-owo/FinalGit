@@ -106,11 +106,11 @@
   margin-bottom: 0.25rem;
   font-weight: bold;
 }
-.info-group input[disabled] {
+.info-group input[readonly] {
   background-color: #eee;
   color: #666;
   outline: none;
-  cursor: not-allowed;
+  cursor: default;
   border: 1px solid #ddd;
   border-radius: 4px;
   width: 94%;
