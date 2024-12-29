@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.service.PostService;
 import kr.or.iei.post.model.vo.Post;
@@ -39,6 +40,9 @@ public class PostController {
 	@Qualifier("postService")
 	private PostService postService;
 	
+	@Autowired
+	@Qualifier("followService")
+    private FollowService followService; 
 	
 	//post 이미지 불러오기 + (다른 내용들 포함)
 	@GetMapping("myFeedFrm.kh") //메뉴 버튼이랑 매핑
@@ -47,9 +51,14 @@ public class PostController {
 		Member loginMember = (Member) session.getAttribute("loginMember");
 		
 		int userNo = loginMember.getUserNo();		
+        int followerCount  = followService.getFollowerCount(userNo);  // 나를 팔로우하는 사람 수
+        int followingCount = followService.getFollowingCount(userNo); // 내가 팔로우하는 사람 수
+		
 		ArrayList<Post> imgList = postService.postUserImg(userNo);
 
 		model.addAttribute("post",imgList);
+		model.addAttribute("followerCount", followerCount);
+		model.addAttribute("followingCount", followingCount);
 		
 		return "member/myFeed";
 

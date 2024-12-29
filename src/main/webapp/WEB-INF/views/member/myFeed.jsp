@@ -233,8 +233,8 @@
 				 <span class="myNick" id="myNick">${loginMember.userNickname}</span>
 				 
 				 <div id="follow-text">
-					 <span>팔로잉 00</span> <%-- 팔로워 테이블 연동 예정 --%>
-					 <span>팔로워 00</span>
+    				<span>팔로워 ${followerCount}</span>
+					<span>팔로잉 ${followingCount}</span>
 				 </div>
 																									 
 				 <div> <%--구현안된 페이지는 홈으로 랜딩 --%>

@@ -146,6 +146,11 @@ public class MemberService {
 		return memberDao.updatePassword(chkMember);
 	}
 
+	public int selectUser(String userId) { //유저 No 검색
+		// TODO Auto-generated method stub
+		return memberDao.selectUserNo(userId);
+	}
+
 	
 
 

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
@@ -46,6 +47,11 @@ public class MemberController {
 	@Autowired
 	@Qualifier("postService")
 	private PostService postService;
+	
+	@Autowired
+	@Qualifier("followService")
+    private FollowService followService; 
+	
 	
 	public MemberController() {
 		super();
@@ -166,6 +172,7 @@ public class MemberController {
 		if (loginMember == null) {
 	        return "redirect:/"; // 로그인 안 된 경우
 	    }
+		
 		int userNo = loginMember.getUserNo();
 		if(search != null) {
 			memberService.updateSearchHistory(userNo,searchType,search);
@@ -190,8 +197,27 @@ public class MemberController {
 			 // 사용자 이름을 사용하여 검색 기록을 업데이트
 	        memberService.updateSearchHistory(userNo, searchType,userName); // 사용자 이름 기록 업데이트 메소드 호출
 	        
+	        
 	        Member member = memberService.selectKeywordUser(userName);
-			model.addAttribute("member", member);
+	        
+			int targetUserNo = memberService.selectUser(member.getUserId()); //상대방 No값
+			// 내가 상대방(targetNo)을 팔로우하고 있는지 여부를 DB에서 조회한 결과
+			int myFollowCount   = followService.selectCheckFollor(userNo, targetUserNo);
+			
+			//상대방(targetNo)이 나를 팔로우하고 있는지 여부를 DB에서 조회한 결과
+	        int theyFollowCount = followService.selectCheckFollor(targetUserNo, userNo);
+
+	        //상대방의 팔로잉/팔로워 수
+	        //(해당 프로필 주인의 userNo=targetUserNo 로 조회)
+	        int followerCount  = followService.getFollowerCount(targetUserNo);  // 나를 팔로우하는 사람 수
+	        int followingCount = followService.getFollowingCount(targetUserNo); // 내가 팔로우 중인 사람 수
+
+	        model.addAttribute("member", member);
+	        model.addAttribute("followerCount", followerCount);
+	        model.addAttribute("followingCount", followingCount);
+			model.addAttribute("myFollowCount", myFollowCount);
+			model.addAttribute("theyFollowCount", theyFollowCount);
+			
 	        // 사용자 프로필 페이지로 이동
 	        return "member/userProfile"; // 사용자 프로필 페이지로 이동
 	        
@@ -387,57 +413,68 @@ public class MemberController {
 		case "hashtag":
 			// 해시태그 데이터 가져오기
 			ArrayList<HashTag> hashtags = memberService.searchHashTagsKeyword(search);
-			for (HashTag tag : hashtags) {
-				html.append("<li class='user-result'>")
-	                .append("<a class='a-user' href='/member/keywordResult.kh?hashName=")
-	                .append(tag.getHashName()) // HashTag 객체의 hashName 사용
-	                .append("&vals=")
-		            .append(search)
-	                .append("'>")
-	                .append("<div class='hash-container'>")
-	                .append("<div class='tag-profile'>")
-	                .append("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"black\">")
-	                .append("<path d=\"m240-160 40-160H120l20-80h160l40-160H180l20-80h160l40-160h80l-40 160h160l40-160h80l-40 160h160l-20 80H660l-40 160h160l-20 80H600l-40 160h-80l40-160H360l-40 160h-80Zm140-240h160l40-160H420l-40 160Z\"/>")
-	                .append("</svg>")
-		            .append("</div>")
-		            .append("<div class='tag-span'>")
-	                .append("<span class='tagName'>")
-	                .append(tag.getHashName())
-	                .append("</span>")
-	                .append("<span class='tagPostCount'>게시글 : ")
-	                .append(tag.getPostCount())
-	                .append("</span>")
-	                .append("</div>")
-	                .append("</div>")
-	                .append("</a>")
-	                .append("</li>");
+			if((hashtags.isEmpty())) {
+				html.append("<div class='user-result'>")
+					.append("<span id='search-result'>검색 결과가 없습니다.</span>")
+	        		.append("</div>");
+			}else {
+				for (HashTag tag : hashtags) {
+					html.append("<li class='user-result'>")
+		                .append("<a class='a-user' href='/member/keywordResult.kh?hashName=")
+		                .append(tag.getHashName()) // HashTag 객체의 hashName 사용
+		                .append("&vals=")
+			            .append(search)
+		                .append("'>")
+		                .append("<div class='hash-container'>")
+		                .append("<div class='tag-profile'>")
+		                .append("<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"black\">")
+		                .append("<path d=\"m240-160 40-160H120l20-80h160l40-160H180l20-80h160l40-160h80l-40 160h160l40-160h80l-40 160h160l-20 80H660l-40 160h160l-20 80H600l-40 160h-80l40-160H360l-40 160h-80Zm140-240h160l40-160H420l-40 160Z\"/>")
+		                .append("</svg>")
+			            .append("</div>")
+			            .append("<div class='tag-span'>")
+		                .append("<span class='tagName'>")
+		                .append(tag.getHashName())
+		                .append("</span>")
+		                .append("<span class='tagPostCount'>게시글 : ")
+		                .append(tag.getPostCount())
+		                .append("</span>")
+		                .append("</div>")
+		                .append("</div>")
+		                .append("</a>")
+		                .append("</li>");
+				}
 			}
 			break;
-
 		case "user":
 			// 유저 데이터 가져오기
 			ArrayList<Member> users = memberService.searchUsersKeyword(search);
-			for (Member user : users) {
-				html.append("<li class='user-result'>")
-		            .append("<a class='a-user' href='/member/keywordResult.kh?userName=")
-		            .append(user.getUserNickname())
-		            .append("&vals=")
-		            .append(search)
-		            .append("'>")
-		            .append("<div class='profile-container'>")
-		            .append("<div class='user-profile'>")
-		            .append("<img class='profileImage' src='")
-		            .append((user.getUserImage() != null && !user.getUserImage().isEmpty()) ? user.getUserImage() : "/resources/profile_file/default_profile.png")
-		            .append("' alt='프로필 이미지' />")
-		            .append("</div>")
-		            .append("<span>")
-		            .append(user.getUserNickname())
-		            .append("/")
-		            .append(user.getUserId())
-		            .append("</span>")
-		            .append("</div>")
-		            .append("</a>")
-		            .append("</li>");
+			if(users.isEmpty()) {
+				html.append("<div class='user-result'>")
+					.append("<span id='search-result'>검색 결과가 없습니다.</span>")
+	        		.append("</div>");
+			}else {
+				for (Member user : users) {
+					html.append("<li class='user-result'>")
+					.append("<a class='a-user' href='/member/keywordResult.kh?userName=")
+					.append(user.getUserNickname())
+					.append("&vals=")
+					.append(search)
+					.append("'>")
+					.append("<div class='profile-container'>")
+					.append("<div class='user-profile'>")
+					.append("<img class='profileImage' src='")
+					.append((user.getUserImage() != null && !user.getUserImage().isEmpty()) ? user.getUserImage() : "/resources/profile_file/default_profile.png")
+					.append("' alt='프로필 이미지' />")
+					.append("</div>")
+					.append("<span>")
+					.append(user.getUserNickname())
+					.append("/")
+					.append(user.getUserId())
+					.append("</span>")
+					.append("</div>")
+					.append("</a>")
+					.append("</li>");
+				}				
 			}
 			break;
 		default:
@@ -510,7 +547,25 @@ public class MemberController {
 			
 		}else if("U".equals(searchType)){ //타입이 유저(U)일때
 			Member member = memberService.selectKeywordUser(userName);
+			
+			int targetUserNo = memberService.selectUser(member.getUserId()); //상대방 No값
+			// 내가 상대방(targetNo)을 팔로우하고 있는지 여부를 DB에서 조회한 결과
+			int myFollowCount   = followService.selectCheckFollor(userNo, targetUserNo);
+			
+			//상대방(targetNo)이 나를 팔로우하고 있는지 여부를 DB에서 조회한 결과
+	        int theyFollowCount = followService.selectCheckFollor(targetUserNo, userNo);
+	        
+	        //상대방의 팔로잉/팔로워 수
+	        //(해당 프로필 주인의 userNo=targetUserNo 로 조회)
+	        int followerCount  = followService.getFollowerCount(targetUserNo);  // 나를 팔로우하는 사람 수
+	        int followingCount = followService.getFollowingCount(targetUserNo); // 내가 팔로우하는 사람 수
+
 			model.addAttribute("member", member);
+			model.addAttribute("myFollowCount", myFollowCount);
+			model.addAttribute("theyFollowCount", theyFollowCount);
+			model.addAttribute("followerCount", followerCount);
+			model.addAttribute("followingCount", followingCount);
+			
 			return "member/userProfile";
 			
 		}else { // 둘다 해당 안될때

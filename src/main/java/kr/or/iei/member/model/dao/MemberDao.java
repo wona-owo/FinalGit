@@ -128,6 +128,11 @@ public class MemberDao {
 		return sqlSession.update("member.updatePassword", chkMember);
 	}
 
+	public int selectUserNo(String userId) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.selectUserNo", userId);
+	}
+
 
 
 }

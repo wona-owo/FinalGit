@@ -281,4 +281,10 @@
 		   set user_pw = #{userPw}
 		 where user_id = #{userId}
 	</update>
+	
+	<select id="selectUserNo"  parameterType="string" resultType="int">
+		select user_no as userNo
+		  from tbl_user
+		 where user_id = #{userId}
+	</select>
 </mapper>

@@ -12,6 +12,7 @@
 			<typeAlias type="kr.or.iei.post.model.vo.Post" alias="post"/>
 			<typeAlias type="kr.or.iei.member.model.vo.HashTag" alias="hashTag"/>
 			<typeAlias type="kr.or.iei.member.model.vo.Search" alias="search"/>
+			<typeAlias type="kr.or.iei.follor.model.vo.Follow" alias="follow"/>
 		</typeAliases>
 
 </configuration>
