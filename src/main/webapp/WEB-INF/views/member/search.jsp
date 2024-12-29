@@ -242,6 +242,7 @@
         </div>
         <br>
         <div class="dropdown-bottom-line"></div>
+        	<c:if test="${not empty searchs}">
 			<div class="searchRecord" id="searchRecord">
 				<div class="ResultBtnBox">
 					<div id="ResultCategory">최근 검색 항목</div>
@@ -309,6 +310,7 @@
 					</c:forEach>
 				</ul>
 			</div>
+			</c:if>
 			<div class="searchResults" id="searchResults">
             <ul class="ResultBox" id="ResultBox">
             
