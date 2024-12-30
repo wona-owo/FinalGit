@@ -20,7 +20,7 @@ public class PostDao {
 	@Qualifier("sqlSessionTemplate")
 	private SqlSessionTemplate sqlSession;
 
-	public List<Post> postUserImg(int userNo) {
+	public List<Post> postData(int userNo) {
 		return sqlSession.selectList("post.postData", userNo);
 	}
 
@@ -50,6 +50,18 @@ public class PostDao {
 	    }
 
 	    return totalInserted;
+	}
+
+	public List<String> callTag(int postNo) {
+		return sqlSession.selectList("post.tagList", postNo);
+	}
+
+	public List<String> imgLists(int postNo) {
+		return sqlSession.selectList("post.imgList", postNo);
+	}
+
+	public List<String> thumbNail(int userNo) {
+		return sqlSession.selectList("post.thumbNail",userNo);
 	}
 	
 }

@@ -14,7 +14,17 @@
 			   p.post_date as postDate
 	      from post_file f
 		 join post p on (f.post_no = p.post_no)	  
-		 where p.user_no = ${_parameter}    		
+		 where p.user_no = ${_parameter} and (substr(f.post_file_name,-6,1) = '1')  		
+	</select>
+	
+	<!-- 게시글 이미지 리스트 조회 -->
+	<select id="imgList" parameterType="_int"
+	resultType="String">
+		
+		select f.post_file_name
+		 from post_file f
+		 join post p on (f.post_no = p.post_no)
+	     where p.post_no = ${_parameter}
 	</select>
 	
 	<!-- 게시글 코드(시퀀스) 생성 -->	
@@ -45,6 +55,15 @@
 		values
         (seq_hashtag.nextval, #{postNo}, #{tag})  	
 	</insert>
+	
+	<!-- 해시태그 불러오기 -->
+	<select id="tagList" parameterType="_int"
+	resultType="String">
+		select hash_name
+		from hashtag h
+		join post p on (p.post_no = h.post_no)
+		where h.post_no = ${_parameter}		
+	</select>
 	
 	
 </mapper>

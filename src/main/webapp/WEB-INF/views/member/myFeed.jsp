@@ -255,9 +255,9 @@
     	
 	    <div class="post-container">
 	   		<c:forEach var="post" items="${post}">
-	   			<div class="post-grid">
+	   			<div class="post-grid" data-id="${post.postNo}">
 	   				<img class="feed-thumbnail" src="/resources/post_file/${post.postFileName}" alt="thumbnail">
-	   				<p class="hidden-post-content" style="display: none;">${post.postContent}</p>
+	   				<p class="hidden-post-content" style="display: none;">${post.postContent}</p>			
 	   			</div>
 	   		</c:forEach>
 	    </div>
@@ -278,13 +278,15 @@
 		                    </div>
 		                    <a href="#" class="modal-close">X</a>
 		                </div>
-					
+							
 		                <div class="post-content">
 		                    <div class="post-content-text"></div>
-		                    <div class="post-content-hashtag"></div>
+		                    <div class="post-content-hashtag">
+		                    	<input name="tags" readonly />
+		                    </div>
 		                </div>
 				
-		                <%-- 나중에 댓글 조회 추가 영역 --%>
+		                <%-- 나중에 댓글 조회 추가 영역 --%> 
 		            </div>
 		        </div>
 		    </div>
@@ -331,22 +333,127 @@
 	
 	
 	<script>
-	
-	    // 콘텐츠 모달 내용 업데이트
+	    
+     	//콘텐츠 모달
 		$(".feed-thumbnail").on("click", function () {
 		    const postGrid = $(this).closest(".post-grid"); // 클릭된 썸네일의 부모 요소
 		    const postId = postGrid.data("id"); // 게시글 ID
 		    const postContent = postGrid.find(".hidden-post-content").text(); // 숨겨진 콘텐츠 가져오기
-		    const postImage = $(this).attr("src"); // 썸네일 이미지 가져오기
-			
-		    console.log(postImage);
-		    console.log(`Post Image: ${postImage}`);
-
-		  
+	
+		    // 초기 모달 설정
 		    $(".modal").css("display", "block");
-		    $(".modal .modal-image").html("<img src=" + postImage + " alt=Post File>"); // 이미지 업데이트
-		    $(".modal .post-content-text").text(postContent); // 내용 업데이트
+		    $(".modal .modal-image").html(`
+		        <div class="previous">◀</div>
+		        <img id="current-image" src="" alt="thumbnail">
+		        <div class="next">▶</div>
+		    `);
+		    $(".modal .post-content-text").text(postContent);
+	
+		    // 이미지 슬라이드 호출
+		    imgSlide(postId);
 		});
+	
+		function imgSlide(postNo) {
+		    $.ajax({
+		        url: "/post/imgLists.kh",
+		        method: "get",
+		        data: { postNo: postNo },
+		        success: function (res) {
+		    
+		            let imgIndex = 0; // 초기 인덱스
+		            const totalImages = res.length;
+	
+		            // 첫 이미지 설정
+		            $("#current-image").attr("src", "/resources/post_file/" + res[imgIndex]);
+	
+		            // 이벤트 핸들러
+		            $(".previous").off("click").on("click", function () {
+		                if (imgIndex > 0) {
+		                    imgIndex--;
+		                    $("#current-image").attr("src", "/resources/post_file/" + res[imgIndex]);
+		                    updateButtonState();
+		                }
+		            });
+	
+		            $(".next").off("click").on("click", function () {
+		                if (imgIndex < totalImages - 1) {
+		                    imgIndex++;
+		                    $("#current-image").attr("src", "/resources/post_file/" + res[imgIndex]);
+		                    updateButtonState();
+		                }
+		            });
+	
+		            // 버튼 상태 업데이트
+		            updateButtonState();
+	
+		            function updateButtonState() {
+		                $(".previous").css("visibility", imgIndex === 0 ? "hidden" : "visible");
+		                $(".next").css("visibility", imgIndex === totalImages - 1 ? "hidden" : "visible");
+		            }
+		        },
+		        error: function () {
+		            console.error("AJAX 통신 에러 발생");
+		        },
+		    });
+		}
+
+	    
+	    //해시태그 불러오기
+		function callHashtag(postNo) {
+		    $.ajax({
+		        url: "/post/hashtags.kh", // 서버 요청 URL
+		        method: "GET", // 요청 방식
+		        data: { postNo: postNo }, // 서버에 전달할 데이터
+		        success: function (res) {
+		            // 서버에서 받은 데이터 (배열 형식 가정: ["태그1", "태그2", "태그3"])
+		            const tagsString = res.join(", "); // 콤마로 구분된 문자열로 변환
+
+		            // input 요소에 데이터 설정		            
+		            const input = document.querySelector('input[name="tags"]');
+		            if (!input) {
+		                console.error("태그 입력 필드를 찾을 수 없습니다.");
+		                return;
+		            }
+
+		            input.value = tagsString;
+
+		            // Tagify 초기화 - 이미 초기화된 경우 중복 방지
+		            if (!input._tagify) {
+		                new Tagify(input, {
+		                    readOnly: true, // 읽기 전용 설정
+		                    delimiters: ", ", // 콤마와 공백으로 태그 구분
+		                });
+		            } else {
+		                input._tagify.destroy(); // 기존 Tagify 제거
+		                new Tagify(input, {
+		                    readOnly: true,
+		                    delimiters: ", ",
+		                });
+		            }
+		        },
+		        error: function () {
+		            console.error("AJAX 통신 오류 발생!");
+		        },
+		    });
+		}
+
+		// 게시글 클릭 시 해당 게시글 ID로 해시태그 호출
+		$(".feed-thumbnail").on("click", function () {
+		    const postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기
+		    if (!postNo) {
+		        console.error("게시글 ID를 찾을 수 없습니다.");
+		        return;
+		    }
+		    callHashtag(postNo); // 해시태그 불러오기
+		});
+
+
+		// 게시글 클릭 시 해당 게시글 ID로 해시태그 호출
+		$(".feed-thumbnail").on("click", function () {
+		    const postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기
+		    callHashtag(postNo); // 해시태그 불러오기
+		});
+
 	
 		// 모달 닫기
 		$(".modal-close").on("click", function () {

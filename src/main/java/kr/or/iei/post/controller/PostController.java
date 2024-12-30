@@ -27,6 +27,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.vo.Member;
@@ -44,9 +45,9 @@ public class PostController {
 	@Qualifier("followService")
     private FollowService followService; 
 	
-	//post 이미지 불러오기 + (다른 내용들 포함)
+	//유저 피드 데이터 불러오기(포스트 이미지, 콘텐츠, 팔로우 수, 썸네일 리스트)
 	@GetMapping("myFeedFrm.kh") //메뉴 버튼이랑 매핑
-	public String postUserImg(Model model, HttpSession session) {
+	public String userFeedInfo(Model model, HttpSession session) {
 		 
 		Member loginMember = (Member) session.getAttribute("loginMember");
 		
@@ -54,20 +55,29 @@ public class PostController {
         int followerCount  = followService.getFollowerCount(userNo);  // 나를 팔로우하는 사람 수
         int followingCount = followService.getFollowingCount(userNo); // 내가 팔로우하는 사람 수
 		
-		ArrayList<Post> imgList = postService.postUserImg(userNo);
-
-		model.addAttribute("post",imgList);
+		ArrayList<Post> postData = postService.postData(userNo);
+		
+		model.addAttribute("post", postData);
 		model.addAttribute("followerCount", followerCount);
 		model.addAttribute("followingCount", followingCount);
+		
 		
 		return "member/myFeed";
 
 	}
-
+	
+	//이미지 리스트 반환(ajax)
+	@GetMapping(value="imgLists.kh", produces="application/json; charset=utf-8")
+	@ResponseBody
+	public String imgLists(@RequestParam("postNo")int postNo) {
+		
+		ArrayList<String> result = postService.imgLists(postNo);	
+		return new Gson().toJson(result);
+	}
 	
 	//post 작성
 	@PostMapping("write.kh")
-	public String savePost(@RequestParam("userNo") int userNo, Model model, HttpServletRequest request, @RequestParam("content") String content , @RequestParam("files") MultipartFile [] files, @RequestParam("hashtag") String tagString) {
+	public String savePost(@RequestParam("userNo")int userNo, Model model, HttpServletRequest request, @RequestParam("content") String content , @RequestParam("files") MultipartFile [] files, @RequestParam("hashtag") String tagString) {
 		
 		//1. 미리 시퀀스 세팅
 		int postNo = postService.postNo();
@@ -158,6 +168,14 @@ public class PostController {
 		    return "common/alert";
 		}
 		
+	}
+	
+	//해시태그 불러오기
+	@GetMapping(value="hashtags.kh", produces="application/json; charset=utf-8")
+	@ResponseBody
+	public ArrayList<String> callHashtag(@RequestParam("postNo") int postNo) {	
+		ArrayList<String> tagList = (ArrayList<String>) postService.callHashtag(postNo);		
+		return tagList;
 	}
 	
 

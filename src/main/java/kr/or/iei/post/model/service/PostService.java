@@ -1,6 +1,7 @@
 package kr.or.iei.post.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +19,8 @@ public class PostService {
 	@Qualifier("postDao")
 	private PostDao postDao;
 
-	public ArrayList<Post> postUserImg(int userNo) {
-		return (ArrayList<Post>) postDao.postUserImg(userNo);
+	public ArrayList<Post> postData(int userNo) {
+		return (ArrayList<Post>) postDao.postData(userNo);
 	}
 
 	public int write(Post post) {
@@ -37,6 +38,18 @@ public class PostService {
 	@Transactional //트랜잭션 설정
 	public int hashtag(ArrayList<String> tagArr, int postNo) {
 		return postDao.hashTag(tagArr, postNo);
+	}
+
+	public List<String> callHashtag(int postNo) {
+		return postDao.callTag(postNo);
+	}
+
+	public ArrayList<String> imgLists(int postNo) {
+		return (ArrayList<String>) postDao.imgLists(postNo);
+	}
+
+	public List<String> thumbNail(int userNo) {
+		return postDao.thumbNail(userNo);
 	}
 	
 }

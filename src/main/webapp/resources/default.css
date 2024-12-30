@@ -427,13 +427,32 @@ main {
     height: auto; 
 }
 
+.tagify[readonly]{
+	margin-top: 40px;
+	margin-bottom: 0px;
+	width: 300px;
+	border: none;
+}
+
+
 /* 모달 이미지 */
 .modal-image img {
+	display: block; 
     height: 500px;
-    object-fit: cover; /* 이미지 비율 유지 */
+	align-items: center;
+	justify-content: center;
     border-bottom-left-radius: 15px;
     border-top-left-radius: 15px;
 }
+
+.modal-image {
+    height: 500px;
+    position: relative; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+
 
 /* 모달 본문 */
 .modal-body {
@@ -446,6 +465,25 @@ main {
     flex-direction: column;
 }
 
+.previous,
+.next {
+    position: absolute; 
+    top: 50%; /* 세로 가운데 */
+    transform: translateY(-50%); /* 가운데 정렬 */
+    font-size: 2rem; 
+    color: white; 
+    cursor: pointer; 
+    z-index: 10; 
+    user-select: none; /* 텍스트 선택 방지 */
+}
+
+.previous {
+    left: 10px; /* 왼쪽 여백 */
+}
+
+.next {
+    right: 10px; /* 오른쪽 여백 */
+}
 /* 모달 본문 상단 */
 .modal-body .top {
     padding: 20px;
@@ -477,6 +515,10 @@ main {
 	overflow: auto;
 	height: 100px;
 	border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.post-content-hashtag{
+	width: 200px;
 }
 
 /* 닫기 버튼 */
