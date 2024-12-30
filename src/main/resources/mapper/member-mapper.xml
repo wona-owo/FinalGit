@@ -287,4 +287,18 @@
 		  from tbl_user
 		 where user_id = #{userId}
 	</select>
+	<!-- 아이디 찾기 -->
+	<select id="findUserId" parameterType="map" resultType="string"> 
+		select user_id as userId
+		from tbl_user
+		where user_email = #{email} and user_phone = #{phone}
+	 </select>
+	 
+	<!-- 사용자의 ID와 이메일로 사용자 조회 -->
+	<select id="findUserByIdAndEmail" parameterType="map" resultType="string"> 
+		SELECT user_id 
+		FROM tbl_user 
+		WHERE user_id = #{userId} 
+		AND user_email = #{email} 
+	</select>
 </mapper>
