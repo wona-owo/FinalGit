@@ -313,7 +313,7 @@
 			
 			   <div>
 			   		<span class="modal-title">이미지, 영상파일 추가</span> <br>
-			   		<input name="files" type="file" id="post-input" accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
+			   		<input name="files" type="file" class="post-input" accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
 			   </div>
 			   
 			   <div>
@@ -323,7 +323,7 @@
 			   
 			   <div>
 			  	   <span>태그 추가</span> <br>
-			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag" type="hidden">
+			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" class="post-hashtag" type="hidden">
 			   </div>
 		   
 			    <div>
@@ -334,7 +334,45 @@
 	    </form>	
 	    
 	   </div> 
+	  </div> 	
+	  
+	  
+	     <%-- 포스트 수정 모달창 --%>
+	    <div class="update-modal">
+	    	<div class="modal-place">
+	    		
+	    	<form id="postForm" action="/post/update.kh" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="userNo" value="${sessionScope.loginMember.userNo}">
+	    	<div class="modal-body">
+			    <div class="top">
+			   		 <span class="modal-title">일기 수정</span>
+			    	 <a href="#" class="modal-close" class="post-update-close">X</a>
+			    </div>
+		   			<div class="modal-image">
+		                <%-- 이미지 수정불가, 확인은 가능. --%>
+		            </div>
+			   <div>
+				   <span>내용 수정</span> <br>
+				   <textarea name="content" rows="10" cols="55" style="resize: none;"></textarea> 
+			   </div>
+			   
+			   <div>
+			  	   <span>태그 수정</span> <br>
+			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" class="post-hashtag" type="hidden">
+			   </div>
+		   
+			    <div>
+				    <input type="submit" value="작성" id="update-submit">
+			    </div>
+					
+	    	</div>
+	    </form>	
+	    
+	   </div> 
 	  </div> 			    
+	  
+	  
+	  		    
 	</main>
 	
 	
@@ -459,6 +497,8 @@
 		 //게시물 삭제
 		 $(".feed-thumbnail").on("click", function () {
 			let postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기 
+			
+			
 			$("#post-delete").on("click",function(){
 				if(confirm("게시물을 삭제하시겠습니까?")){
 						
@@ -482,24 +522,22 @@
 		  
 			//게시물 수정
 			$("#post-update").on("click",function(){
+				let postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기 
 				
+				
+				$("#post-update").on("click",function(){
+					  $(".content-modal").css("display", "none");
+					  $(".update-modal").css("display","block");
+					  imgSlide(postNo);
+				});			
 			});	 
-		 })
-		
-		
+		 });
 		
 	
-		// 모달 닫기
+		// 포스트 조회 닫기
 		$(".modal-close").on("click", function () {
 		    $(".modal").css("display", "none");
 		});
-
-		
-		//모달창 닫기
-		$(".modal-close").on("click", function(){
-			$(".modal").css("display", "none");
-		})
-		
 		
 		//포스트 작성 열기
 		$("#post-button").on("click",function(){
@@ -511,9 +549,14 @@
 			$(".post-modal").css("display","none");		
 		});
 		
+		// 포스트 수정 닫기
+		$(".modal-close").on("click", function () {
+		    $(".update-modal").css("display", "none");
+		});
+		
 		
 		 // Tagify 초기화 및 옵션 설정
-	    const tagify = new Tagify($('#post-hashtag')[0], {
+	    const tagify = new Tagify($('.post-hashtag')[0], {
 	        delimiters: ", ",           // 쉼표와 공백으로 태그 구분
 	        maxTags: 5,                 // 최대 5개의 태그 허용
 	        pattern: /^[가-힣]{1,30}$/,  // 한글태그
