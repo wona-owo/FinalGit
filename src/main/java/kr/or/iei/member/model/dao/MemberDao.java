@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.member.model.vo.Mypet;
 import kr.or.iei.member.model.vo.Search;
 import kr.or.iei.post.model.vo.Post;
 
@@ -144,5 +145,31 @@ public class MemberDao {
 		return sqlSession.selectOne("member.findUserByIdAndEmail", params);
 	}
 
+	public List<String> selectBreedType(String petType) {
+        return sqlSession.selectList("member.selectBreedType", petType);
+    }
 
+    public List<Mypet> selectMypet(String userNo) {
+        return sqlSession.selectList("member.selectMypet", userNo);
+    }
+
+    public int dupChkMypet(Mypet mypet) {
+        return sqlSession.selectOne("member.dupChkMypet", mypet);
+    }
+    
+    public int overChkMypet(Mypet mypet) {
+        return sqlSession.selectOne("member.overChkMypet", mypet);
+    }
+
+    public int insertMypet(Mypet mypet) {
+        return sqlSession.insert("member.insertMypet", mypet);
+    }
+
+    public int deleteMypet(Mypet mypet) {
+        return sqlSession.delete("member.deleteMypet", mypet);
+    }
+
+    public int updateMypet(Mypet mypet) {
+        return sqlSession.update("member.updateMypet", mypet);
+    }
 }

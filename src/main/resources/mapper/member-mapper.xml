@@ -301,4 +301,74 @@
 		WHERE user_id = #{userId} 
 		AND user_email = #{email} 
 	</select>
+	
+	<!-- 품종리스트 가져오기 -->
+    <select id="selectBreedType" parameterType="string" resultType="string">
+        select breed_${_parameter}_name as breedType
+          from breed_${_parameter}
+      order by breed_${_parameter}_name
+    </select>
+    
+    <!-- 반려동물 리스트 -->
+    <select id="selectMypet" parameterType="string" resultType="mypet">
+        select pet_no as petNo,
+               user_no as userNo,
+               pet_name as petName,
+               pet_gender as petGender,
+               pet_type as petType,
+               breed_type as breedType
+          from myPet
+           where user_no = #{userNo}
+    </select>
+    
+    <!-- 중복 반려동물 조회 -->
+    <select id="dupChkMypet" parameterType="mypet" resultType="_int">
+        select count(*)
+          from myPet
+           where user_no = #{userNo}
+           and pet_name = #{petName}
+    </select>
+    
+    <!-- 반려동물 마리수 조회 -->
+    <select id="overChkMypet" parameterType="mypet" resultType="_int">
+        select count(*)
+          from myPet
+           where user_no = #{userNo}
+    </select>
+    
+    <!-- 반려동물 추가 -->
+    <insert id="insertMypet" parameterType="mypet">
+        insert into mypet
+            (pet_no,
+             user_no,
+             pet_name,
+             pet_gender,
+             pet_type,
+             breed_type)
+        values
+            (seq_mypet.nextval,
+             #{userNo},
+             #{petName},
+             #{petGender},
+             #{petType},
+             #{breedType}) 
+    </insert>
+    
+    <!-- 반려동물 삭제 -->
+    <delete id="deleteMypet" parameterType="mypet">
+        delete from mypet
+              where pet_no = #{petNo}
+                and user_no = #{userNo}
+    </delete>
+    
+    <!-- 반려동물 수정 -->
+    <update id="updateMypet" parameterType="mypet">
+        update mypet
+           set pet_name = #{petName},
+               pet_gender = #{petGender},
+               pet_type = #{petType},
+               breed_type = #{breedType}
+         where pet_no = #{petNo}
+           and user_no = #{userNo}
+    </update>
 </mapper>

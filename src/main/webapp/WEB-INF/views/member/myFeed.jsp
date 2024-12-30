@@ -13,6 +13,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+<%-- select2 --%>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <style>
 /* ===== 모달 배경 ===== */
 .modal-backdrop-G {
@@ -214,6 +217,56 @@
 	padding: 0.2rem;
 	width: 97%;
 }
+
+/* === 마이펫 편집 === */
+.radio-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.radio-group label {
+    display: flex;
+    width: 110px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    gap: 5px;
+}
+.radio-group input {
+    width: 30px;
+    height: 30px;
+}
+.select2-container{
+    z-index: 9992;
+}
+.pet-box{
+    width:130px; 
+    height:120px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 4px; 
+    box-sizing: border-box; 
+    text-align: center; 
+}
+.pet-image-container {
+    width: 120px;
+    height: 60px;
+    border-radius: 15%;
+    overflow: hidden; /* 둥글게 잘림 */
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#pet-box-container{
+    display: grid;
+    grid-template-columns: repeat(2, 130px);
+    grid-auto-rows: 120px;
+    gap: 8px;     
+}
 </style>
 </head>
 <body>
@@ -239,7 +292,7 @@
 																									 
 				 <div> <%--구현안된 페이지는 홈으로 랜딩 --%>
 				 	<button class="profile-button" onclick="openProfileModal()"> 프로필 편집 </button>
-				 	<button class="profile-button" id="updPet" onclick="location.href='/member/mainFeed.kh'"> 마이펫 편집 </button>
+				 	<button class="profile-button" id="updPet" onclick="openMypetModal()"> 마이펫 편집 </button>
 				 </div>	
 				 <div>	
 				 	<button class="profile-button" id="allBook" onclick="location.href='/member/mainFeed.kh'"> 북마크 확인 </button>
@@ -1196,6 +1249,347 @@
 		    	}
 		    }
 	    }
+	}
+	
+	// 마이펫 HTML
+	function createMypetHTML(){
+	    return `
+	    <div class="modal-backdrop-G" id="mypetModalBackdrop" style="display: none;">
+	    <div class="modal-G" id="mypetModal" style="display: none;">
+	        <div class="modal-content-G">
+	            <h2>마이펫 편집</h2>
+
+	            <div class="modal-body-G">
+	                <div class="modal-left-G" id="pet-box-container">
+	                </div>
+
+	                <div class="modal-right-G">
+	                    <div class="form-group">
+	                        <label for="petName">이름</label>
+                            <input type="text" class="modal-in" id="petName" name="petName" />
+	                    </div>
+
+	                    <div class="form-group">
+	                        <label>성별</label>
+	                        <div class="radio-group">
+                        	<label><input type="radio" name="petGender" value="M"> 수컷  </label>
+                            <label><input type="radio" name="petGender" value="F"> 암컷  </label>
+                            </div>
+	                    </div>
+
+	                    <div class="form-group">
+	                        <label>종류</label>
+	                        <div class="radio-group">
+                        	<label><input type="radio" name="petType" value="DOG"> 댕댕이</label>
+                            <label><input type="radio"  name="petType" value="CAT"> 냥냥이</label>
+                            </div>
+	                    </div>
+
+	                    <div class="form-group">
+	                        <label for="breedType">품종</label>
+							<select class="breedType" name="breedType">
+								
+							</select>
+	                    </div>
+
+	                    <div class="button-area">
+	                    	<button class="btn btn-dup-check" id="insertPetBtn">추가</button>
+	                        <button class="btn save-btn" id="updatePetBtn">수정</button>
+	                        <button class="btn cancel-btn" id="cancelPetBtn">취소</button>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	    `;
+	}
+	
+	function openMypetModal(){
+    	// 1. 모달 HTML 문자열 생성
+	    const modalHTML = createMypetHTML();
+
+	    // 2. 임시로 div를 만들고, 그 안에 모달 HTML을 주입
+	    const tempDiv = document.createElement('div');
+	    tempDiv.innerHTML = modalHTML.trim();
+
+	    // 3. 실제 모달 요소(overlay)를 가져오기
+	    // (tempDiv 안에 있는 첫 번째 자식이 우리가 만든 .modal-overlay)
+	    const modalOverlay = tempDiv.firstChild;
+
+	    // 4. body에 모달 요소를 추가 
+	    $('#myfeed-main').append(modalOverlay);
+	    
+	    // 5. 모달 표시	
+	    $("#mypetModalBackdrop").css("display", "block");
+	    $("#mypetModal").css("display", "block");
+	    
+	    const userNo = "${loginMember.userNo}";
+ 	    
+	    $(document).ready(function() {
+	        $('.breedType').select2();
+	        
+	        selectUserMypet(userNo);
+	    	
+	     	// petType 변경 이벤트 추가
+	        $("input[name='petType']").on("change", function () {
+	            const selectedType = $(this).val(); // 선택된 petType 값
+	            updateBreedOptions(selectedType); // 옵션 업데이트 호출
+	        });
+	    });
+	    
+	    // 내 반려동물 리스트
+	    function selectUserMypet(userNo){
+	    	$.ajax({
+	            url: '/member/selectMypet.kh',
+	            type: 'POST',
+	            data: { userNo: userNo }, // petType을 파라미터로 전달
+	            success: function (res) {
+	            	const petBoxContainer = $('#pet-box-container');
+	            	petBoxContainer.empty();
+	            	
+	            	res.forEach(mypet => {
+	                    const $petBox = $('<div>', { class: 'pet-box' });
+	                    
+	                    const $petImageContainer = $('<div>', { class: 'pet-image-container' });
+	                    const $img = $('<img>', {
+	                        id: 'profileImagePreview',
+	                        src: '/resources/css_image/' + mypet.petType + '.png',
+	                        alt: '반려동물 이미지'
+	                    });
+	                    $petImageContainer.append($img);
+
+	                    const $petNameDiv = $('<div>', { 
+	                        class: 'petName',
+	                        text: mypet.petName
+	                    });
+	                    
+	                    const $cancelBtn = $('<button>', {
+	                        class: 'btn btn-delete',
+	                        id: 'deletePetBtn_'+mypet.petNo,
+	                        text: '삭제'
+	                        
+	                    // 삭제 버튼 이벤트
+	                    }).on("click", deletePet);
+
+	                    $petBox.append($petImageContainer);
+	                    $petBox.append($petNameDiv);
+	                    $petBox.append($cancelBtn);
+
+	                    petBoxContainer.append($petBox);
+	                    
+	                 	// `pet-box` 클릭 이벤트
+	                    $petBox.on('click', function () {
+	                    	
+	                        // 다른 박스의 선택 상태 초기화
+	                        $('.pet-box').css('background-color', '');
+	                        $('.pet-box').find('#petNo').remove();
+	                        
+	                        // 클릭된 박스 선택
+	                        $petBox.css('background-color', '#f0a235');
+	                        
+	                        const $hiddenInput = $('<input>', {
+		                    	id: 'petNo',
+		                        type: 'hidden', 
+		                        value: mypet.petNo 
+		                    });
+	                        $petBox.append($hiddenInput)
+	                        
+	                        // 오른쪽 폼 값 설정
+	                        $('#petName').val(mypet.petName);
+	                        $('input[name="petGender"][value="' + mypet.petGender + '"]').prop('checked', true);
+	                        $('input[name="petType"][value="' + mypet.petType + '"]').prop('checked', true);
+	                        updateBreedOptions(mypet.petType, mypet.breedType);
+	                    });
+	                });
+
+	            },
+	            error: function(xhr, status, error) {
+	                console.error("에러 발생:", error);
+	            }
+	        });
+	    }
+	    
+		// 품종 옵션 업데이트 함수
+	    function updateBreedOptions(petType, selectedBreed = null) {
+	        // AJAX 요청으로 DB에서 품종 목록 가져오기
+	        $.ajax({
+	            url: '/member/breedOption.kh', // 서버 API 엔드포인트
+	            type: 'GET',
+	            data: { petType: petType }, // petType을 파라미터로 전달
+	            success: function (response) {
+	                const breedSelect = $('.breedType');
+	                breedSelect.empty(); // 기존 옵션 제거
+	                
+	                // 받아온 데이터로 옵션 추가
+	                response.forEach(breedName => {
+	                	const option = new Option(breedName, breedName, false, false);
+	                    breedSelect.append(option);
+	                });
+
+	                // Select2 다시 초기화
+	                breedSelect.trigger('change');
+	                
+	             	// 선택된 값 설정
+	                if (selectedBreed) {
+	                    breedSelect.val(selectedBreed).trigger('change');
+	                }
+	            },
+	            error: function (xhr, status, error) {
+	                console.error("옵션 가져오기 실패:", error);
+	            }
+	        });
+	    }
+	    
+	 	// (이벤트) 모달 바깥(배경) 클릭 시 닫기
+	    $("#mypetModalBackdrop").on("click", function (event) {
+	        if (event.target === this) {
+	        	closeMypetModal();
+	        }
+	    });
+
+	    // (이벤트) 취소 버튼
+	    $("#cancelPetBtn").on("click", closeMypetModal);
+	    
+	    // 모달 닫기 함수
+	    function closeMypetModal() {
+	        $("#mypetModalBackdrop").remove(); // DOM에서 제거
+	    }
+	    
+	    // (이벤트) 추가 버튼
+	    $("#insertPetBtn").on("click", insertPet);
+	    
+	 	// (이벤트) 수정 버튼
+	    $("#updatePetBtn").on("click", updatePet);
+	 
+	 	// petName 확인
+	 	function chkPetName(petName, petGender, petType, breedType){
+	 		// petName의 글자수 확인
+	 	    const isValid = /^[가-힣]{1,5}$/.test(petName);
+	 	    
+	 		if (!petName || !petGender || !petType || !breedType) {
+	 			alert('입력하지 않은 값이 있습니다.');
+	 			return false;
+	 	    }
+	 		
+	 		if (!isValid) {
+	 			alert("펫 이름은 한글로 작성해야 하며, 5글자를 초과할 수 없습니다.");
+	 	        return false;
+	 	    }
+	 		
+	 		return true;
+	 	}
+	 	
+	 	// 반려동물 추가
+	 	function insertPet(){
+	 		const petName = $('#petName').val().trim();
+	 	    const petGender = $('input[name="petGender"]:checked').val();
+	 	    const petType = $('input[name="petType"]:checked').val();
+	 	    const breedType = $('.breedType').val();
+	 		
+	 		// 유효성 검사
+	 	    if (!chkPetName(petName, petGender, petType, breedType)) {
+	 	        return; // 유효하지 않은 경우 종료
+	 	    }
+	 	    
+	 		$.ajax({
+	 	        url: '/member/insertMypet.kh',
+	 	        type: 'POST',
+	 	        data: {
+	 	            petName: petName,
+	 	            petGender: petGender,
+	 	            petType: petType,
+	 	            breedType: breedType,
+	 	            userNo: userNo},
+	 	        success: function (response) {
+	 	        	if (response === 'success') {
+	 	                alert('반려동물이 성공적으로 추가되었습니다.');
+	 	                selectUserMypet(userNo);
+	 	            } else if (response === 'duplicate') {
+	 	                alert('이미 동일한 이름의 반려동물이 존재합니다.');
+	 	            } else if (response === 'over'){
+	 	            	alert('반려동물은 6마리까지 등록 가능합니다.');
+	 	            } else {
+	 	                alert('반려동물 추가에 실패했습니다. 다시 시도해주세요.');
+	 	            }
+	 	        },
+	 	        error: function (xhr, status, error) {
+	 	            console.error('반려동물 추가 중 오류 발생:', error);
+	 	        }
+	 	    });
+
+	 	}
+	 	
+	 	function updatePet(){
+	 		const petNo = $('#petNo').val();
+	 		const petName = $('#petName').val().trim();
+	 	    const petGender = $('input[name="petGender"]:checked').val();
+	 	    const petType = $('input[name="petType"]:checked').val();
+	 	    const breedType = $('.breedType').val();
+			console.log(petNo);
+	 	   
+	 		if (!petNo) {
+	 	        alert('수정할 반려동물을 선택하거나 지정해주세요.');
+	 	        return;
+	 	    }
+	 	    
+	 		// 유효성 검사
+	 	    if (!chkPetName(petName, petGender, petType, breedType)) {
+	 	        return; // 유효하지 않은 경우 종료
+	 	    }
+	 		
+	 		$.ajax({
+	 	        url: '/member/updateMypet.kh',
+	 	        type: 'POST',
+	 	        data: {
+	 	            petNo: petNo,
+	 	            userNo : userNo,
+	 	            petName: petName,
+	 	            petGender: petGender,
+	 	            petType: petType,
+	 	            breedType: breedType
+	 	        },
+	 	        success: function (response) {
+	 	            if (response === 'success') {
+	 	                alert('반려동물이 성공적으로 수정되었습니다.');
+	 	                selectUserMypet("${loginMember.userNo}"); // 갱신
+	 	            } else {
+	 	                alert('반려동물 수정에 실패했습니다. 다시 시도해주세요.');
+	 	            }
+	 	        },
+	 	        error: function (xhr, status, error) {
+	 	            console.error('반려동물 수정 중 오류 발생:', error);
+	 	        }
+	 	    });
+	 	}
+	 	
+	 	// 반려동물 삭제
+	 	function deletePet(e){
+	 		const petNo = $(e.target).attr('id').split('_')[1];
+	 		
+	 		if (!confirm('정말로 이 반려동물을 삭제하시겠습니까?')) {
+	 	        return;
+	 	    }
+	 		
+	 		$.ajax({
+	 	        url: '/member/deleteMypet.kh',
+	 	        type: 'POST',
+	 	        data: { petNo: petNo,
+	 	        		userNo: userNo},
+	 	        success: function (response) {
+	 	            if (response === 'success') {
+	 	                alert('반려동물이 성공적으로 삭제되었습니다.');
+	 	                selectUserMypet(userNo); // 갱신
+	 	            } else {
+	 	                alert('반려동물 삭제에 실패했습니다. 다시 시도해주세요.');
+	 	            }
+	 	        },
+	 	        error: function (xhr, status, error) {
+	 	            console.error('반려동물 삭제 중 오류 발생:', error);
+	 	        }
+	 	    });
+	 	}
+	 		
 	}
 	</script>
 </body>

@@ -13,6 +13,7 @@
 			<typeAlias type="kr.or.iei.member.model.vo.HashTag" alias="hashTag"/>
 			<typeAlias type="kr.or.iei.member.model.vo.Search" alias="search"/>
 			<typeAlias type="kr.or.iei.follor.model.vo.Follow" alias="follow"/>
+			<typeAlias type="kr.or.iei.member.model.vo.Mypet" alias="mypet"/>
 		</typeAliases>
 
 </configuration>

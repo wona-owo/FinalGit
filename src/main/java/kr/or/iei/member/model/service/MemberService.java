@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import kr.or.iei.member.model.dao.MemberDao;
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.member.model.vo.Mypet;
 import kr.or.iei.member.model.vo.Search;
 import kr.or.iei.post.model.vo.Post;
 
@@ -173,4 +174,31 @@ public class MemberService {
 		return memberDao.updatePassword(member); // DAO 호출
 	}
 
+	public ArrayList<String> selectBreedType(String petType) {
+        return (ArrayList<String>) memberDao.selectBreedType(petType);
+    }
+
+    public ArrayList<Mypet> selectMypet(String userNo) {
+        return (ArrayList<Mypet>) memberDao.selectMypet(userNo);
+    }
+
+    public int dupChkMypet(Mypet mypet) {
+        return memberDao.dupChkMypet(mypet);
+    }
+
+    public int overChkMypet(Mypet mypet) {
+        return memberDao.overChkMypet(mypet);
+    }
+    
+    public int insertMypet(Mypet mypet) {
+        return memberDao.insertMypet(mypet);
+    }
+
+    public int deleteMypet(Mypet mypet) {
+        return memberDao.deleteMypet(mypet);
+    }
+
+    public int updateMypet(Mypet mypet) {
+        return memberDao.updateMypet(mypet);
+    }
 }

@@ -41,6 +41,7 @@ import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.member.model.vo.Mypet;
 import kr.or.iei.member.model.vo.Search;
 import kr.or.iei.post.model.service.PostService;
 import kr.or.iei.post.model.vo.Post;
@@ -663,12 +664,15 @@ public class MemberController {
 			int result = memberService.updatePassword(chkMember);
 			
 			if(result > 0) {
+				// 비밀번호 변경완료 시
 				session.invalidate();
 				return 2;
 			}else {
+				// 비밀번호 변경실패 시
 				return 1;
 			}
 		}else {
+			// 비밀번호가 일치하지 않을 시
 			return 0;
 		}
 	}
@@ -772,5 +776,77 @@ public class MemberController {
 			e.printStackTrace();
 		}
 	}
+	
+	// 품종 가져오기
+    @GetMapping("breedOption.kh")
+    @ResponseBody
+    public ArrayList<String> breedOption(@RequestParam String petType) {
+        ArrayList<String> breedList = memberService.selectBreedType(petType);
+        return breedList;
+    }
+    
+    // 내 반려동물 가져오기
+    @PostMapping("selectMypet.kh")
+    @ResponseBody
+    public ArrayList<Mypet> selectMypet (@RequestParam String userNo) {
+        ArrayList<Mypet> petList = memberService.selectMypet(userNo);
+        return petList;
+    }
+    
+    // 반려동물 추가
+    @PostMapping("insertMypet.kh")
+    @ResponseBody
+    public String insertMypet (Mypet mypet) {
+        // 반려동물 중복체크
+        int result = memberService.dupChkMypet(mypet);
+        
+        if(result > 0) {
+            // 중복 이름의 반려동물 존재
+            return "duplicate";
+        }else {
+            // 반려동물 6마리 이상 등록 시, 등록 실패
+            result = memberService.overChkMypet(mypet);
+            
+            if(result > 5) {
+                return "over";
+            }else {
+                result = memberService.insertMypet(mypet);
+                
+                if(result > 0) {
+                    return "success";
+                } else {
+                    return "fail";
+                }
+            }
+            
+        }
+    }
+    
+    // 반려동물 삭제
+    @PostMapping("deleteMypet.kh")
+    @ResponseBody
+    public String deleteMypet (Mypet mypet) {
+        int result = memberService.deleteMypet(mypet);
+        
+        if(result > 0) {
+            return "success";
+        } else {
+            return "fail";
+        }
+        
+    }
+    
+    // 반려동물 수정
+    @PostMapping("updateMypet.kh")
+    @ResponseBody
+    public String updateMypet (Mypet mypet) {
+        int result = memberService.updateMypet(mypet);
+        
+        if(result > 0) {
+            return "success";
+        } else {
+            return "fail";
+        }
+    }
 }
 
