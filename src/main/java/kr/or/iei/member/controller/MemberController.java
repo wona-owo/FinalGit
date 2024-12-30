@@ -5,13 +5,22 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Random;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -663,4 +672,108 @@ public class MemberController {
 			return 0;
 		}
 	}
+	
+	//아이디 비밀번호 찾기
+	@PostMapping(value = "find.kh", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String findUserId(@RequestParam("email") String email, @RequestParam("phone") String phone,
+			@RequestParam("userId") String userId, @RequestParam("actionType") String actionType) {
+		System.out.println(actionType);
+		if ("findId".equals(actionType)) {
+			String userIds = memberService.findUserId(email, phone);
+			if (userId != null) {
+				return "가입한 아이디는: " + userIds;
+			} else {
+				return "해당 정보로 가입된 아이디가 없습니다.";
+			}
+		} else if ("findPassword".equals(actionType)) {
+			String checkuser = memberService.selectPwUser(userId, email);
+			System.out.println("유저 정보가 있는지 없는지 :" + checkuser);
+			if (checkuser != null) {
+				String newPw = generateRandomPassword();
+				System.out.println("임시 비밀번호 : " + newPw);
+				int result = memberService.replaceMemberPw(userId, newPw);
+				if (result > 0) {
+					System.out.println("result 값 : " + result);
+					sendEmail(email, newPw);
+					return "임시 비밀번호가 이메일로 발송되었습니다.";
+				} else {
+					return "비밀번호 업데이트에 실패했습니다.";
+				}
+			} else {
+				return "해당 정보로 가입된 아이디가 없습니다.";
+			}
+		}
+		return "유효하지 않은 요청입니다.";
+	}
+
+	// 랜덤 비밀번호 생성 메서드
+	private String generateRandomPassword() {
+		String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String lower = "abcdefghijklmnopqrstuvwxyz";
+		String digit = "0123456789";
+		String special = "!@#$";
+		String allStr = upper + lower + digit + special;
+
+		SecureRandom random = new SecureRandom();
+		StringBuilder ranPw = new StringBuilder();
+
+		// 각각 최소 1개 이상은 포함되도록
+		ranPw.append(upper.charAt(random.nextInt(upper.length())));
+		ranPw.append(lower.charAt(random.nextInt(lower.length())));
+		ranPw.append(digit.charAt(random.nextInt(digit.length())));
+		ranPw.append(special.charAt(random.nextInt(special.length())));
+
+		for (int i = 0; i < 8; i++) { // 나머지 8자리를 랜덤으로 추가
+			ranPw.append(allStr.charAt(random.nextInt(allStr.length())));
+		}
+
+		// 임시 비밀번호를 무작위로 섞기
+		char[] allChars = ranPw.toString().toCharArray();
+		for (int i = 0; i < allChars.length; i++) {
+			int ranIdx = random.nextInt(allChars.length);
+			char temp = allChars[i];
+			allChars[i] = allChars[ranIdx];
+			allChars[ranIdx] = temp;
+		}
+
+		return new String(allChars);
+	}
+
+	// 이메일 전송 메서드
+	private void sendEmail(String toEmail, String newPassword) {
+		Properties prop = new Properties();
+		prop.put("mail.smtp.host", "smtp.naver.com");
+		prop.put("mail.smtp.port", "465");
+		prop.put("mail.smtp.auth", "true");
+		prop.put("mail.smtp.ssl.enable", "true");
+		prop.put("mail.smtp.ssl.trust", "smtp.naver.com");
+
+		// Session 객체 생성
+		Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+			@Override
+			protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+				
+				return new javax.mail.PasswordAuthentication("이메일", "비밀번호"); //발신자
+			}
+		});
+
+		try {
+			MimeMessage msg = new MimeMessage(session);
+			msg.setSentDate(new Date());
+			msg.setFrom(new InternetAddress("이메일 주소", "댕냥일기")); //발신자
+			InternetAddress to = new InternetAddress(toEmail); 
+			msg.addRecipient(Message.RecipientType.TO, to); //수신자
+			msg.setSubject("임시 비밀번호 발급");
+			msg.setContent("임시 비밀번호는 [<span style='color:red;font-weight:bold;'>" + newPassword + "</span>]입니다",
+					"text/html; charset=utf-8");
+			Transport.send(msg);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
+

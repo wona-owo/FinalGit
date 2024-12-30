@@ -151,7 +151,26 @@ public class MemberService {
 		return memberDao.selectUserNo(userId);
 	}
 
-	
+	// 아이디 찾기
+	public String findUserId(String email, String phone) {
+		HashMap<String, String> params = new HashMap<>();
+		params.put("email", email);
+		params.put("phone", phone);
+		return memberDao.findUserId(params);
+	}
 
+	public String selectPwUser(String userId, String email) {
+		HashMap<String, String> params = new HashMap<>();
+		params.put("userId", userId);
+		params.put("email", email);
+		return memberDao.selectPwUser(params);
+	}
+
+	public int replaceMemberPw(String userId, String newPw) {
+		Member member = new Member();
+		member.setUserId(userId);
+		member.setUserPw(newPw); // 새 비밀번호 설정
+		return memberDao.updatePassword(member); // DAO 호출
+	}
 
 }

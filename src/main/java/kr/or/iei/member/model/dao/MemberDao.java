@@ -133,6 +133,16 @@ public class MemberDao {
 		return sqlSession.selectOne("member.selectUserNo", userId);
 	}
 
+	// 아이디 찾기
+	public String findUserId(HashMap<String, String> params) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.findUserId", params);
+	}
+
+	public String selectPwUser(HashMap<String, String> params) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.findUserByIdAndEmail", params);
+	}
 
 
 }
