@@ -265,12 +265,11 @@
 	        document.getElementById('findIdButton').classList.add('active'); // 아이디 찾기 버튼 활성화
 	        document.getElementById('findPasswordButton').classList.remove('active'); // 비밀번호 찾기 버튼 비활성화
 	    };
-
-	    // 비밀번호 찾기 버튼 클릭 시
+	 // 비밀번호 찾기 버튼 클릭 시
 	    document.getElementById('findPasswordButton').onclick = function(event) {
 	        event.preventDefault(); // 기본 링크 동작 방지
 	        document.getElementById('modal-title').innerText = '비밀번호 찾기';
-	        
+
 	        // 아이디 찾기 결과를 숨기고 비밀번호 찾기 관련 요소를 보여줍니다.
 	        document.getElementById('resultSection').style.display = 'none'; // 결과 영역 숨기기
 	        document.getElementById('findSection').style.display = 'block'; // 입력 필드 보이기
@@ -282,6 +281,11 @@
 	        document.getElementById('actionType').value = 'findPassword'; // actionType 값 변경
 	        document.getElementById('findIdButton').classList.remove('active'); // 아이디 찾기 버튼 비활성화
 	        document.getElementById('findPasswordButton').classList.add('active'); // 비밀번호 찾기 버튼 활성화
+	        // 입력 필드 초기화
+	        document.getElementById('emailInput').value = ''; // 이메일 입력 필드 비우기
+	        document.getElementById('phoneInput').value = ''; // 전화번호 입력 필드 비우기
+	        document.getElementById('userIdInput').value = ''; // 아이디 입력 필드 비우기
+	        document.getElementById('resultSection').style.display = 'none'; // 결과 영역 숨기기
 	    };
 
 	    // 아이디 찾기 버튼 클릭 시
@@ -297,8 +301,11 @@
 	        document.getElementById('actionType').value = 'findId'; // actionType 값 변경
 	        document.getElementById('findPasswordButton').classList.remove('active'); // 비밀번호 찾기 버튼 비활성화
 	        document.getElementById('findIdButton').classList.add('active'); // 아이디 찾기 버튼 활성화
+	        // 입력 필드 초기화
 	        document.getElementById('emailInput').value = ''; // 이메일 입력 필드 비우기
 	        document.getElementById('phoneInput').value = ''; // 전화번호 입력 필드 비우기
+	        document.getElementById('userIdInput').value = ''; // 아이디 입력 필드 비우기
+	        document.getElementById('resultSection').style.display = 'none'; // 결과 영역 숨기기
 	    };
 
 	    // 아이디 찾기 성공 시
@@ -319,10 +326,8 @@
 	            document.getElementById('resultMessage').innerText = data;
 	            document.getElementById('resultSection').style.display = 'block'; // 결과 영역 보이기
 
-	            // 아이디 찾기 성공 시 입력 필드 숨기기
-	            if (data.includes("가입한 아이디는:")) { // 성공 메시지에 따라 조건 설정
-	                document.getElementById('findSection').style.display = 'none'; // 입력 필드 숨기기
-	            }
+	            // 입력 필드 숨기기
+	            document.getElementById('findSection').style.display = 'none'; // 입력 필드 숨기기
 	        })
 	        .catch(error => {
 	            console.error('Error:', error);

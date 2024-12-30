@@ -678,23 +678,20 @@ public class MemberController {
 	@ResponseBody
 	public String findUserId(@RequestParam("email") String email, @RequestParam("phone") String phone,
 			@RequestParam("userId") String userId, @RequestParam("actionType") String actionType) {
-		System.out.println(actionType);
 		if ("findId".equals(actionType)) {
 			String userIds = memberService.findUserId(email, phone);
-			if (userId != null) {
+			if (userIds != null) {
 				return "가입한 아이디는: " + userIds;
-			} else {
-				return "해당 정보로 가입된 아이디가 없습니다.";
+			} else { 
+				return "해당 정보로 가입된 아이디가 없습니다."; 
 			}
+			
 		} else if ("findPassword".equals(actionType)) {
 			String checkuser = memberService.selectPwUser(userId, email);
-			System.out.println("유저 정보가 있는지 없는지 :" + checkuser);
 			if (checkuser != null) {
 				String newPw = generateRandomPassword();
-				System.out.println("임시 비밀번호 : " + newPw);
 				int result = memberService.replaceMemberPw(userId, newPw);
 				if (result > 0) {
-					System.out.println("result 값 : " + result);
 					sendEmail(email, newPw);
 					return "임시 비밀번호가 이메일로 발송되었습니다.";
 				} else {
@@ -761,7 +758,7 @@ public class MemberController {
 		try {
 			MimeMessage msg = new MimeMessage(session);
 			msg.setSentDate(new Date());
-			msg.setFrom(new InternetAddress("이메일 주소", "댕냥일기")); //발신자
+			msg.setFrom(new InternetAddress("이메일", "댕냥일기")); //발신자
 			InternetAddress to = new InternetAddress(toEmail); 
 			msg.addRecipient(Message.RecipientType.TO, to); //수신자
 			msg.setSubject("임시 비밀번호 발급");
