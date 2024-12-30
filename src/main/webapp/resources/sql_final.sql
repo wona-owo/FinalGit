@@ -162,19 +162,6 @@ create table bookmark(
 
 
 -- 검색 테이블
-create table search(
-    user_no number references tbl_user(user_no) on delete cascade,
-    keyword varchar2(100) not null unique,
-    keyword_date date default sysdate not null
-);
-
-CREATE TABLE search (
-    user_no number references tbl_user(user_no) on delete cascade,
-    keyword varchar2(100) not null,
-    keyword_date date default sysdate not null,
-    unique (user_no, keyword) -- user_no가 중복된 키워드 입력할때 새롭게 insert되는거 방지
-);
-
 CREATE TABLE search (
     user_no number references tbl_user(user_no) on delete cascade,
     keyword varchar2(100) not null,

@@ -63,5 +63,9 @@ public class PostDao {
 	public List<String> thumbNail(int userNo) {
 		return sqlSession.selectList("post.thumbNail",userNo);
 	}
+
+	public int delPost(int postNo) {
+		return sqlSession.delete("post.delPost",postNo);
+	}
 	
 }

@@ -273,10 +273,16 @@
 		            <div class="modal-body">
 		                <div class="top">
 		                    <div class="modal-user">
-		                        <div class="profile-frame" id="modal-profile"></div>
+		                        <div class="profile-frame" id="modal-profile">
+		                        	<img id="profileImagePreview" alt="프로필 이미지" />
+		                        </div>
 		                        <p>${loginMember.userNickname}</p>
 		                    </div>
-		                    <a href="#" class="modal-close">X</a>
+		                    <div class="modal-buttons">
+			                    <i class="fa-solid fa-pen" id="post-update"></i>
+			                    <i class="fa-solid fa-trash" id="post-delete"></i>
+			                    <a href="#" class="modal-close">X</a>
+		                    </div>
 		                </div>
 							
 		                <div class="post-content">
@@ -337,7 +343,7 @@
      	//콘텐츠 모달
 		$(".feed-thumbnail").on("click", function () {
 		    const postGrid = $(this).closest(".post-grid"); // 클릭된 썸네일의 부모 요소
-		    const postId = postGrid.data("id"); // 게시글 ID
+		    let postNo = postGrid.data("id"); // 게시글 ID
 		    const postContent = postGrid.find(".hidden-post-content").text(); // 숨겨진 콘텐츠 가져오기
 	
 		    // 초기 모달 설정
@@ -350,7 +356,8 @@
 		    $(".modal .post-content-text").text(postContent);
 	
 		    // 이미지 슬라이드 호출
-		    imgSlide(postId);
+		    imgSlide(postNo);
+		  
 		});
 	
 		function imgSlide(postNo) {
@@ -435,25 +442,52 @@
 		            console.error("AJAX 통신 오류 발생!");
 		        },
 		    });
-		}
+
+	    }
 
 		// 게시글 클릭 시 해당 게시글 ID로 해시태그 호출
 		$(".feed-thumbnail").on("click", function () {
-		    const postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기
+			let postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기
 		    if (!postNo) {
 		        console.error("게시글 ID를 찾을 수 없습니다.");
 		        return;
 		    }
 		    callHashtag(postNo); // 해시태그 불러오기
 		});
-
-
-		// 게시글 클릭 시 해당 게시글 ID로 해시태그 호출
-		$(".feed-thumbnail").on("click", function () {
-		    const postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기
-		    callHashtag(postNo); // 해시태그 불러오기
-		});
-
+		
+		
+		 //게시물 삭제
+		 $(".feed-thumbnail").on("click", function () {
+			let postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기 
+			$("#post-delete").on("click",function(){
+				if(confirm("게시물을 삭제하시겠습니까?")){
+						
+					 $.ajax({
+					        url: "/post/delete.kh", // 서버 요청 URL
+					        method: "GET", // 요청 방식
+					        data: { postNo: postNo }, // 서버에 전달할 데이터
+					        success: function (res) {
+					        	alert("게시물이 삭제되었습니다.");	
+					        	location.reload();
+					        },
+					        error: function(){
+					        	alert("게시물 삭제에 실패하였습니다! 다시 시도해주세요.");
+					        }
+					});
+					 
+				}
+					
+			});
+		 
+		  
+			//게시물 수정
+			$("#post-update").on("click",function(){
+				
+			});	 
+		 })
+		
+		
+		
 	
 		// 모달 닫기
 		$(".modal-close").on("click", function () {
@@ -525,6 +559,13 @@
 				$("#postForm")[0].submit();
 			}
 		});
+		
+		 
+		
+		
+		
+		
+		 
 		 
 	</script>
 	<%-- 포로필 modal --%>

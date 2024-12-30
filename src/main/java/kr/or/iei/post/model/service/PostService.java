@@ -51,5 +51,9 @@ public class PostService {
 	public List<String> thumbNail(int userNo) {
 		return postDao.thumbNail(userNo);
 	}
+
+	public int deletePost(int postNo) {
+		return postDao.delPost(postNo);
+	}
 	
 }

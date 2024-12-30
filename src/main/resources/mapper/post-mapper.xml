@@ -65,5 +65,10 @@
 		where h.post_no = ${_parameter}		
 	</select>
 	
+	<!-- 포스트 삭제 -->
+	<delete id="delPost" parameterType="_int">
+		delete post where post_no = #{_parameter}
+	</delete>
+	
 	
 </mapper>

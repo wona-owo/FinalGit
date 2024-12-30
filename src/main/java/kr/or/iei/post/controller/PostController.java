@@ -178,6 +178,35 @@ public class PostController {
 		return tagList;
 	}
 	
+	//게시물 삭제
+	@GetMapping(value="delete.kh", produces="text/html; charset=utf-8")
+    @ResponseBody
+    public String deletePost(@RequestParam("postNo") int postNo) {
+        
+		 // 파일 경로 리스트 가져오기
+        ArrayList<String> filePaths = postService.imgLists(postNo);
+        
+        //배열 순회하면서 파일 삭제
+        for(String filePath : filePaths) {
+        	if(filePath != null) {
+        		File file = new File(filePath);
+        		if (file.exists() && !file.delete()) {
+                    return "error"; // 파일 삭제 실패 시 반환
+                }      		
+        	}
+        }
+         
+        // 데이터베이스에서 게시물 삭제
+        int result = postService.deletePost(postNo);
+        
+        if (result > 0) {
+            return "success"; 
+        } else {
+            return "error"; 
+        }
+		
+    }
+	
 
 }	
 

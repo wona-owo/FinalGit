@@ -529,6 +529,21 @@ main {
     text-decoration: none;
 }
 
+/*수정, 삭제 버튼*/
+#post-delete{
+	width: 18px;
+    color: #f0a235;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#post-update{
+	width: 18px;
+    color: #1096e7;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
 /* 포스트 작성 모달창 배경 */
 .post-modal {
     display: none; /* 기본적으로 숨김 */
