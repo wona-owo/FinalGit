@@ -171,8 +171,15 @@ public class MemberController {
 	
 	//메인피드 Frm
 	@GetMapping("mainFeed.kh")
-	public String mainFeedFrm() {
-		return "member/mainFeed";
+	public String mainFeedFrm(HttpSession session, Model model) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            return "redirect:/";
+        }
+        int userNo = loginMember.getUserNo();
+        ArrayList<Member> recommendList = followService.recommendFriends(userNo);
+        model.addAttribute("friendList", recommendList != null ? recommendList : new ArrayList<>());
+        return "member/mainFeed";
 	}
 	
 	//검색 기록

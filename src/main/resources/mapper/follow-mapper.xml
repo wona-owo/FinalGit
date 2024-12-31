@@ -37,5 +37,60 @@
          WHERE follower_no = #{userNo}
     </select>
     
+    <!-- 로그인한 사용자가 키우는 반려동물 타입 목록 조회 -->
+    <select id="getMyPetTypes" parameterType="int" resultType="string">
+        SELECT breed_type AS breedType
+        FROM mypet
+        WHERE user_no = #{userNo}
+    </select>
     
+    <!-- 추천 사용자 조회 -->
+    <select id="getRecommendUsers" parameterType="map" resultType="member">
+        SELECT *
+	    FROM (
+	        SELECT U.user_no AS userNo,
+               U.user_id AS userId,
+               U.user_nickname AS userNickname,
+               U.user_image AS userImage,
+               U.user_address AS userAddress,
+               U.enroll_date AS enrollDate,
+               U.acct_level AS acctLevel,
+               U.ban_yn AS banYN,
+               M.pet_type AS petType,
+               M.breed_type AS breedType
+          FROM tbl_user U
+          JOIN mypet M ON U.user_no = M.user_no
+         WHERE 1=1
+           <if test="petTypeList != null and !petTypeList.isEmpty()">
+               AND M.breed_type IN 
+                   <foreach collection="petTypeList" item="ptype" open="(" separator="," close=")">
+                       #{ptype}
+                   </foreach>
+           </if>
+           AND U.user_no != #{myUserNo}
+           AND U.user_no NOT IN (
+                SELECT F.follower_no
+                  FROM follow F
+                 WHERE F.following_no = #{myUserNo}
+           )
+           AND U.user_no NOT IN (
+                SELECT F.following_no
+                  FROM follow F
+                 WHERE F.follower_no = #{myUserNo}
+           )
+         ORDER BY DBMS_RANDOM.VALUE 
+	    )
+	    WHERE ROWNUM &lt;= 5
+    </select>
+    <!-- 유저의 반려동물 정보 가져오기 -->
+    <select id="getPetsByUserNo" parameterType="int" resultType="mypet">
+        SELECT pet_no AS petNo,
+               user_no AS userNo,
+               pet_name AS petName,
+               pet_gender AS petGender,
+               pet_type AS petType,
+               breed_type AS breedType
+          FROM mypet
+         WHERE user_no = #{userNo}
+    </select>
 </mapper>

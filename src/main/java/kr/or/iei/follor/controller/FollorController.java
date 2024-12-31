@@ -1,5 +1,6 @@
 package kr.or.iei.follor.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -109,4 +111,19 @@ public class FollorController {
 		return resultMap;
 	}
 	
+	@GetMapping("/recommend")
+	public String recommendFriendsPage(HttpSession session, Model model) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+
+	    if (loginMember == null) {
+	        return "redirect:/";
+	    }
+
+	    int userNo = loginMember.getUserNo();
+	    ArrayList<Member> recommendList = followService.recommendFriends(userNo);
+
+	    model.addAttribute("friendList", recommendList != null ? recommendList : new ArrayList<>());
+
+	    return "member/rightSideMenu";
+	}
 }

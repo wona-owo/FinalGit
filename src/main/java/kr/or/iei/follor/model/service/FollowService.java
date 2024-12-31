@@ -1,5 +1,6 @@
 package kr.or.iei.follor.model.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import kr.or.iei.follor.model.dao.FollowDao;
+import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.member.model.vo.Mypet;
 
 @Service("followService")
 public class FollowService {
@@ -54,5 +57,43 @@ public class FollowService {
 
     public int getFollowingCount(int userNo) {
         return followDao.selectFollowingCount(userNo);
+    }
+
+    public ArrayList<Member> recommendFriends(int userNo) {
+        ArrayList<String> myPetTypes = (ArrayList<String>) followDao.getMyPetTypes(userNo);
+        
+        if (myPetTypes == null || myPetTypes.isEmpty()) {
+            return new ArrayList<>(); // 빈 리스트 반환
+        }
+        
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("petTypeList", myPetTypes);
+        params.put("myUserNo", userNo);
+        
+        ArrayList<Member> recommendList = (ArrayList<Member>) followDao.getRecommendUsers(params);
+        
+        for (Member member : recommendList) {
+            boolean following = checkIfFollowing(userNo, member.getUserNo());
+            member.setFollowing(following);
+            
+            // 반려동물 정보 추가
+            ArrayList<Mypet> pets = (ArrayList<Mypet>)followDao.getPetsByUserNo(member.getUserNo());
+            if (!pets.isEmpty()) {
+                Mypet pet = pets.get(0); // 첫 번째 반려동물 정보 사용
+                member.setPetType(pet.getPetType());
+                member.setBreedType(pet.getBreedType());
+            }
+        }
+        
+        return recommendList;
+    }
+    
+    // **팔로우 상태 확인 메소드 추가**
+    private boolean checkIfFollowing(int userNo, int targetUserNo) {
+    	HashMap<String, Object> check = new HashMap<>();
+        check.put("follow", userNo);
+        check.put("followed", targetUserNo);
+        int count = followDao.selectCheckFollor(check);
+        return count > 0;
     }
 }
