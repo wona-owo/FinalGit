@@ -279,19 +279,19 @@
 	<update id="updatePassword" parameterType="member">
 		update tbl_user
 		   set user_pw = #{userPw}
-		 where user_id = #{userId}
+		 where user_id = #{userId} and user_type = 'G'
 	</update>
 	
 	<select id="selectUserNo"  parameterType="string" resultType="int">
 		select user_no as userNo
 		  from tbl_user
-		 where user_id = #{userId}
+		 where user_id = #{userId} and user_type = 'G'
 	</select>
 	<!-- 아이디 찾기 -->
 	<select id="findUserId" parameterType="map" resultType="string"> 
 		select user_id as userId
 		from tbl_user
-		where user_email = #{email} and user_phone = #{phone}
+		where user_email = #{email} and user_phone = #{phone} and user_type = 'G'
 	 </select>
 	 
 	<!-- 사용자의 ID와 이메일로 사용자 조회 -->

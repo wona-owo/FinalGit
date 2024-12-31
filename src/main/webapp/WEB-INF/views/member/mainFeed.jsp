@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Main Feed</title>
+
 <link rel ="stylesheet"  href="/resources/default.css"  >
 <!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -17,5 +18,7 @@
 	<main id="main-feed">
 	 	<p>메인피드</p>
 	</main>
+	
+	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
 </body>
 </html>
