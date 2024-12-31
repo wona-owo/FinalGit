@@ -262,7 +262,7 @@ INSERT INTO Breed_cat (breed_cat_no, breed_cat_name) VALUES (seq_breed_cat.NEXTV
 INSERT INTO Breed_cat (breed_cat_no, breed_cat_name) VALUES (seq_breed_cat.NEXTVAL, '치토');
 INSERT INTO Breed_cat (breed_cat_no, breed_cat_name) VALUES (seq_breed_cat.NEXTVAL, '컬러포인트 쇼트헤어');
 INSERT INTO Breed_cat (breed_cat_no, breed_cat_name) VALUES (seq_breed_cat.NEXTVAL, '킴릭');
-INSERT INTO Breed_cat (breed_cat_no, breed_cat_name) VALUES (seq_breed_cat.NEXTVAL, '코숏');
+INSERT INTO Breed_cat (breed_cat_no, breed_cat_name) VALUES (seq_breed_cat.NEXTVAL, '코리안 쇼트헤어');
 
 COMMIT;
 
@@ -477,5 +477,8 @@ INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTV
 INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '시베리안 허스키');
 INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '스탠더드 슈나우저');
 INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '티베탄 마스티프');
+INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '진돗개');
+INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '삽살개');
+INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '풍산개');
 
 COMMIT;
