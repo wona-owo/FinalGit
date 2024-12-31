@@ -14,6 +14,9 @@
 			<typeAlias type="kr.or.iei.member.model.vo.Search" alias="search"/>
 			<typeAlias type="kr.or.iei.follor.model.vo.Follow" alias="follow"/>
 			<typeAlias type="kr.or.iei.member.model.vo.Mypet" alias="mypet"/>
+			<typeAlias type="kr.or.iei.member.model.vo.Mypet" alias="mypet"/>
+			<typeAlias type="kr.or.iei.story.model.vo.Story" alias="story"/>
+			<typeAlias type="kr.or.iei.story.model.vo.StoryFile" alias="storyFile"/>
 		</typeAliases>
 
 </configuration>
