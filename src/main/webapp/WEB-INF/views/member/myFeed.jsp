@@ -85,7 +85,7 @@
 	justify-content: center;
 	align-items: center;
 }
-#profileImagePreview {
+#proImagePreview {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
@@ -676,7 +676,7 @@
 	            <div class="modal-body-G">
 	                <div class="modal-left-G">
 	                    <div class="profile-image-container">
-	                        <img id="profileImagePreview"
+	                        <img id="proImagePreview"
 	                            alt="프로필 이미지" />
 	                    </div>
 	                    <div class="image-btn-group">
@@ -787,7 +787,7 @@
 		let updAddress = $("#userAddress");
 		let updEmail = $("#userEmail");
 	    let updPhone = $("#userPhone");
-	    let updImage = $("#profileImagePreview");
+	    let updImage = $("#proImagePreview");
 	    
 	    // 이미지 파일 변경없음과 삭제를 구분할 변수
 	    let delChk = false;	    
@@ -848,13 +848,13 @@
 	        const file = fileInput.files[0];
 	        if (!file) return;
 
-	        // selectedProfileImageFile에 저장
+	    	// 선택한 파일 저장
 	        selectedProfileImageFile = file;
 
-	        // 미리보기
+	    	// 미리보기 업데이트
 	        const reader = new FileReader();
 	        reader.onload = (e) => {
-	            $("#profileImagePreview").attr("src", e.target.result);
+	            $("#proImagePreview").attr("src", e.target.result);
 	        };
 	        reader.readAsDataURL(file);
 	            
@@ -1353,7 +1353,7 @@
 	                    
 	                    const $petImageContainer = $('<div>', { class: 'pet-image-container' });
 	                    const $img = $('<img>', {
-	                        id: 'profileImagePreview',
+	                        id: 'proImagePreview',
 	                        src: '/resources/css_image/' + mypet.petType + '.png',
 	                        alt: '반려동물 이미지'
 	                    });
