@@ -38,7 +38,7 @@
 				
 				<div class="one-menu">
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/" class="menu-link">정기구독</a>
+					<a href="/story/modalTest.kh" class="menu-link">정기구독</a>
 				</div>
 			</div>		
 			
