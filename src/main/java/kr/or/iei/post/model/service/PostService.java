@@ -1,6 +1,7 @@
 package kr.or.iei.post.model.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,14 @@ public class PostService {
 
 	public int deletePost(int postNo) {
 		return postDao.delPost(postNo);
+	}
+
+	public int updatePost(Post post) {
+		return postDao.updPost(post);
+	}
+	
+	public int delTag(int postNo) {
+		return postDao.delTag(postNo);
 	}
 	
 }

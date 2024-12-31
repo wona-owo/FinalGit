@@ -11,7 +11,7 @@
         // 알림 메시지 출력 후 이동
         window.onload = function() {
             alert("${message}");
-            window.location.href = "${url}";
+            window.location.href = "/post/myFeedFrm.kh";
         };
     </script>
 </body>

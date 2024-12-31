@@ -207,6 +207,65 @@ public class PostController {
 		
     }
 	
+	//게시물 수정
+	@PostMapping("update.kh")
+	public String updatePost(Model model, @RequestParam("userNo") int userNo, @RequestParam("postNo") int postNo, @RequestParam("content") String content, @RequestParam("hashtag") String tagString ) {
+		
+		Post post = new Post();
+		
+		//post 객체 세팅
+		post.setUserNo(userNo);
+		post.setPostNo(postNo);
+		post.setPostContent(content);
+		
+		 if (postNo == 0) {
+		        // postNo가 null일 경우 처리 로직
+		        System.out.println("postNo 값이 없습니다.");
+		    }
+		
+		//post 수정
+		int resPs = postService.updatePost(post);
+		
+		//hashtag 수정
+		ObjectMapper objMap = new ObjectMapper();   
+		int resHs = 0;  
+		ArrayList<String> tagArr;
+		
+		try {
+			tagArr = objMap.readValue(tagString, new TypeReference<ArrayList<String>>() {});
+			
+			//삭제 후 재삽입
+			//삭제
+			int delRes = postService.delTag(postNo);
+			
+			if(delRes < 0) {
+				model.addAttribute("message", "작업에 실패했습니다. 다시 시도해주세요.");
+			    model.addAttribute("url", "redirect:myFeedFrm.kh");
+			    return "common/alert";
+			}
+	
+			
+			//태그 array 전달(삽입)
+			resHs = postService.hashtag(tagArr, postNo);			
+			
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}							
+		
+		//성공시 피드 랜딩
+		if(resHs > 0 && resPs > 0) {			
+			return "redirect:myFeedFrm.kh";								
+		}else {
+			model.addAttribute("message", "작업에 실패했습니다. 다시 시도해주세요.");
+		    model.addAttribute("url", "redirect:myFeedFrm.kh");
+		    return "common/alert";
+		}
+	}
+	
 
 }	
 

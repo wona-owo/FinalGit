@@ -70,5 +70,17 @@
 		delete post where post_no = #{_parameter}
 	</delete>
 	
+	<!-- 포스트 업데이트 -->
+	<update id="updPost" parameterType="post">
+		update post
+			set  post_content = #{postContent}
+		where user_no = #{userNo} and post_no = #{postNo}
+	</update>
+	
+	<!-- 해시태그 삭제 -->
+	<delete id="delTag" parameterType="_int">
+		delete hashtag where post_no = #{_parameter}
+	</delete>
+	
 	
 </mapper>

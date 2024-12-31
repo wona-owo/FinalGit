@@ -48,7 +48,6 @@ public class PostDao {
 	        // 예외 발생 시 전체 작업이 롤백됨
 	        totalInserted += sqlSession.insert("post.hashTag", paramMap);
 	    }
-
 	    return totalInserted;
 	}
 
@@ -67,5 +66,15 @@ public class PostDao {
 	public int delPost(int postNo) {
 		return sqlSession.delete("post.delPost",postNo);
 	}
+
+	public int updPost(Post post) {
+		return sqlSession.update("post.updPost", post);
+	}
+	
+	public int delTag(int postNo) {	
+		return sqlSession.delete("post.delTag", postNo);
+	}
+
+
 	
 }

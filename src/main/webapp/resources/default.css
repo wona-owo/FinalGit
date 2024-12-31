@@ -447,10 +447,12 @@ main {
 
 .modal-image {
     height: 500px;
+    width: 500px;
     position: relative; 
     display: flex;
     justify-content: center; 
     align-items: center;
+    overflow: hidden;
 }
 
 
@@ -623,7 +625,7 @@ main {
     color: #555;
 }
 
-.post-input{
+#post-input{
 	width: 408px;
 	margin-top: 10px;
 	background-color: #fff;
