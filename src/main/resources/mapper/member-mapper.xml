@@ -223,17 +223,20 @@
 	 <select id="selectMySearchList" parameterType="int" resultType="search">
         SELECT * FROM (
             SELECT 
-                user_no AS userNo,
-                keyword,
-                keyword_date AS keywordDate,
-                search_type AS searchType,
-                search_user_id AS searchUserId
+                s.user_no AS userNo,
+                s.keyword AS keyWord,
+                s.keyword_date AS keywordDate,
+                s.search_type AS searchType,
+                s.search_user_id AS searchUserId,
+                u.user_image AS userImage
             FROM 
-                search
+                search s
+            JOIN
+            	tbl_user u On s.user_no = u.user_no
             WHERE 
-                user_no = #{userNo}
+                s.user_no = #{userNo}
             ORDER BY 
-                keyword_date DESC
+                s.keyword_date DESC
         ) WHERE ROWNUM &lt;= 10
     </select>
 	<!-- 검색 날짜 최신화 -->

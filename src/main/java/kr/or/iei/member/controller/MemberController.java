@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
 
@@ -157,6 +158,8 @@ public class MemberController {
 		int userNo = loginMember.getUserNo();
 
 	    ArrayList<Search> searchHistory = memberService.selectSearchHistoryList(userNo);
+	    
+	  
 	    	
 	    model.addAttribute("searchs", searchHistory);
 		
@@ -216,6 +219,20 @@ public class MemberController {
 	        
 	        
 	        Member member = memberService.selectKeywordUser(userName);
+	        
+			// 내 프로필 조회 시
+			if (loginMember.getUserId().equals(member.getUserId())) {
+				int followerCount = followService.getFollowerCount(userNo); // 나를 팔로우하는 사람 수
+				int followingCount = followService.getFollowingCount(userNo); // 내가 팔로우하는 사람 수
+
+				ArrayList<Post> postData = postService.postData(userNo); // 내가 작성한 글
+
+				model.addAttribute("post", postData);
+				model.addAttribute("followerCount", followerCount);
+				model.addAttribute("followingCount", followingCount);
+
+				return "member/myFeed";
+			}
 	        
 			int targetUserNo = memberService.selectUser(member.getUserId()); //상대방 No값
 			// 내가 상대방(targetNo)을 팔로우하고 있는지 여부를 DB에서 조회한 결과
@@ -335,7 +352,7 @@ public class MemberController {
 		            .append("<div class='user-profile'>")
 		            .append("<img class='profileImage' src='")
 		            .append((m.getUserImage() != null && !m.getUserImage().isEmpty()) ? m.getUserImage() : "/resources/profile_file/default_profile.png")
-		            .append("' alt='프로필 이미지' />")
+		            .append("'alt='프로필 이미지' />")
 		            .append("</div>")
 		            .append("<span>")
 		            .append(m.getUserNickname())
@@ -565,6 +582,21 @@ public class MemberController {
 		}else if("U".equals(searchType)){ //타입이 유저(U)일때
 			Member member = memberService.selectKeywordUser(userName);
 			
+			// 내 프로필 조회 시
+			if(loginMember.getUserId().equals(member.getUserId())){
+				int followerCount  = followService.getFollowerCount(userNo);  // 나를 팔로우하는 사람 수
+				int followingCount = followService.getFollowingCount(userNo); // 내가 팔로우하는 사람 수
+				
+				ArrayList<Post> postData = postService.postData(userNo); // 내가 작성한 글 
+				
+				model.addAttribute("post", postData);
+				model.addAttribute("followerCount", followerCount);
+				model.addAttribute("followingCount", followingCount);
+
+				return "member/myFeed";
+			}
+
+			// 내가 상대방(targetNo)을 팔로우하고 있는지 여부를 DB에서 조회한 결과
 			int targetUserNo = memberService.selectUser(member.getUserId()); //상대방 No값
 			// 내가 상대방(targetNo)을 팔로우하고 있는지 여부를 DB에서 조회한 결과
 			int myFollowCount   = followService.selectCheckFollor(userNo, targetUserNo);

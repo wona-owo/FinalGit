@@ -44,65 +44,70 @@ public class FollorController {
 		int myNo = loginMember.getUserNo(); // 나
 		int targetNo = memberService.selectUser(userId); // 상대방
 
-		if (targetNo == 0) {
+		if (targetNo <= 0) { // 팔로우를 했는데 대상이 없을 경우
 			resultMap.put("success", false);
 			resultMap.put("message", "존재하지 않는 사용자입니다.");
 			return resultMap;
-		}
-		if ("follow".equals(action)) {
-			// (1) 이미 팔로우 중인지 확인
-			int isFollowing = followService.selectCheckFollor(myNo, targetNo);
-			if (isFollowing > 0) {
-				// 이미 팔로우 중
-				resultMap.put("success", false);
-				resultMap.put("isFollowing", true);
-				resultMap.put("message", "이미 팔로우하고 있습니다.");
-			} else {
-				// 팔로우 insert
-				int insertResult = followService.insertfollow(myNo, targetNo);
-				if (insertResult > 0) {
-					int followerCount = followService.getFollowerCount(targetNo);
-					int followingCount = followService.getFollowingCount(targetNo);
-					resultMap.put("success", true);
-					resultMap.put("isFollowing", true);
-					resultMap.put("message", "팔로우 성공");
-					resultMap.put("followerCount", followerCount);
-					resultMap.put("followingCount", followingCount);
-				} else {
-					resultMap.put("success", false);
-					resultMap.put("isFollowing", false);
-					resultMap.put("message", "팔로우 실패");
-				}
-			}
-
-		} else if ("unfollow".equals(action)) {
-			// (1) 현재 내가 팔로우 중인지 확인
-			int isFollowing = followService.selectCheckFollor(myNo, targetNo);
-			if (isFollowing == 0) {
-				// 이미 팔로우 안 하고 있음
-				resultMap.put("success", false);
-				resultMap.put("isFollowing", false);
-				resultMap.put("message", "이미 언팔로우 상태입니다.");
-			} else {
-				// 언팔로우 delete
-				int deleteResult = followService.deleteFollow(myNo, targetNo);
-				if (deleteResult > 0) {
-					int followerCount = followService.getFollowerCount(targetNo);
-					int followingCount = followService.getFollowingCount(targetNo);
-					resultMap.put("success", true);
-					resultMap.put("isFollowing", false);
-					resultMap.put("message", "언팔로우 성공");
-	                resultMap.put("followerCount", followerCount);
-	                resultMap.put("followingCount", followingCount);
-				} else {
-					resultMap.put("success", false);
-					resultMap.put("isFollowing", true);
-					resultMap.put("message", "언팔로우 실패");
-				}
-			}
-		} else {
+		}else if(myNo == targetNo) { // 팔로우 대상이 자신일 경우
 			resultMap.put("success", false);
-			resultMap.put("message", "잘못된 요청입니다. (action 파라미터)");
+			resultMap.put("message", "자신을 팔로우할 수 없습니다.");
+			return resultMap;
+		}else { //기타
+			if ("follow".equals(action)) {
+				// (1) 이미 팔로우 중인지 확인
+				int isFollowing = followService.selectCheckFollor(myNo, targetNo);
+				if (isFollowing > 0) {
+					// 이미 팔로우 중
+					resultMap.put("success", false);
+					resultMap.put("isFollowing", true);
+					resultMap.put("message", "이미 팔로우하고 있습니다.");
+				} else {
+					// 팔로우 insert
+					int insertResult = followService.insertfollow(myNo, targetNo);
+					if (insertResult > 0) {
+						int followerCount = followService.getFollowerCount(targetNo);
+						int followingCount = followService.getFollowingCount(targetNo);
+						resultMap.put("success", true);
+						resultMap.put("isFollowing", true);
+						resultMap.put("message", "팔로우 성공");
+						resultMap.put("followerCount", followerCount);
+						resultMap.put("followingCount", followingCount);
+					} else {
+						resultMap.put("success", false);
+						resultMap.put("isFollowing", false);
+						resultMap.put("message", "팔로우 실패");
+					}
+				}
+				
+			} else if ("unfollow".equals(action)) {
+				// (1) 현재 내가 팔로우 중인지 확인
+				int isFollowing = followService.selectCheckFollor(myNo, targetNo);
+				if (isFollowing == 0) {
+					// 이미 팔로우 안 하고 있음
+					resultMap.put("success", false);
+					resultMap.put("isFollowing", false);
+					resultMap.put("message", "이미 언팔로우 상태입니다.");
+				} else {
+					// 언팔로우 delete
+					int deleteResult = followService.deleteFollow(myNo, targetNo);
+					if (deleteResult > 0) {
+						int followerCount = followService.getFollowerCount(targetNo);
+						int followingCount = followService.getFollowingCount(targetNo);
+						resultMap.put("success", true);
+						resultMap.put("isFollowing", false);
+						resultMap.put("message", "언팔로우 성공");
+						resultMap.put("followerCount", followerCount);
+						resultMap.put("followingCount", followingCount);
+					} else {
+						resultMap.put("success", false);
+						resultMap.put("isFollowing", true);
+						resultMap.put("message", "언팔로우 실패");
+					}
+				}
+			} else {
+				resultMap.put("success", false);
+				resultMap.put("message", "잘못된 요청입니다. (action 파라미터)");
+			}
 		}
 		// 4) 맞팔 여부 체크
 		boolean isMutualFollow = followService.isFollowingEachOther(myNo, targetNo);

@@ -294,7 +294,7 @@
 									<a class="a-user" href="/member/searchHistory.kh?userName=${search.searchUserId}&vals=x&searchType=${search.searchType}">
 										<div class="profile-container">
 											<div class="user-profile">
-											<img class="profileImage" src="${not empty member.userImage ? member.userImage : '/resources/profile_file/default_profile.png'}"alt="프로필 이미지" />
+											<img class="profileImage" src="${not empty search.userImage ? search.userImage : '/resources/profile_file/default_profile.png'}"alt="프로필 이미지" />
 											</div>
 											<span>${search.searchUserId}</span>
 										</div>
