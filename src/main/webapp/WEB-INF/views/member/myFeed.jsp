@@ -324,7 +324,7 @@
 		            </div>
 										   
 		            <div class="modal-body">
-		            	<div>
+		            	<div class="post-section">
 			                <div class="top">
 			                    <div class="modal-user">
 			                        <div class="profile-frame" id="modal-profile">
@@ -347,10 +347,30 @@
 			                </div>
 						</div>
 						
-		                <%-- 댓글 조회 --%>
-		                <div class="comment">
-		                	
+		                <%-- 댓글 영역 --%>
+		                <div class="comment-section">
+		                		<div class="comment-list">
+		                			<%-- 동적으로 댓글이 추가될 위치 --%>
+		                				<div class="comment">
+		                					 <p><strong>유저1</strong>: 첫 번째 댓글</p>
+		                					<div class="reply">
+		                					<p>↳ <strong>유저2</strong>: 첫 번째 댓글 첫 번째 답글</p>
+		                					 <p>↳ <strong>유저3</strong>: 첫 번째 댓글 두 번째 답글</p>
+		                					</div>
+		                				</div>
+		                				<div class="comment">
+		                					 <p><strong>유저2</strong>: 두 번째 댓글</p>
+		                					<div class="reply">
+		                					<p>↳ <strong>유저3</strong>: 두 번째 댓글 첫 번째 답글</p>	        
+		                					</div>
+		                				</div>
+		                		</div>
 		                </div> 
+		                
+		                <div class="comment-form">
+		                	<textarea class="comment-input" placeholder="댓글달기..."></textarea>
+		                	<button class="submit-comment"><i class="fa-solid fa-comment"></i></button>
+		                </div>
 		                
 		            </div>
 		        </div>

@@ -464,6 +464,7 @@ main {
     width: 400px;
     height: 500px;
     display: flex;
+    align-items: center;
     flex-direction: column;
 }
 
@@ -506,6 +507,10 @@ main {
 .modal-user{
 	display: flex;
 	gap: 10px;
+}
+
+.post-section{
+	 width: 400px;
 }
 
 /*모달 콘텐츠 텍스트*/
@@ -655,6 +660,74 @@ main {
   object-position: 50% 50%;
 }
 
+/*댓글창*/
+
+.comment-section {
+    margin-top: 20px;
+    width: 400px;
+}
+
+.comment-list {
+    height: 180px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background: #f9f9f9;
+}
+
+.comment {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.reply {
+    margin-left: 20px;
+    padding-left: 10px;
+    border-left: 2px solid #eee;
+}
+
+.comment-form {
+	width: 80%;
+    margin-top: 15px;
+    display: flex;
+    align-items: center; /* 세로축 중앙 정렬 */
+    justify-content: space-between; /* 입력창과 버튼 사이에 간격 */
+}
+
+.comment-input {
+    flex: 1; /* 입력창이 남은 공간을 채우도록 설정 */
+    height: 30px; 
+    margin-right: 10px; 
+    padding: 5px; 
+    border: 1px solid #ddd; 
+    border-radius: 5px;
+    resize: none; 
+}
+
+.submit-comment {
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    background-color: #3bbd9e; 
+    color: white; 
+    border: none; 
+    border-radius: 50%; 
+    width: 40px;
+    height: 40px; 
+    cursor: pointer; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.submit-comment:hover {
+    background-color: #32a389; /* 호버 시 배경색 변경 */
+}
+
+.fa-comment {
+    color: #fff; 
+    font-size: 16px; /
+}
 
 
 
