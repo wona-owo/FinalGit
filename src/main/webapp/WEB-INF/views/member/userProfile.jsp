@@ -137,53 +137,41 @@
 	    </div>
 	    			    
 	</main>
-	
+	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
 	
 	<script>
 		$(document).ready(function(){
-			  // 이벤트 위임
-			  $(document).on("click", ".follow-toggle", function(){
-			    var $btn = $(this);
-			    var userId = $btn.data("userid");       // 상대방 아이디
-			    var isFollowing = $btn.data("following"); // true/false
-	
-			    $.ajax({
-			      url: '/follor/follow',        // 실제 컨트롤러 매핑 URL
-			      type: 'POST',
-			      dataType: 'json',
-			      data: {
+			$.ajax({
+			    url: '/follor/follow', // 실제 컨트롤러 매핑 URL
+			    type: 'POST',
+			    dataType: 'json',
+			    data: {
 			        userId: userId,
-			        action: isFollowing ? 'unfollow' : 'follow'
-			      },
-			      success: function(response){
-			        // 예: response = { success: true/false, isFollowing: true/false, isMutualFollow: true/false, ... }
-			        if(response.success){
-			          // 이미 팔로우중 -> 언팔 성공
-			          if(response.isFollowing){
-			            // 맞팔 여부에 따라 텍스트가 다를 수 있음
-			            // 예: response.isMutualFollow ? '언팔로우' : '언팔로우'
-			            $btn.text('언팔로우').data('following', true).removeClass('follow-btn').addClass('unfollow-btn');
-			          } else {
-			            // 팔로우 상태 아님 -> 팔로우 버튼으로
-			            $btn.text('팔로우').data('following', false).removeClass('unfollow-btn').addClass('follow-btn');
-			          }
-			       	  // 1) 만약 Controller 응답에 followerCount / followingCount가 있으면
-			          //    아래처럼 DOM을 업데이트
-			          if(response.followerCount !== undefined){
-			              $(".followerCountSpan").text(response.followerCount);
-			          }
-			          if(response.followingCount !== undefined){
-			              $(".followingCountSpan").text(response.followingCount);
-			          }
+			        action: isFollowing ? 'unfollow' : 'follow' // 팔로우/언팔로우 액션
+			    },
+			    success: function(response) {
+			        // 응답 처리 로직
+			        if (response.success) {
+			            // 버튼 상태 업데이트
+			            if (response.isFollowing) {
+			                $btn.text('언팔로우').data('following', true).removeClass('follow-btn').addClass('unfollow-btn');
+			            } else {
+			                $btn.text('팔로우').data('following', false).removeClass('unfollow-btn').addClass('follow-btn');
+			            }
+			            // 카운트 업데이트
+			            if (response.followerCount !== undefined) {
+			                $(".followerCountSpan").text(response.followerCount);
+			            }
+			            if (response.followingCount !== undefined) {
+			                $(".followingCountSpan").text(response.followingCount);
+			            }
 			        } else {
-			          alert("팔로우/언팔로우 처리 실패: " + (response.message || ''));
+			            alert("팔로우/언팔로우 처리 실패: " + (response.message || ''));
 			        }
-			      },
-			      error: function(){
+			    },
+			    error: function() {
 			        console.log("AJAX error!");
-			      }
-			    });
-			  });
+			    }
 			});
 			
 		//모달창 노출

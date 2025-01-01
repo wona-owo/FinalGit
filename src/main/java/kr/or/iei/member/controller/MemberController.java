@@ -159,8 +159,6 @@ public class MemberController {
 
 	    ArrayList<Search> searchHistory = memberService.selectSearchHistoryList(userNo);
 	    
-	  
-	    	
 	    model.addAttribute("searchs", searchHistory);
 		
 		return "member/search";
@@ -224,9 +222,12 @@ public class MemberController {
 			if (loginMember.getUserId().equals(member.getUserId())) {
 				int followerCount = followService.getFollowerCount(userNo); // 나를 팔로우하는 사람 수
 				int followingCount = followService.getFollowingCount(userNo); // 내가 팔로우하는 사람 수
-
+				
 				ArrayList<Post> postData = postService.postData(userNo); // 내가 작성한 글
-
+				ArrayList<Mypet> mypets = memberService.selectMyPetList(userNo);
+				
+				model.addAttribute("member", loginMember);
+				model.addAttribute("mypetList", mypets);
 				model.addAttribute("post", postData);
 				model.addAttribute("followerCount", followerCount);
 				model.addAttribute("followingCount", followingCount);
@@ -246,6 +247,9 @@ public class MemberController {
 	        int followerCount  = followService.getFollowerCount(targetUserNo);  // 나를 팔로우하는 사람 수
 	        int followingCount = followService.getFollowingCount(targetUserNo); // 내가 팔로우 중인 사람 수
 
+	        ArrayList<Mypet> mypets = memberService.selectMyPetList(targetUserNo);
+			
+			model.addAttribute("mypetList", mypets);
 	        model.addAttribute("member", member);
 	        model.addAttribute("followerCount", followerCount);
 	        model.addAttribute("followingCount", followingCount);
@@ -588,7 +592,10 @@ public class MemberController {
 				int followingCount = followService.getFollowingCount(userNo); // 내가 팔로우하는 사람 수
 				
 				ArrayList<Post> postData = postService.postData(userNo); // 내가 작성한 글 
+				ArrayList<Mypet> mypets = memberService.selectMyPetList(userNo);
 				
+				model.addAttribute("member", loginMember);
+				model.addAttribute("mypetList", mypets);
 				model.addAttribute("post", postData);
 				model.addAttribute("followerCount", followerCount);
 				model.addAttribute("followingCount", followingCount);
@@ -608,7 +615,9 @@ public class MemberController {
 	        //(해당 프로필 주인의 userNo=targetUserNo 로 조회)
 	        int followerCount  = followService.getFollowerCount(targetUserNo);  // 나를 팔로우하는 사람 수
 	        int followingCount = followService.getFollowingCount(targetUserNo); // 내가 팔로우하는 사람 수
-
+	        ArrayList<Mypet> mypets = memberService.selectMyPetList(targetUserNo);
+			
+			model.addAttribute("mypetList", mypets);
 			model.addAttribute("member", member);
 			model.addAttribute("myFollowCount", myFollowCount);
 			model.addAttribute("theyFollowCount", theyFollowCount);

@@ -221,7 +221,7 @@
 	
 	<!-- 검색 기록 -->
 	 <select id="selectMySearchList" parameterType="int" resultType="search">
-        SELECT * FROM (
+	 	 SELECT * FROM (
             SELECT 
                 s.user_no AS userNo,
                 s.keyword AS keyWord,
@@ -232,7 +232,7 @@
             FROM 
                 search s
             JOIN
-            	tbl_user u On s.user_no = u.user_no
+                tbl_user u on s.search_user_id = u.user_nickname
             WHERE 
                 s.user_no = #{userNo}
             ORDER BY 
@@ -374,4 +374,17 @@
          where pet_no = #{petNo}
            and user_no = #{userNo}
     </update>
+    
+    <select id="selectMyPetList" parameterType="int" resultType="mypet">
+    	select pet_no as petNo,
+               user_no as userNo,
+               pet_name as petName,
+               pet_gender as petGender,
+               pet_type as petType,
+               breed_type as breedType
+          from myPet
+        where user_no = #{userNo}
+    </select>
+    
+    
 </mapper>

@@ -172,4 +172,17 @@ public class MemberDao {
     public int updateMypet(Mypet mypet) {
         return sqlSession.update("member.updateMypet", mypet);
     }
+
+	public List<Mypet> selectMyPetList(int userNo) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.selectMyPetList", userNo);
+	}
+
+	//유저 이미지 가져오기
+	public List<Member> selectUserImages(ArrayList<String> userIds) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("member.selectUserImages", userIds);
+	}
+
+	
 }

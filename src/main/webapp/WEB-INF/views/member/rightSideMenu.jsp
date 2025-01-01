@@ -27,22 +27,22 @@
     border: 1px solid #ddd;
 }
 
-.re-friend-container {
+.re-friend-container, .family-container {
     margin-top: 20px;
 }
 
-.friend-container-title {
+.friend-container-title, .family-container-title {
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center; /* 가운데 정렬 */
 }
 
-.friend-list {
+.friend-list, .family-list {
     list-style: none;
     padding: 0;
 }
 
-.friend-item {
+.friend-item, .family-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -50,7 +50,7 @@
     border-bottom: 1px solid #eee;
 }
 
-.friend-item:last-child {
+.friend-item:last-child, .family-item:last-child {
     border-bottom: none;
 }
 
@@ -64,7 +64,7 @@
     
 }
 
-.recommendation-info {
+.recommendation-info, .family-info {
     display: flex;
     flex-direction: column;
 }
@@ -107,10 +107,11 @@
     margin-top: 20px;
 }
 
-.friend-item-content {
+.friend-item-content, .family-item-content {
     display: flex;
     align-items: center;
 }
+
 </style>
 <link rel ="stylesheet"  href="/resources/default.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -118,36 +119,77 @@
 </head>
 <body>
     <aside class="right-menu">
-        <div class="re-friend-container">
-            <div class="friend-container-title">
-                <span>같은 동물 키우는 사람, 여기 있어요!</span>
-            </div>
-            <ul class="friend-list">
-                <c:forEach var="friend" items="${friendList}">
-                    <li class="friend-item">
-                        <div class="friend-item-content">
-                            <img class="profile-img" src="${not empty friend.userImage ? friend.userImage : '/resources/profile_file/default_profile.png'}"alt="프로필 이미지" />
-                            <div class="recommendation-info">
-                                <span class="username">${friend.userNickname}</span>
-                                <span class="pet-info"> 
-                                    <c:choose>
-                                        <c:when test="${friend.petType == 'DOG'}">강아지</c:when>
-                                        <c:when test="${friend.petType == 'CAT'}">고양이</c:when>
-                                        <c:otherwise>${friend.petType}</c:otherwise>
-                                    </c:choose> - ${friend.breedType}
-                                </span>
-                            </div>                        
-                        </div>
-                        <div>
-                            <a href="javascript:void(0)" class="follow-toggle ${friend.following ? 'unfollow-btn' : 'follow-btn'}" 
-                                    data-userid="${friend.userId}" data-following="${friend.following}">
-                                ${friend.following ? '언팔로우' : '팔로우'}
-                            </a>
-                        </div>
-                    </li>
-                </c:forEach>
-            </ul>
-        </div>
+    	<c:choose>
+    		<c:when test="${not empty mypetList}">
+    			<div class="family-container">
+    				<div class="family-container-title">
+						<span>${member.userName}의 가족을 소개합니다</span>    				
+    				</div>
+    				<ul class="family-list">
+    					<c:forEach var="mypet" items="${mypetList}">
+    						<li class="family-item">
+    							<div class="family-item-content">
+	    							<img class="profile-img" alt="" src="/resources/css_image/${mypet.petType}.png">
+	    							<div class="family-info">
+	    								<span class="username">${mypet.petName}</span>
+	    								<span class="pet-info"> 
+		                                    ${mypet.breedType}
+			                           </span>
+	    							</div>
+    							</div>
+    							<div class="petGender-img">
+		                            <c:choose>
+                                        <c:when test="${mypet.petGender == 'M'}">
+                                        	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="skyblue" class="bi bi-gender-male" viewBox="0 0 16 16">
+											  <path fill-rule="evenodd" d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/>
+											</svg>
+                                        </c:when>
+                                        <c:when test="${mypet.petGender == 'F'}">
+                                        	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ff94c7" class="bi bi-gender-female" viewBox="0 0 16 16">
+											  <path fill-rule="evenodd" d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8M3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5"/>
+											</svg>
+                                        </c:when>
+                                        <c:otherwise>${mypet.petGender}</c:otherwise>
+                                    </c:choose>
+		                        </div>
+    						</li>
+    					</c:forEach>
+    				</ul>
+    			</div>
+    		</c:when>
+    		<c:otherwise>
+    			<div class="re-friend-container">
+		            <div class="friend-container-title">
+		                <span>같은 동물 키우는 사람, 여기 있어요!</span>
+		            </div>
+		            <ul class="friend-list">
+		                <c:forEach var="friend" items="${friendList}">
+		                    <li class="friend-item">
+		                        <div class="friend-item-content">
+		                            <img class="profile-img" src="${not empty friend.userImage ? friend.userImage : '/resources/profile_file/default_profile.png'}"alt="프로필 이미지" />
+		                            <div class="recommendation-info">
+		                                <span class="username">${friend.userNickname}</span>
+		                                <span class="pet-info"> 
+		                                    <c:choose>
+		                                        <c:when test="${friend.petType == 'DOG'}">강아지</c:when>
+		                                        <c:when test="${friend.petType == 'CAT'}">고양이</c:when>
+		                                        <c:otherwise>${friend.petType}</c:otherwise>
+		                                    </c:choose> - ${friend.breedType}
+		                                </span>
+		                            </div>                        
+		                        </div>
+		                        <div>
+		                            <a href="javascript:void(0)" class="follow-toggle ${friend.following ? 'unfollow-btn' : 'follow-btn'}" 
+		                                    data-userid="${friend.userId}" data-following="${friend.following}">
+		                                ${friend.following ? '언팔로우' : '팔로우'}
+		                            </a>
+		                        </div>
+		                    </li>
+		                </c:forEach>
+		            </ul>
+		        </div>
+    		</c:otherwise>
+    	</c:choose>
     </aside>
     <script>
     $(document).ready(function(){

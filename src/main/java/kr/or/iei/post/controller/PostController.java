@@ -30,7 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import kr.or.iei.follor.model.service.FollowService;
+import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.member.model.vo.Mypet;
 import kr.or.iei.post.model.service.PostService;
 import kr.or.iei.post.model.vo.Post;
 @RequestMapping("/post/")
@@ -43,7 +45,11 @@ public class PostController {
 	
 	@Autowired
 	@Qualifier("followService")
-    private FollowService followService; 
+    private FollowService followService;
+	
+	@Autowired
+	@Qualifier("service")
+	private MemberService memberService;
 	
 	//유저 피드 데이터 불러오기(포스트 이미지, 콘텐츠, 팔로우 수, 썸네일 리스트)
 	@GetMapping("myFeedFrm.kh") //메뉴 버튼이랑 매핑
@@ -57,6 +63,10 @@ public class PostController {
 		
 		ArrayList<Post> postData = postService.postData(userNo);
 		
+		ArrayList<Mypet> mypets = memberService.selectMyPetList(userNo);
+		
+		model.addAttribute("member", loginMember);
+		model.addAttribute("mypetList", mypets);
 		model.addAttribute("post", postData);
 		model.addAttribute("followerCount", followerCount);
 		model.addAttribute("followingCount", followingCount);

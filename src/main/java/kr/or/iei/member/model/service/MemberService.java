@@ -201,4 +201,20 @@ public class MemberService {
     public int updateMypet(Mypet mypet) {
         return memberDao.updateMypet(mypet);
     }
+    
+    //2025-01-01 장승원 추가
+    //selectMypet은 String이라 다른 매소드 선언
+    //내가 키우는 동물 리스트
+	public ArrayList<Mypet> selectMyPetList(int userNo) {
+		// TODO Auto-generated method stub
+		return (ArrayList<Mypet>)memberDao.selectMyPetList(userNo);
+	}
+
+
+	public ArrayList<Member> selectUserImages(ArrayList<String> userIds) {
+		// TODO Auto-generated method stub
+		return (ArrayList<Member>) memberDao.selectUserImages(userIds);
+	}
+
+	
 }

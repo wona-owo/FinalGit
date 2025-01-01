@@ -453,7 +453,7 @@
 	  		    
 	</main>
 	
-	
+	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
 	<script>    
 		
 	$(document).ready(function () {

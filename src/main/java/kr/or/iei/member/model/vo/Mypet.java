@@ -61,8 +61,7 @@ public class Mypet {
 		return "Mypet [petNo=" + petNo + ", userNo=" + userNo + ", petName=" + petName + ", petGender=" + petGender
 				+ ", petType=" + petType + ", breedType=" + breedType + "]";
 	}
-
 	
-
+	
 	
 }
