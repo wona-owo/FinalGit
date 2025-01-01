@@ -126,6 +126,29 @@ create table tbl_comment( --comment는 oracle 예약어
     comment_date date default sysdate not null
 );
 
+-- 댓글 테이블 데이터 추가
+-- 댓글 추가
+insert into tbl_comment (comment_no, user_no, post_no, parent_no, comment_content, comment_date)
+values (seq_comment.nextval, 2, 17, null, '첫 번째 부모 댓글입니다.', sysdate);
+
+insert into tbl_comment (comment_no, user_no, post_no, parent_no, comment_content, comment_date)
+values (seq_comment.nextval, 3, 17, null, '두 번째 부모 댓글입니다.', sysdate);
+
+-- 답글 추가 (parent_no에 부모 댓글의 comment_no 지정)
+insert into tbl_comment (comment_no, user_no, post_no, parent_no, comment_content, comment_date)
+values (seq_comment.nextval, 2, 17, 1, '첫 번째 부모 댓글에 대한 답글입니다.', sysdate);
+
+insert into tbl_comment (comment_no, user_no, post_no, parent_no, comment_content, comment_date)
+values (seq_comment.nextval, 3, 17, 1, '첫 번째 부모 댓글에 대한 두 번째 답글입니다.', sysdate);
+
+insert into tbl_comment (comment_no, user_no, post_no, parent_no, comment_content, comment_date)
+values (seq_comment.nextval, 2, 17, 2, '두 번째 부모 댓글에 대한 답글입니다.', sysdate);
+
+-- 결과 확인
+select * from tbl_comment;
+
+commit;
+
 -- 자가참조 조건 오류 방지 위해 이후 추가
 alter table tbl_comment add constraint comment_parent foreign key (parent_no) references tbl_comment(comment_no) on delete cascade;
 

@@ -324,28 +324,34 @@
 		            </div>
 										   
 		            <div class="modal-body">
-		                <div class="top">
-		                    <div class="modal-user">
-		                        <div class="profile-frame" id="modal-profile">
-		                        	<img id="profileImagePreview" alt="프로필 이미지" />
-		                        </div>
-		                        <p>${loginMember.userNickname}</p>
-		                    </div>
-		                    <div class="modal-buttons">
-			                    <i class="fa-solid fa-pen" id="post-update"></i>
-			                    <i class="fa-solid fa-trash" id="post-delete"></i>
-			                    <a href="#" class="modal-close">X</a>
-		                    </div>
-		                </div>
-							
-		                <div class="post-content">
-		                    <div class="post-content-text"></div>
-		                    <div class="post-content-hashtag">
-		                    	<input name="tags" readonly />
-		                    </div>
-		                </div>
-				
-		                <%-- 나중에 댓글 조회 추가 영역 --%> 
+		            	<div>
+			                <div class="top">
+			                    <div class="modal-user">
+			                        <div class="profile-frame" id="modal-profile">
+			                        	<img id="profileImagePreview" alt="프로필 이미지" />
+			                        </div>
+			                        <p>${loginMember.userNickname}</p>
+			                    </div>
+			                    <div class="modal-buttons">
+				                    <i class="fa-solid fa-pen" id="post-update"></i>
+				                    <i class="fa-solid fa-trash" id="post-delete"></i>
+				                    <a href="#" class="modal-close">X</a>
+			                    </div>
+			                </div>
+								
+			                <div class="post-content">
+			                    <div class="post-content-text"></div>
+			                    <div class="post-content-hashtag">
+			                    	<input name="tags" readonly />
+			                    </div>
+			                </div>
+						</div>
+						
+		                <%-- 댓글 조회 --%>
+		                <div class="comment">
+		                	
+		                </div> 
+		                
 		            </div>
 		        </div>
 		    </div>
@@ -546,7 +552,7 @@
 	    	let postNo = $(this).closest(".post-grid").data("id");
 	    	
 		    // 게시물 삭제
-		    $("#post-delete").on("click", function () {
+		    $("#post-delete").off("click").on("click", function () {
 		        if (confirm("게시물을 삭제하시겠습니까?")) {
 		            $.ajax({
 		                url: "/post/delete.kh",
