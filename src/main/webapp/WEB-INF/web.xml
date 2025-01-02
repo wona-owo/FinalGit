@@ -40,6 +40,8 @@
 			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml
 			 classpath:applicationContext.xml</param-value>
 		</init-param>
+		<!-- WebSocket 지원을 위한 async-supported 추가 -->
+		<async-supported>true</async-supported>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 		

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="chat">
+	<!--  채팅방 목록 조회  -->
+    <select id="getChatRoomList" resultType="chatRoom">
+        SELECT room_id AS roomId,
+               user1_no AS user1No,
+               user2_no AS user2No,
+               user1_left AS user1Left,
+               user2_left AS user2Left,
+               create_date AS createDate
+        FROM chat_room
+    </select>
+
+    <!--  특정 사용자의 채팅방 목록 조회  -->
+    <select id="getChatRoomListByUser" resultType="chatRoom">
+        SELECT room_id AS roomId,
+               user1_no AS user1No,
+               user2_no AS user2No,
+               user1_left AS user1Left,
+               user2_left AS user2Left,
+               create_date AS createDate
+        FROM chat_room
+        WHERE user1_no = #{userNo} OR user2_no = #{userNo}
+    </select>
+
+    <!--  채팅 메시지 조회  -->
+    <select id="getChatMessages" resultType="chatMessage">
+        SELECT message_id AS messageId,
+               room_id AS roomId,
+               sender_no AS senderNo,
+               message_content AS messageContent,
+               send_date AS sendDate
+        FROM chat_message
+        WHERE room_id = #{roomId}
+        ORDER BY send_date ASC
+    </select>
+
+    <!--  사용자 ID로 사용자 번호 조회  -->
+    <select id="getUserNoByUserId" resultType="int">
+        SELECT user_no
+        FROM tbl_user
+        WHERE user_id = #{userId}
+    </select>
+
+    <!--  두 사용자의 채팅방 조회  -->
+    <select id="getChatRoomByUsers" resultType="chatRoom">
+        SELECT room_id AS roomId,
+               user1_no AS user1No,
+               user2_no AS user2No,
+               user1_left AS user1Left,
+               user2_left AS user2Left,
+               create_date AS createDate
+        FROM chat_room
+        WHERE (user1_no = #{user1_no} AND user2_no = #{user2_no})
+           OR (user1_no = #{user2_no} AND user2_no = #{user1_no})
+    </select>
+
+    <!--  roomId로 채팅방 조회  -->
+    <select id="getChatRoomByRoomId" resultType="chatRoom">
+        SELECT room_id AS roomId,
+               user1_no AS user1No,
+               user2_no AS user2No,
+               user1_left AS user1Left,
+               user2_left AS user2Left,
+               create_date AS createDate
+        FROM chat_room
+        WHERE room_id = #{roomId}
+    </select>
+
+    <!--  채팅방 생성  -->
+    <insert id="createChatRoom" parameterType="map">
+        INSERT INTO chat_room (room_id, user1_no, user2_no, create_date)
+        VALUES (seq_chat_room.nextval, #{user1_no}, #{user2_no}, SYSDATE)
+    </insert>
+
+    <!--  채팅 메시지 저장  -->
+    <insert id="saveChatMessage" parameterType="chatMessage">
+        INSERT INTO chat_message (message_id, room_id, sender_no, message_content, send_date)
+        VALUES (seq_chat_message.nextval, #{roomId}, #{senderNo}, #{messageContent}, SYSDATE)
+    </insert>
+
+    <!--  채팅방 나가기  -->
+    <update id="leaveChatRoom" parameterType="map">
+        UPDATE chat_room
+        SET user1_left = CASE WHEN user1_no = #{userNo} THEN 1 ELSE user1_left END,
+            user2_left = CASE WHEN user2_no = #{userNo} THEN 1 ELSE user2_left END
+        WHERE room_id = #{roomId}
+    </update>
+</mapper>
