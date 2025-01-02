@@ -20,22 +20,27 @@ public class ChatService {
 	@Qualifier("chatDao")
 	private ChatDao chatDao;
 
+	// 모든 채팅방 목록을 조회
 	public ArrayList<ChatRoom> getChatRoomList() {
 		return (ArrayList<ChatRoom>) chatDao.getChatRoomList();
 	}
 
+	// 특정 사용자가 참여하고 있는 채팅방 목록을 조회
 	public ArrayList<ChatRoom> getChatRoomListByUser(int userNo) {
 		return (ArrayList<ChatRoom>) chatDao.getChatRoomListByUser(userNo);
 	}
 
+	// 특정 채팅방의 모든 메시지를 조회
 	public ArrayList<ChatMessage> getChatMessages(int roomId) {
 		return (ArrayList<ChatMessage>) chatDao.getChatMessages(roomId);
 	}
 
+	// 사용자 ID를 통해 사용자 번호를 조회
 	public int getUserNoByUserId(String userId) {
 		return chatDao.getUserNoByUserId(userId);
 	}
 
+	// 두 사용자가 참여하고 있는 채팅방을 조회
 	public ChatRoom getChatRoomByUsers(int user1No, int user2No) {
 		HashMap<String, Integer> params = new HashMap<>();
 		params.put("user1_no", user1No);
@@ -43,6 +48,7 @@ public class ChatService {
 		return chatDao.getChatRoomByUsers(params);
 	}
 
+	// 새로운 채팅방을 생성
 	public ChatRoom createChatRoom(int user1No, int user2No) {
 		HashMap<String, Integer> params = new HashMap<>();
 		params.put("user1_no", user1No);
@@ -51,10 +57,12 @@ public class ChatService {
 		return chatDao.getChatRoomByUsers(params);
 	}
 
+	// 채팅 메시지를 저장
 	public void saveChatMessage(ChatMessage chatMessage) {
 		chatDao.saveChatMessage(chatMessage);
 	}
 
+	// 사용자가 채팅방을 나갈 때 해당 정보를 업데이트
 	public void leaveChatRoom(int roomId, int userNo) {
 		HashMap<String, Integer> params = new HashMap<>();
 		params.put("roomId", roomId);
@@ -62,7 +70,7 @@ public class ChatService {
 		chatDao.leaveChatRoom(params);
 	}
 
-	// 추가: roomId로 채팅방을 조회하는 메소드
+	// 특정 roomId에 해당하는 채팅방을 조회
 	public ChatRoom getChatRoomByRoomId(int roomId) {
 		return chatDao.getChatRoomByRoomId(roomId);
 	}

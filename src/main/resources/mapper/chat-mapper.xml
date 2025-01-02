@@ -14,14 +14,20 @@
 
     <!--  특정 사용자의 채팅방 목록 조회  -->
     <select id="getChatRoomListByUser" resultType="chatRoom">
-        SELECT room_id AS roomId,
-               user1_no AS user1No,
-               user2_no AS user2No,
-               user1_left AS user1Left,
-               user2_left AS user2Left,
-               create_date AS createDate
-        FROM chat_room
-        WHERE user1_no = #{userNo} OR user2_no = #{userNo}
+         SELECT cr.room_id AS roomId,
+               cr.user1_no AS user1No,
+               u1.user_name AS user1Name,
+               u1.user_nickName AS user1NickName,
+               cr.user2_no AS user2No,
+               u2.user_name AS user2Name,
+               u2.user_nickName AS user2NickName,
+               cr.user1_left AS user1Left,
+               cr.user2_left AS user2Left,
+               cr.create_date AS createDate
+        FROM chat_room cr
+        JOIN tbl_user u1 ON cr.user1_no = u1.user_no
+        JOIN tbl_user u2 ON cr.user2_no = u2.user_no
+        WHERE cr.user1_no = #{userNo} OR cr.user2_no = #{userNo}
     </select>
 
     <!--  채팅 메시지 조회  -->

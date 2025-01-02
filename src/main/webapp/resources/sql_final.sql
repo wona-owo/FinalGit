@@ -504,4 +504,29 @@ INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTV
 INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '삽살개');
 INSERT INTO breed_dog (breed_dog_no, breed_dog_name) VALUES (seq_breed_dog.NEXTVAL, '풍산개');
 
+
+-- 채팅방 테이블
+CREATE TABLE chat_room (
+    room_id NUMBER PRIMARY KEY,
+    user1_no NUMBER REFERENCES tbl_user(user_no) ON DELETE CASCADE,
+    user2_no NUMBER REFERENCES tbl_user(user_no) ON DELETE CASCADE,
+    user1_left CHAR(1) DEFAULT 'N' CHECK(user1_left IN ('Y', 'N')),
+    user2_left CHAR(1) DEFAULT 'N' CHECK(user2_left IN ('Y', 'N')),
+    create_date DATE DEFAULT SYSDATE NOT NULL
+);
+ALTER TABLE chat_room
+ADD CONSTRAINT unique_user1_user2 UNIQUE (user1_no, user2_no);
+-- 채팅 메시지 테이블
+CREATE TABLE chat_message (
+    message_id NUMBER PRIMARY KEY,
+    room_id NUMBER REFERENCES chat_room(room_id) ON DELETE CASCADE,
+    sender_no NUMBER REFERENCES tbl_user(user_no) ON DELETE CASCADE,
+    message_content VARCHAR2(1000) NOT NULL,
+    send_date DATE DEFAULT SYSDATE NOT NULL
+);
+
+CREATE SEQUENCE seq_chat_room;
+CREATE SEQUENCE seq_chat_message;
+
+
 COMMIT;

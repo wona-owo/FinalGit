@@ -9,11 +9,18 @@ public class ChatRoom {
     private String user1Left;
     private String user2Left;
     private Date createDate;
+
+    //join
+    private String user1Name;
+    private String user1NickName;
+    private String user2Name;
+    private String user2NickName;
 	public ChatRoom() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public ChatRoom(int roomId, int user1No, int user2No, String user1Left, String user2Left, Date createDate) {
+	public ChatRoom(int roomId, int user1No, int user2No, String user1Left, String user2Left, Date createDate,
+			String user1Name, String user1NickName, String user2Name, String user2NickName) {
 		super();
 		this.roomId = roomId;
 		this.user1No = user1No;
@@ -21,6 +28,10 @@ public class ChatRoom {
 		this.user1Left = user1Left;
 		this.user2Left = user2Left;
 		this.createDate = createDate;
+		this.user1Name = user1Name;
+		this.user1NickName = user1NickName;
+		this.user2Name = user2Name;
+		this.user2NickName = user2NickName;
 	}
 	public int getRoomId() {
 		return roomId;
@@ -58,13 +69,38 @@ public class ChatRoom {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
+	public String getUser1Name() {
+		return user1Name;
+	}
+	public void setUser1Name(String user1Name) {
+		this.user1Name = user1Name;
+	}
+	public String getUser1NickName() {
+		return user1NickName;
+	}
+	public void setUser1NickName(String user1NickName) {
+		this.user1NickName = user1NickName;
+	}
+	public String getUser2Name() {
+		return user2Name;
+	}
+	public void setUser2Name(String user2Name) {
+		this.user2Name = user2Name;
+	}
+	public String getUser2NickName() {
+		return user2NickName;
+	}
+	public void setUser2NickName(String user2NickName) {
+		this.user2NickName = user2NickName;
+	}
 	@Override
 	public String toString() {
 		return "ChatRoom [roomId=" + roomId + ", user1No=" + user1No + ", user2No=" + user2No + ", user1Left="
-				+ user1Left + ", user2Left=" + user2Left + ", createDate=" + createDate + "]";
+				+ user1Left + ", user2Left=" + user2Left + ", createDate=" + createDate + ", user1Name=" + user1Name
+				+ ", user1NickName=" + user1NickName + ", user2Name=" + user2Name + ", user2NickName=" + user2NickName
+				+ "]";
 	}
 
-    // Getters and Setters
     
     
 }
