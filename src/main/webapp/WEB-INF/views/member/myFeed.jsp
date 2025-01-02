@@ -14,8 +14,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
 <%-- select2 --%>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
 <style>
 /* ===== 모달 배경 ===== */
 .modal-backdrop-G {
@@ -85,7 +85,7 @@
 	justify-content: center;
 	align-items: center;
 }
-#profileImagePreview {
+#proImagePreview {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
@@ -554,7 +554,7 @@
 	            <div class="modal-body-G">
 	                <div class="modal-left-G">
 	                    <div class="profile-image-container">
-	                        <img id="profileImagePreview"
+	                        <img id="proImagePreview"
 	                            alt="프로필 이미지" />
 	                    </div>
 	                    <div class="image-btn-group">
@@ -665,7 +665,7 @@
 		let updAddress = $("#userAddress");
 		let updEmail = $("#userEmail");
 	    let updPhone = $("#userPhone");
-	    let updImage = $("#profileImagePreview");
+	    let updImage = $("#proImagePreview");
 	    
 	    // 이미지 파일 변경없음과 삭제를 구분할 변수
 	    let delChk = false;	    
@@ -732,7 +732,7 @@
 	        // 미리보기
 	        const reader = new FileReader();
 	        reader.onload = (e) => {
-	            $("#profileImagePreview").attr("src", e.target.result);
+	            $("#proImagePreview").attr("src", e.target.result);
 	        };
 	        reader.readAsDataURL(file);
 	            
@@ -755,12 +755,6 @@
 	        
 	        delChk = true;
 	    }
-	    
-	    // 입력 정보 체크
-	    $(document).ready(function() {
-	        chkUserEmail();
-	        chkUserPhone();
-	    });
 	    
 	    //유효성 검증 변수
 	    let phoneVal = false;
@@ -812,6 +806,10 @@
 	    }
 	    
 	    updEmail.on("input", chkUserEmail);
+	    
+	 	// 입력 정보 체크
+        chkUserEmail();
+        chkUserPhone();
 	    
 	    // 닉네임
 	    // 닉네임 입력 시, 중복체크 변수를 false로 변경
@@ -1204,17 +1202,15 @@
 	    
 	    const userNo = "${loginMember.userNo}";
  	    
-	    $(document).ready(function() {
-	        $('.breedType').select2();
-	        
-	        selectUserMypet(userNo);
-	    	
-	     	// petType 변경 이벤트 추가
-	        $("input[name='petType']").on("change", function () {
-	            const selectedType = $(this).val(); // 선택된 petType 값
-	            updateBreedOptions(selectedType); // 옵션 업데이트 호출
-	        });
-	    });
+		$('.breedType').select2();
+        
+        selectUserMypet(userNo);
+    	
+     	// petType 변경 이벤트 추가
+        $("input[name='petType']").on("change", function () {
+            const selectedType = $(this).val(); // 선택된 petType 값
+            updateBreedOptions(selectedType); // 옵션 업데이트 호출
+        });
 	    
 	    // 내 반려동물 리스트
 	    function selectUserMypet(userNo){
@@ -1231,7 +1227,7 @@
 	                    
 	                    const $petImageContainer = $('<div>', { class: 'pet-image-container' });
 	                    const $img = $('<img>', {
-	                        id: 'profileImagePreview',
+	                        id: 'proImagePreview',
 	                        src: '/resources/css_image/' + mypet.petType + '.png',
 	                        alt: '반려동물 이미지'
 	                    });
@@ -1305,9 +1301,6 @@
 	                    breedSelect.append(option);
 	                });
 
-	                // Select2 다시 초기화
-	                breedSelect.trigger('change');
-	                
 	             	// 선택된 값 설정
 	                if (selectedBreed) {
 	                    breedSelect.val(selectedBreed).trigger('change');
