@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.dao.PostDao;
+import kr.or.iei.post.model.vo.Comment;
 import kr.or.iei.post.model.vo.Post;
 
 @Service("postService")
@@ -64,6 +65,10 @@ public class PostService {
 	
 	public int delTag(int postNo) {
 		return postDao.delTag(postNo);
+	}
+
+	public ArrayList<Comment> getComment(int postNo) {
+		return (ArrayList<Comment>) postDao.getComment(postNo);
 	}
 	
 }

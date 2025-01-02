@@ -14,7 +14,8 @@
 			   p.post_date as postDate
 	      from post_file f
 		 join post p on (f.post_no = p.post_no)	  
-		 where p.user_no = ${_parameter} and (substr(f.post_file_name,-6,1) = '1')  		
+		 where p.user_no = ${_parameter} and (substr(f.post_file_name,-5,1) = '1')
+		 order by post_date desc  		
 	</select>
 	
 	<!-- 게시글 이미지 리스트 조회 -->
@@ -25,6 +26,7 @@
 		 from post_file f
 		 join post p on (f.post_no = p.post_no)
 	     where p.post_no = ${_parameter}
+	     
 	</select>
 	
 	<!-- 게시글 코드(시퀀스) 생성 -->	
@@ -81,6 +83,22 @@
 	<delete id="delTag" parameterType="_int">
 		delete hashtag where post_no = #{_parameter}
 	</delete>
+	
+	<!-- 게시글 댓글조회 -->
+	<select id="getComment" parameterType="_int"
+	resultType="comment">
+		select c.comment_no as commentNo,
+			   c.user_no as userNo,
+			   c.post_no as postNo,
+			   c.parent_no as parentNo,
+			   c.comment_content as commentContent,
+			   c.comment_date as commentDate,
+			   u.user_nickname as userNickname,
+			   u.user_id as userId
+		from tbl_comment c
+		join tbl_user u on (c.user_no = u.user_no)  
+		where c.post_no = #{_parameter}
+	</select>
 	
 	
 </mapper>

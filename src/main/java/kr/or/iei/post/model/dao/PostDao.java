@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.post.model.vo.Comment;
 import kr.or.iei.post.model.vo.Post;
 
 @Repository("postDao")
@@ -73,6 +74,10 @@ public class PostDao {
 	
 	public int delTag(int postNo) {	
 		return sqlSession.delete("post.delTag", postNo);
+	}
+
+	public List<Comment> getComment(int postNo) {
+		return sqlSession.selectList("post.getComment", postNo);
 	}
 
 

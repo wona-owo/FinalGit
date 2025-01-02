@@ -126,7 +126,7 @@ create table tbl_comment( --comment는 oracle 예약어
     comment_date date default sysdate not null
 );
 
--- 댓글 테이블 데이터 추가
+-- 댓글 테이블 데이터 추가(게시물 번호, 부모댓글 번호는 개인 테스트 데이터에 따라 바뀔수 있으니 체크)
 -- 댓글 추가
 insert into tbl_comment (comment_no, user_no, post_no, parent_no, comment_content, comment_date)
 values (seq_comment.nextval, 2, 17, null, '첫 번째 부모 댓글입니다.', sysdate);

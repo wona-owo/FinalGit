@@ -315,258 +315,95 @@
 	   		</c:forEach>
 	    </div>
 	    
-	    <%-- 콘텐츠 모달창 --%>
-	    <div class="modal">
-		    <div class="modal-place">
-		        <div class="modal-contents">
-		            <div class="modal-image">
-		                <%-- 클릭한 게시글의 이미지를 동적으로 삽입 --%>
-		            </div>
-										   
-		            <div class="modal-body">
-		            	<div class="post-section">
-			                <div class="top">
-			                    <div class="modal-user">
-			                        <div class="profile-frame" id="modal-profile">
-			                        	<img id="profileImagePreview" alt="프로필 이미지" />
-			                        </div>
-			                        <p>${loginMember.userNickname}</p>
-			                    </div>
-			                    <div class="modal-buttons">
-				                    <i class="fa-solid fa-pen" id="post-update"></i>
-				                    <i class="fa-solid fa-trash" id="post-delete"></i>
-				                    <a href="#" class="modal-close">X</a>
-			                    </div>
-			                </div>
-								
-			                <div class="post-content">
-			                    <div class="post-content-text"></div>
-			                    <div class="post-content-hashtag">
-			                    	<input name="tags" readonly />
-			                    </div>
-			                </div>
+	    <%--포스트 modal--%>
+	    <%@ include file="/WEB-INF/views/member/postModal.jsp" %>
+	  	
+	  	
+		<%-- 포스트 작성 모달창 --%>
+		<div class="post-modal" id="write-modal">
+			<div class="modal-place">
+	
+				<form id="postForm" action="/post/write.kh" method="post"
+					enctype="multipart/form-data">
+					<input type="hidden" name="userNo"
+						value="${sessionScope.loginMember.userNo}">
+					<div class="modal-body">
+						<div class="top">
+							<span class="modal-title">일기쓰기</span> <a href="#"
+								class="modal-close" id="post-write-close">X</a>
 						</div>
-						
-		                <%-- 댓글 영역 --%>
-		                <div class="comment-section">
-		                		<div class="comment-list">
-		                			<%-- 동적으로 댓글이 추가될 위치 --%>
-		                				<div class="comment">
-		                					 <p><strong>유저1</strong>: 첫 번째 댓글</p>
-		                					<div class="reply">
-		                					<p>↳ <strong>유저2</strong>: 첫 번째 댓글 첫 번째 답글</p>
-		                					 <p>↳ <strong>유저3</strong>: 첫 번째 댓글 두 번째 답글</p>
-		                					</div>
-		                				</div>
-		                				<div class="comment">
-		                					 <p><strong>유저2</strong>: 두 번째 댓글</p>
-		                					<div class="reply">
-		                					<p>↳ <strong>유저3</strong>: 두 번째 댓글 첫 번째 답글</p>	        
-		                					</div>
-		                				</div>
-		                		</div>
-		                </div> 
-		                
-		                <div class="comment-form">
-		                	<textarea class="comment-input" placeholder="댓글달기..."></textarea>
-		                	<button class="submit-comment"><i class="fa-solid fa-comment"></i></button>
-		                </div>
-		                
-		            </div>
-		        </div>
-		    </div>
+	
+						<div>
+							<span class="modal-title">이미지, 영상파일 추가</span> <br> <input
+								name="files" type="file" id="post-input"
+								accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
+						</div>
+	
+						<div>
+							<span>내용 추가</span> <br>
+							<textarea name="content" rows="10" cols="55" style="resize: none;"></textarea>
+						</div>
+	
+						<div>
+							<span>태그 추가</span> <br> <input name="hashtag"
+								placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag" type="hidden">
+						</div>
+	
+						<div>
+							<input type="submit" value="작성" id="post-submit">
+						</div>
+	
+					</div>
+				</form>
+	
+			</div>
 		</div>
-
-	    
-	     <%-- 포스트 작성 모달창 --%>
-	    <div class="post-modal" id="write-modal">
-	    	<div class="modal-place">
-	    	
-	    	<form id="postForm" action="/post/write.kh" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="userNo" value="${sessionScope.loginMember.userNo}">
-	    	<div class="modal-body">
-			    <div class="top">
-			   		 <span class="modal-title">일기쓰기</span>
-			    	 <a href="#" class="modal-close" id="post-write-close">X</a>
-			    </div>
-			
-			   <div>
-			   		<span class="modal-title">이미지, 영상파일 추가</span> <br>
-			   		<input name="files" type="file" id="post-input" accept=".jpg, .gif, .png, .jpeg, .mp4, .wmv, .mov" multiple>
-			   </div>
-			   
-			   <div>
-				   <span>내용 추가</span> <br>
-				   <textarea name="content" rows="10" cols="55" style="resize: none;"></textarea> 
-			   </div>
-			   
-			   <div>
-			  	   <span>태그 추가</span> <br>
-			  	   <input name="hashtag" placeholder="태그를 입력하세요.(최대 5개)" id="post-hashtag" type="hidden">
-			   </div>
-		   
-			    <div>
-				    <input type="submit" value="작성" id="post-submit">
-			    </div>
-					
-	    	</div>
-	    </form>	
-	    
-	   </div> 
-	  </div> 	
-	  
-	  
-	     <%-- 포스트 수정 모달창 --%>
-	    <div class="post-modal" id="update-modal">
-		    <div class="modal-place">
-		
-		        <form id="update" action="/post/update.kh" method="post" enctype="multipart/form-data">
-		            <input type="hidden" name="userNo" value="${sessionScope.loginMember.userNo}">
-		            <input type="hidden" name="postNo" id="postNo">
-		
-		            <div class="modal-body">
-		                <div class="top">
-		                    <span class="modal-title">일기 수정</span>
-		                    <a href="#" class="modal-close" id="post-update-close">X</a>
-		                </div>
-		
-		                <div>
-		                    <span>내용 수정</span> <br>
-		                    <textarea name="content" rows="10" cols="55" style="resize: none;" id="postContent"></textarea>
-		                </div>
-		
-		                <div>
-		                    <span>태그 수정</span> <br>
-		                    <input name="hashtag" id="editTags" placeholder="태그를 입력하세요.(최대 5개)" type="hidden">
-		                </div>
-		
-		                <div>
-		                    <input type="submit" value="수정" id="post-update-submit">
-		                </div>
-		            </div>
-		        </form>
-		
-		    </div>
+	
+	
+		<%-- 포스트 수정 모달창 --%>
+		<div class="post-modal" id="update-modal">
+			<div class="modal-place">
+	
+				<form id="update" action="/post/update.kh" method="post"
+					enctype="multipart/form-data">
+					<input type="hidden" name="userNo"
+						value="${sessionScope.loginMember.userNo}"> <input
+						type="hidden" name="postNo" id="postNo">
+	
+					<div class="modal-body">
+						<div class="top">
+							<span class="modal-title">일기 수정</span> <a href="#"
+								class="modal-close" id="post-update-close">X</a>
+						</div>
+	
+						<div>
+							<span>내용 수정</span> <br>
+							<textarea name="content" rows="10" cols="55" style="resize: none;"
+								id="postContent"></textarea>
+						</div>
+	
+						<div>
+							<span>태그 수정</span> <br> <input name="hashtag" id="editTags"
+								placeholder="태그를 입력하세요.(최대 5개)" type="hidden">
+						</div>
+	
+						<div>
+							<input type="submit" value="수정" id="post-update-submit">
+						</div>
+					</div>
+				</form>
+	
+			</div>
 		</div>
-	  
-	  
-	  		    
+	  	
+	  	  		    
 	</main>
 	
 	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
-	<script>    
+
+	<script>
 		
-	$(document).ready(function () {
-	    // 콘텐츠 모달
-	    $(".feed-thumbnail").on("click", function () {
-	        const postGrid = $(this).closest(".post-grid"); // 클릭된 썸네일의 부모 요소
-	        let postNo = postGrid.data("id"); // 게시글 ID
-	        const postContent = postGrid.find(".hidden-post-content").text(); // 숨겨진 콘텐츠 가져오기
-
-	        // 초기 모달 설정
-	        $(".modal").css("display", "block");
-	        $(".modal .modal-image").html(`
-	            <div class="previous">◀</div>
-	            <img id="current-image" src="" alt="thumbnail">
-	            <div class="next">▶</div>
-	        `);
-	        $(".modal .post-content-text").text(postContent);
-
-	        // 이미지 슬라이드 호출
-	        imgSlide(postNo);
-	    });
-
-	    // 이미지 슬라이드 함수
-	    function imgSlide(postNo) {
-	        $.ajax({
-	            url: "/post/imgLists.kh",
-	            method: "get",
-	            data: { postNo: postNo },
-	            success: function (res) {
-	                let imgIndex = 0; // 초기 인덱스
-	                const totalImages = res.length;
-
-	                // 첫 이미지 설정
-	                $("#current-image").attr("src", "/resources/post_file/" + res[imgIndex]);
-
-	                // 이벤트 핸들러
-	                $(".previous").off("click").on("click", function () {
-	                    if (imgIndex > 0) {
-	                        imgIndex--;
-	                        $("#current-image").attr("src", "/resources/post_file/" + res[imgIndex]);
-	                        updateButtonState();
-	                    }
-	                });
-
-	                $(".next").off("click").on("click", function () {
-	                    if (imgIndex < totalImages - 1) {
-	                        imgIndex++;
-	                        $("#current-image").attr("src", "/resources/post_file/" + res[imgIndex]);
-	                        updateButtonState();
-	                    }
-	                });
-
-	                // 버튼 상태 업데이트
-	                updateButtonState();
-
-	                function updateButtonState() {
-	                    $(".previous").css("visibility", imgIndex === 0 ? "hidden" : "visible");
-	                    $(".next").css("visibility", imgIndex === totalImages - 1 ? "hidden" : "visible");
-	                }
-	            },
-	            error: function () {
-	                console.error("AJAX 통신 에러 발생");
-	            },
-	        });
-	    }
-
-	    // 해시태그 불러오기
-	    function callHashtag(postNo) {
-	        $.ajax({
-	            url: "/post/hashtags.kh", // 서버 요청 URL
-	            method: "GET", // 요청 방식
-	            data: { postNo: postNo }, // 서버에 전달할 데이터
-	            success: function (res) {
-	                const tagsString = res.join(", "); // 콤마로 구분된 문자열로 변환
-	                const input = document.querySelector('input[name="tags"]');
-
-	                if (!input) {
-	                    console.error("태그 입력 필드를 찾을 수 없습니다.");
-	                    return;
-	                }
-
-	                input.value = tagsString;
-
-	                // Tagify 초기화 - 이미 초기화된 경우 중복 방지
-	                if (!input._tagify) {
-	                    new Tagify(input, {
-	                        readOnly: true,
-	                        delimiters: ", ", // 콤마와 공백으로 태그 구분
-	                    });
-	                } else {
-	                    input._tagify.destroy();
-	                    new Tagify(input, {
-	                        readOnly: true,
-	                        delimiters: ", ",
-	                    });
-	                }
-	            },
-	            error: function () {
-	                console.error("AJAX 통신 오류 발생!");
-	            },
-	        });
-	    }
-
-	    // 게시글 클릭 시 해당 게시글 ID로 해시태그 호출
-	    $(".feed-thumbnail").on("click", function () {
-	        let postNo = $(this).closest(".post-grid").data("id"); // 게시글 ID 가져오기
-	        if (!postNo) {
-	            console.error("게시글 ID를 찾을 수 없습니다.");
-	            return;
-	        }
-	        callHashtag(postNo); // 해시태그 불러오기
-	    });
-
+		//삭제, 수정 스크립트
 	    $(".feed-thumbnail").on("click", function () {
 		     
 	    	let postNo = $(this).closest(".post-grid").data("id");
@@ -594,19 +431,19 @@
 		    $("#post-update").on("click", function () {
 		        const postContent = $(this).closest(".post-grid").find(".hidden-post-content").text(); // 게시물 내용
 		        const postTags = $(this).closest(".post-grid").data("tags"); // 기존 태그 데이터
-
+	
 		        $("#postNo").val(postNo); // 게시물 번호
 		        $("#postContent").val(postContent); // 게시물 내용
-
+	
 		        $("#update-modal").css("display", "block"); // 수정 모달 열기
-
+	
 		        const tagInput = document.querySelector("#editTags");
-
+	
 		        // 기존 Tagify 인스턴스 제거
 		        if (tagInput._tagify) {
 		            tagInput._tagify.destroy();
 		        }
-
+	
 		        // 새로운 Tagify 인스턴스 생성
 		        const tagify = new Tagify(tagInput, {
 		            delimiters: ", ",
@@ -614,36 +451,32 @@
 		            pattern: /^[가-힣]{1,30}$/, // 한글만 허용
 		            duplicates: false, // 중복 태그 방지
 		        });
-
+	
 		        // 기존 태그 데이터 처리
 		        const tagList = postTags ? postTags.map(tag => tag.value) : []; // 데이터가 없을 경우 빈 배열
 		        tagify.addTags(tagList); // Tagify에 기존 태그 추가
-
+	
 		        // 폼 제출 시 태그 데이터 처리
 		        $("#update").on("submit", function (event) {
 		            event.preventDefault(); // 기본 폼 제출 방지
-
+	
 		            // Tagify에서 현재 태그 데이터를 가져옴
 		            const tagData = tagify.value;
 		            const tagValues = tagData.map(tag => tag.value); // 태그 값만 추출
-
+	
 		            // JSON 문자열로 변환하여 hidden input에 설정
 		            const tagString = JSON.stringify(tagValues);
 		            $("#editTags").val(tagString);
-
+	
 		            // 최종 폼 제출
 		            this.submit();
 		        });
 		    });
-
+	
 	    });
-
-	    // 포스트 조회 닫기
-	    $(".modal-close").on("click", function () {
-	        $(".modal").css("display", "none");
-	    });
-
-	    // 포스트 작성 열기/닫기
+		
+		
+	 	// 포스트 작성 열기/닫기
 	    $("#post-button").on("click", function () {
 	        $("#write-modal").css("display", "block");
 	    });
@@ -656,61 +489,56 @@
 	    $(".modal-close").on("click", function () {
 	        $("#update-modal").css("display", "none");
 	    });
-	});
-
 	
-	 // Tagify 초기화 및 옵션 설정
-	   const tagify = new Tagify($('#post-hashtag')[0], {
-	       delimiters: ", ",           // 쉼표와 공백으로 태그 구분
-	       maxTags: 5,                 // 최대 5개의 태그 허용
-	       pattern: /^[가-힣]{1,30}$/,  // 한글태그
-	       duplicates: false,          // 중복 태그 방지
-	   });
-		 
-		 //태그 데이터 유효성 관련 알럿
-		 tagify.on("invalid",function(e){
-			 if (e.detail.reason == "exceeds") {
-			    alert("최대 5개의 태그만 입력할 수 있습니다.");
-			} else if (e.detail.reason == "duplicate") {
-			    alert("같은 태그는 등록할 수 없습니다.");
-			} else if (e.detail.reason == "pattern") {
-			    alert("태그는 한글, 영어, 숫자만 입력할 수 있습니다.");
-			}
-		 });
-
+	    
+	    // Tagify 초기화 및 옵션 설정
+		   const tagify = new Tagify($('#post-hashtag')[0], {
+		       delimiters: ", ",           // 쉼표와 공백으로 태그 구분
+		       maxTags: 5,                 // 최대 5개의 태그 허용
+		       pattern: /^[가-힣]{1,30}$/,  // 한글태그
+		       duplicates: false,          // 중복 태그 방지
+		   });
+			 
+			 //태그 데이터 유효성 관련 알럿
+			 tagify.on("invalid",function(e){
+				 if (e.detail.reason == "exceeds") {
+				    alert("최대 5개의 태그만 입력할 수 있습니다.");
+				} else if (e.detail.reason == "duplicate") {
+				    alert("같은 태그는 등록할 수 없습니다.");
+				} else if (e.detail.reason == "pattern") {
+				    alert("태그는 한글, 영어, 숫자만 입력할 수 있습니다.");
+				}
+			 });
 	
-		// 사진이 하나라도 없으면 작성 불가
-		 const imageCk = $("#post-input");
-		 const submit = $("#post-submit");
-
-		 submit.on("click", function (event) {
-		     // 기본 제출 동작 방지
-		     event.preventDefault();
-
-		     if (!imageCk[0].files.length) {
-		         alert("1개 이상의 이미지를 등록해야 합니다!");
-		     } else {
-		         let tagData = tagify.value;
-		         let tagList = [];
-
-		         for (let tag of tagData) {
-		             tagList.push(tag["value"]);
-		         }
-
-		         let tagString = JSON.stringify(tagList);
-		         $("#post-hashtag").val(tagString);
-		         $("#postForm")[0].submit();
-		         
-		         
-		     }
-		 });
-
+		
+			// 사진이 하나라도 없으면 작성 불가
+			 const imageCk = $("#post-input");
+			 const submit = $("#post-submit");
+	
+			 submit.on("click", function (event) {
+			     // 기본 제출 동작 방지
+			     event.preventDefault();
+	
+			     if (!imageCk[0].files.length) {
+			         alert("1개 이상의 이미지를 등록해야 합니다!");
+			     } else {
+			         let tagData = tagify.value;
+			         let tagList = [];
+	
+			         for (let tag of tagData) {
+			             tagList.push(tag["value"]);
+			         }
+	
+			         let tagString = JSON.stringify(tagList);
+			         $("#post-hashtag").val(tagString);
+			         $("#postForm")[0].submit();
+			         
+			         
+			     }
+			 });
+	
 			
-
-
-	
 	</script>
-	
 	
 	
 	

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -34,10 +35,14 @@ import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Mypet;
 import kr.or.iei.post.model.service.PostService;
+import kr.or.iei.post.model.vo.Comment;
 import kr.or.iei.post.model.vo.Post;
 @RequestMapping("/post/")
 @Controller
 public class PostController {
+	
+	@Autowired
+	private ServletContext servletContext;
 	
 	@Autowired
 	@Qualifier("postService")
@@ -126,7 +131,7 @@ public class PostController {
 			   String fileName = post.getUserNo() + "_" 
 					   		   + post.getPostNo() + "_" 
 					   		   + toDay + "_"
-					   		   + (i+1) + "_" + extension;
+					   		   + (i+1) + extension;
 			   
 			   //파일 경로 세팅
 			   savePath += fileName;
@@ -195,11 +200,12 @@ public class PostController {
         
 		 // 파일 경로 리스트 가져오기
         ArrayList<String> filePaths = postService.imgLists(postNo);
+        String basePath =  servletContext.getRealPath("/resources/post_file/");
         
         //배열 순회하면서 파일 삭제
         for(String filePath : filePaths) {
         	if(filePath != null) {
-        		File file = new File(filePath);
+        		File file = new File(basePath + filePath);
         		if (file.exists() && !file.delete()) {
                     return "error"; // 파일 삭제 실패 시 반환
                 }      		
@@ -274,6 +280,14 @@ public class PostController {
 		    model.addAttribute("url", "redirect:myFeedFrm.kh");
 		    return "common/alert";
 		}
+	}
+	
+	//게시물 댓글 조회
+	@GetMapping(value="comment.kh", produces="application/json; charset=utf-8")
+	@ResponseBody
+	public ArrayList<Comment> getComment(Model model, @RequestParam("postNo") int postNo) {	
+		ArrayList<Comment> comments = postService.getComment(postNo);
+		return comments;
 	}
 	
 
