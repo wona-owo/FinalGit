@@ -33,7 +33,7 @@
 				
 				<div class="one-menu">
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/member/message.kh" class="menu-link">메시지</a>
+					<a href="/chat/chatRoomList.kh" class="menu-link">메시지</a>
 				</div>
 				
 				<div class="one-menu">

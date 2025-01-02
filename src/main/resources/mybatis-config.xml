@@ -17,6 +17,8 @@
 			<typeAlias type="kr.or.iei.member.model.vo.Mypet" alias="mypet"/>
 			<typeAlias type="kr.or.iei.story.model.vo.Story" alias="story"/>
 			<typeAlias type="kr.or.iei.story.model.vo.StoryFile" alias="storyFile"/>
+			<typeAlias type="kr.or.iei.chat.model.vo.ChatRoom" alias="chatRoom"/>
+			<typeAlias type="kr.or.iei.chat.model.vo.ChatMessage" alias="chatMessage"/>
 		</typeAliases>
 
 </configuration>

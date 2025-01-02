@@ -61,6 +61,7 @@
 								<a href="javascript:void(0)" class="follow-toggle unfollow-btn"
 									data-userid="${member.userId}" data-following="true"> 언팔로우
 								</a>
+								<a href="/chat/startChat.kh?userId=${member.userId}" class="message-btn" data-userid="${member.userId}">메시지</a>
 							</c:when>
 
 							<%-- 내가 상대만 팔로우 중 --%>
@@ -140,40 +141,67 @@
 	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
 	
 	<script>
-		$(document).ready(function(){
-			$.ajax({
-			    url: '/follor/follow', // 실제 컨트롤러 매핑 URL
-			    type: 'POST',
-			    dataType: 'json',
-			    data: {
-			        userId: userId,
-			        action: isFollowing ? 'unfollow' : 'follow' // 팔로우/언팔로우 액션
-			    },
-			    success: function(response) {
-			        // 응답 처리 로직
-			        if (response.success) {
-			            // 버튼 상태 업데이트
-			            if (response.isFollowing) {
-			                $btn.text('언팔로우').data('following', true).removeClass('follow-btn').addClass('unfollow-btn');
-			            } else {
-			                $btn.text('팔로우').data('following', false).removeClass('unfollow-btn').addClass('follow-btn');
-			            }
-			            // 카운트 업데이트
-			            if (response.followerCount !== undefined) {
-			                $(".followerCountSpan").text(response.followerCount);
-			            }
-			            if (response.followingCount !== undefined) {
-			                $(".followingCountSpan").text(response.followingCount);
-			            }
-			        } else {
-			            alert("팔로우/언팔로우 처리 실패: " + (response.message || ''));
-			        }
-			    },
-			    error: function() {
-			        console.log("AJAX error!");
-			    }
-			});
-			
+	$(document).ready(function() {
+	    // 메시지 버튼 클릭 이벤트
+	    $(".message-btn").on("click", function(event) {
+		    event.preventDefault(); // 기본 링크 동작 방지
+		    var targetUserId = $(this).data("userid");
+		    $.ajax({
+		        url: '/chat/startChat.kh',
+		        type: 'GET',
+		        data: { userId: targetUserId },
+		        success: function(response) {
+		            if (response.success) {
+		                window.location.href = '/chat/chatRoom.kh?roomId=' + response.roomId;
+		            } else {
+		                alert('채팅방 생성에 실패했습니다: ' + (response.message || ''));
+		            }
+		        },
+		        error: function() {
+		            alert('서버 오류가 발생했습니다.');
+		        }
+		    });
+		});
+
+	    // 팔로우/언팔로우 버튼 클릭 이벤트
+	    $(".follow-toggle").on("click", function() {
+	        var $btn = $(this);
+	        var userId = $btn.data("userid");
+	        var isFollowing = $btn.data("following");
+
+	        $.ajax({
+	            url: '/follow/toggleFollow', // 실제 컨트롤러 매핑 URL
+	            type: 'POST',
+	            dataType: 'json',
+	            data: {
+	                userId: userId,
+	                action: isFollowing ? 'unfollow' : 'follow' // 팔로우/언팔로우 액션
+	            },
+	            success: function(response) {
+	                if (response.success) {
+	                    // 버튼 상태 업데이트
+	                    if (response.isFollowing) {
+	                        $btn.text('언팔로우').data('following', true).removeClass('follow-btn').addClass('unfollow-btn');
+	                    } else {
+	                        $btn.text('팔로우').data('following', false).removeClass('unfollow-btn').addClass('follow-btn');
+	                    }
+	                    // 카운트 업데이트
+	                    if (response.followerCount !== undefined) {
+	                        $(".followerCountSpan").text(response.followerCount);
+	                    }
+	                    if (response.followingCount !== undefined) {
+	                        $(".followingCountSpan").text(response.followingCount);
+	                    }
+	                } else {
+	                    alert("팔로우/언팔로우 처리 실패: " + (response.message || ''));
+	                }
+	            },
+	            error: function() {
+	                console.log("AJAX error!");
+	            }
+	        });
+	    });
+	});
 		//모달창 노출
 		const modal = $(".modal");
 		
