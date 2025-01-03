@@ -1,6 +1,7 @@
 package kr.or.iei.chat.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,25 +46,38 @@ public class ChatController {
 	// 채팅방 상세 페이지를 보여주는 메소드
 	@GetMapping("chatRoom.kh")
 	public String chatRoom(@RequestParam("roomId") int roomId, Model model, HttpSession session) {
-		Member loginMember = (Member) session.getAttribute("loginMember");
-		if (loginMember == null) {
-			return "redirect:/"; // 로그인 안 된 경우
-		}
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        return "redirect:/";
+	    }
 
-		ArrayList<ChatMessage> chatMessages = chatService.getChatMessages(roomId);
-		ChatRoom chatRoom = chatService.getChatRoomByRoomId(roomId);
+	    ChatRoom chatRoom = chatService.getChatRoomByRoomId(roomId);
+	    if (chatRoom == null) {
+	        return "redirect:/chat/chatRoomList.kh";
+	    }
 
-		if (chatRoom == null) {
-			// 채팅방이 존재하지 않을 경우 처리
-			return "redirect:/chat/chatRoomList.kh";
-		}
+	    int receiverNo = (chatRoom.getUser1No() == loginMember.getUserNo()) ? chatRoom.getUser2No()
+	            : chatRoom.getUser1No();
 
-		int receiverNo = (chatRoom.getUser1No() == loginMember.getUserNo()) ? chatRoom.getUser2No()
-				: chatRoom.getUser1No();
-		model.addAttribute("chatMessages", chatMessages);
-		model.addAttribute("receiverNo", receiverNo);
-		model.addAttribute("roomId", roomId); // 추가: roomId도 모델에 포함
-		return "chat/chatRoom";
+	    // 마지막 나간 시간 확인
+	    Date lastOutTime = null;
+	    if (chatRoom.getUser1No() == loginMember.getUserNo()) {
+	        lastOutTime = chatRoom.getUser1OutTime();
+	    } else {
+	        lastOutTime = chatRoom.getUser2OutTime();
+	    }
+
+	    ArrayList<ChatMessage> chatMessages;
+	    if (lastOutTime != null) {
+	        chatMessages = chatService.getChatMessagesAfterOutTime(roomId, lastOutTime);
+	    } else {
+	        chatMessages = chatService.getChatMessages(roomId);
+	    }
+
+	    model.addAttribute("chatMessages", chatMessages);
+	    model.addAttribute("receiverNo", receiverNo);
+	    model.addAttribute("roomId", roomId);
+	    return "chat/chatRoom";
 	}
 
 	// 메시지를 전송하는 메소드
@@ -81,7 +95,7 @@ public class ChatController {
 		chatMessage.setMessageContent(message);
 
 		chatService.saveChatMessage(chatMessage);
-
+		
 		return "redirect:/chat/chatRoom.kh?roomId=" + roomId;
 	}
 
@@ -116,11 +130,37 @@ public class ChatController {
 				result.put("message", "채팅방을 생성하는 데 실패했습니다.");
 				return result;
 			}
-		}
+			
+		} else if ("Y".equals(chatRoom.getUser1Left()) || "Y".equals(chatRoom.getUser2Left())) {
+			int updateChatRoom = chatService.updateChatRoom(user1No, chatRoom.getRoomId(), chatRoom.getUser1No(), chatRoom.getUser2No());
+			if (updateChatRoom == 0) {
+			    // 업데이트 실패 처리 로직
+			    result.put("success", false);
+			    result.put("message", "채팅방 업데이트에 실패했습니다.");
+			    return result;
+			}
+	    } 
 
 		result.put("success", true);
 		result.put("roomId", chatRoom.getRoomId());
 		return result;
 	}
+	
+	// 채팅방 나가기 요청 처리
+    @PostMapping("leaveChatRoom.kh")
+    @ResponseBody
+    public HashMap<String, Object> leaveChatRoom(@RequestParam("roomId") int roomId, HttpSession session) {
+        HashMap<String, Object> result = new HashMap<>();
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
 
+        chatService.leaveChatRoom(roomId, loginMember.getUserNo());
+        result.put("success", true);
+        result.put("message", "채팅방을 나갔습니다.");
+        return result;
+    }
 }

@@ -37,25 +37,49 @@
     	<div>
     		<span>${sessionScope.loginMember.userNickname}</span>
     	</div>
-	    <ul>
-	     
+	    <ul id="chatRoomList">
 	        <c:forEach var="chatRoom" items="${chatRoomList}">
-	            <li class="">
+	            <li id="chatRoom-${chatRoom.roomId}">
 	                <a href="/chat/chatRoom.kh?roomId=${chatRoom.roomId}">
-	                   <%-- 현재 사용자가 user1인 경우 user2NickName 표시 --%>
-                        <c:choose>
-                            <c:when test="${chatRoom.user1No == currentUserNo}">
-                                ${chatRoom.user2NickName}
-                            </c:when>
-                            <%-- 그렇지 않은 경우 user1NickName 표시 --%>
-                            <c:otherwise>
-                                ${chatRoom.user1NickName}
-                            </c:otherwise>
-                        </c:choose>
+	                    <c:choose>
+	                        <c:when test="${chatRoom.user1No == currentUserNo}">
+	                            ${chatRoom.user2NickName}
+	                        </c:when>
+	                        <c:otherwise>
+	                            ${chatRoom.user1NickName}
+	                        </c:otherwise>
+	                    </c:choose>
 	                </a>
+	                <button onclick="leaveChatRoom(${chatRoom.roomId})">나가기</button>
 	            </li>
 	        </c:forEach>
-	    </ul>    
+    	</ul>
     </main>
+    
+     <script>
+	    function leaveChatRoom(roomId) {
+	        .ajax(`/chat/leaveChatRoom.kh`, {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/x-www-form-urlencoded'
+	            },
+	            body: `roomId=${roomId}`
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.success) {
+	                // 채팅방 목록에서 해당 채팅방 제거
+	                const chatRoomElement = document.getElementById(`chatRoom-${roomId}`);
+	                if (chatRoomElement) {
+	                    chatRoomElement.remove();
+	                }
+	                alert(data.message);
+	            } else {
+	                alert(data.message);
+	            }
+	        })
+	        .catch(error => console.error('Error:', error));
+    }
+    </script>
 </body>
 </html>

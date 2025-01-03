@@ -9,7 +9,11 @@ public class ChatRoom {
     private String user1Left;
     private String user2Left;
     private Date createDate;
-
+    private Date user1OutTime;
+    private Date user2OutTime;
+    private String user1ReadYN;
+    private String user2ReadYN;
+    private String unreadFlag;
     //join
     private String user1Name;
     private String user1NickName;
@@ -20,6 +24,7 @@ public class ChatRoom {
 		// TODO Auto-generated constructor stub
 	}
 	public ChatRoom(int roomId, int user1No, int user2No, String user1Left, String user2Left, Date createDate,
+			Date user1OutTime, Date user2OutTime, String user1ReadYN, String user2ReadYN, String unreadFlag,
 			String user1Name, String user1NickName, String user2Name, String user2NickName) {
 		super();
 		this.roomId = roomId;
@@ -28,6 +33,11 @@ public class ChatRoom {
 		this.user1Left = user1Left;
 		this.user2Left = user2Left;
 		this.createDate = createDate;
+		this.user1OutTime = user1OutTime;
+		this.user2OutTime = user2OutTime;
+		this.user1ReadYN = user1ReadYN;
+		this.user2ReadYN = user2ReadYN;
+		this.unreadFlag = unreadFlag;
 		this.user1Name = user1Name;
 		this.user1NickName = user1NickName;
 		this.user2Name = user2Name;
@@ -69,6 +79,36 @@ public class ChatRoom {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
+	public Date getUser1OutTime() {
+		return user1OutTime;
+	}
+	public void setUser1OutTime(Date user1OutTime) {
+		this.user1OutTime = user1OutTime;
+	}
+	public Date getUser2OutTime() {
+		return user2OutTime;
+	}
+	public void setUser2OutTime(Date user2OutTime) {
+		this.user2OutTime = user2OutTime;
+	}
+	public String getUser1ReadYN() {
+		return user1ReadYN;
+	}
+	public void setUser1ReadYN(String user1ReadYN) {
+		this.user1ReadYN = user1ReadYN;
+	}
+	public String getUser2ReadYN() {
+		return user2ReadYN;
+	}
+	public void setUser2ReadYN(String user2ReadYN) {
+		this.user2ReadYN = user2ReadYN;
+	}
+	public String getUnreadFlag() {
+		return unreadFlag;
+	}
+	public void setUnreadFlag(String unreadFlag) {
+		this.unreadFlag = unreadFlag;
+	}
 	public String getUser1Name() {
 		return user1Name;
 	}
@@ -96,11 +136,11 @@ public class ChatRoom {
 	@Override
 	public String toString() {
 		return "ChatRoom [roomId=" + roomId + ", user1No=" + user1No + ", user2No=" + user2No + ", user1Left="
-				+ user1Left + ", user2Left=" + user2Left + ", createDate=" + createDate + ", user1Name=" + user1Name
-				+ ", user1NickName=" + user1NickName + ", user2Name=" + user2Name + ", user2NickName=" + user2NickName
-				+ "]";
+				+ user1Left + ", user2Left=" + user2Left + ", createDate=" + createDate + ", user1OutTime="
+				+ user1OutTime + ", user2OutTime=" + user2OutTime + ", user1ReadYN=" + user1ReadYN + ", user2ReadYN="
+				+ user2ReadYN + ", unreadFlag=" + unreadFlag + ", user1Name=" + user1Name + ", user1NickName="
+				+ user1NickName + ", user2Name=" + user2Name + ", user2NickName=" + user2NickName + "]";
 	}
-
-    
+	
     
 }

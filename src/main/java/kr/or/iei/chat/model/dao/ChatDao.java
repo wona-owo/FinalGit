@@ -52,13 +52,29 @@ public class ChatDao {
 	        sqlSession.insert("chat.saveChatMessage", chatMessage);
 	    }
 
-	    // 사용자가 채팅방을 나갈 때 해당 정보를 업데이트
-	    public void leaveChatRoom(Map<String, Integer> params) {
-	        sqlSession.update("chat.leaveChatRoom", params);
+	    // 사용자 나가기 시 out_time과 _left 업데이트 (동적 SQL 사용)
+	    public void setUserOutTimeAndLeft(Map<String, Object> params) {
+	        sqlSession.update("chat.setUserOutTimeAndLeft", params);
 	    }
-
+	    
+	    // 양쪽 사용자가 모두 나갔을 경우 채팅방 삭제
+	    public void deleteChatRoom(int roomId) {
+	        sqlSession.delete("chat.deleteChatRoom", roomId);
+	    }
+	    
 	    // 특정 roomId에 해당하는 채팅방을 조회
 	    public ChatRoom getChatRoomByRoomId(int roomId) {
 	        return sqlSession.selectOne("chat.getChatRoomByRoomId", roomId);
 	    }
+	    
+	    // 특정 방의 마지막 out_time을 기준으로 메시지 조회
+	    public List<ChatMessage> getChatMessagesAfterOutTime(Map<String, Object> params) {
+	        return sqlSession.selectList("chat.getChatMessagesAfterOutTime", params);
+	    }
+
+		public int updateChatRoom(HashMap<String, Object> params) {
+			// TODO Auto-generated method stub
+			return sqlSession.update("chat.updateChatRoomUser", params);
+		}
+
 }
