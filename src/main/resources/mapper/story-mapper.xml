@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="story">
-  
+	 
+	<!--  -->
+	<select id="selectStoryFollowList" parameterType="string" resultType="storyFollowList">
+		SELECT u.user_no AS userNo,
+			   u.user_nickname AS userNickname,
+			   u.user_image AS userImage
+		  FROM follow f
+		  JOIN tbl_user u ON f.following_no = u.user_no
+		  JOIN story s    ON u.user_no      = s.user_no
+		 WHERE f.follower_no = #{_parameter}
+		   AND s.create_date >= SYSDATE - 1
+	  GROUP BY u.user_no, u.user_nickname, u.user_image
+	  ORDER BY MAX(s.create_date) DESC
+	</select>
+	
+	<select id="selectStoryFileList" parameterType="string" resultType="storyFile">
+		SELECT s.user_no AS userNo,
+			   s.story_no AS storyNo,
+			   sf.story_file_no AS storyFileNo,
+			   sf.story_file_name AS storyFileName,
+			   s.create_date AS storyCreateDate
+		  FROM story s
+		  JOIN story_file sf ON s.story_no = sf.story_no
+		 WHERE s.user_no IN (
+			   SELECT DISTINCT u.user_no
+				 FROM follow      f
+				 JOIN tbl_user    u ON f.following_no = u.user_no
+				 JOIN story       st ON u.user_no = st.user_no
+				WHERE f.follower_no = #{_parameter}
+				  AND st.create_date >= SYSDATE - 1
+			   )
+		   AND s.create_date >= SYSDATE - 1
+	  ORDER BY s.create_date DESC
+	</select>
 </mapper>

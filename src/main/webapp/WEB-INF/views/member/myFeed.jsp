@@ -560,7 +560,7 @@
 	                    <div class="image-btn-group">
 	                        <button id="btnChangeImage" class="btn">변경</button>
 	                        <button id="btnDeleteImage" class="btn btn-delete">삭제</button>
-	                        <input type="file" id="userImage" name="userImage" accept="image/*"
+	                        <input type="file" id="userImage" name="userImage" accept=".jpg, .png"
 	                            style="display: none;" />
 	                    </div>
 

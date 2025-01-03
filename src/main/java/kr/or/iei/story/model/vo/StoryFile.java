@@ -5,16 +5,19 @@ public class StoryFile {
 	private int storyNo;
 	private String storyFileName;
 
+	private int userNo;
+
 	public StoryFile() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public StoryFile(int storyFileNo, int storyNo, String storyFileName) {
+	public StoryFile(int storyFileNo, int storyNo, String storyFileName, int userNo) {
 		super();
 		this.storyFileNo = storyFileNo;
 		this.storyNo = storyNo;
 		this.storyFileName = storyFileName;
+		this.userNo = userNo;
 	}
 
 	public int getStoryFileNo() {
@@ -39,6 +42,14 @@ public class StoryFile {
 
 	public void setStoryFileName(String storyFileName) {
 		this.storyFileName = storyFileName;
+	}
+
+	public int getUserNo() {
+		return userNo;
+	}
+
+	public void setUserNo(int userNo) {
+		this.userNo = userNo;
 	}
 
 }
