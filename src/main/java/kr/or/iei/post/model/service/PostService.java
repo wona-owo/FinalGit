@@ -70,5 +70,9 @@ public class PostService {
 	public ArrayList<Comment> getComment(int postNo) {
 		return (ArrayList<Comment>) postDao.getComment(postNo);
 	}
+
+	public int writeComment(Comment comment) {
+		return postDao.writeComment(comment);
+	}
 	
 }

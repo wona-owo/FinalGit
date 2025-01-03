@@ -663,74 +663,149 @@ main {
   object-position: 50% 50%;
 }
 
-/*댓글창*/
-
+/* 댓글 영역 */
 .comment-section {
     margin-top: 20px;
-    width: 400px;
+    width: 100%; /* 부모 요소의 너비에 맞춤 */
+    max-width: 400px; /* 최대 너비 제한 */
+    overflow: hidden; /* 내용이 영역을 넘지 않도록 설정 */
 }
 
+/* 댓글 리스트 */
 .comment-list {
-    height: 180px;
-    overflow-y: auto;
+    height: 180px; /* 고정된 높이 설정 */
+    overflow-y: auto; /* 스크롤 활성화 */
     border: 1px solid #ddd;
     padding: 10px;
     border-radius: 5px;
     background: #f9f9f9;
+    margin-bottom: 15px; /* 댓글 리스트와 입력창 간격 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    word-wrap: break-word; /* 긴 텍스트 줄바꿈 */
 }
 
+/* 댓글 항목 */
 .comment {
-    margin-bottom: 10px;
-    padding: 10px;
+    margin-bottom: 5px;
+    padding: 5px;
     border-bottom: 1px solid #ddd;
 }
 
+/* 답글 */
 .reply {
     margin-left: 20px;
     padding-left: 10px;
     border-left: 2px solid #eee;
 }
 
+/* 답글 링크 */
+.reply-link {
+    font-size: 14px;
+    color: #3b92bd;
+    text-decoration: underline;
+}
+
+/* 댓글 입력창 래퍼 */
+.comment-form-wrapper {
+    position: relative; /* 부모 요소 기준 위치 설정 */
+    padding: 0; /* 내부 여백 제거 */
+    margin: 0; /* 외부 여백 제거 */
+    width: 100%; /* 부모 요소의 너비에 맞춤 */
+    max-width: 400px; /* 최대 너비 제한 */
+    background: #ffffff; /* 배경색 */
+    border-top: 1px solid #ddd; /* 상단 테두리 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+/* 댓글 입력창 */
 .comment-form {
-	width: 80%;
-    margin-top: 15px;
-    display: flex;
+    display: flex; /* 입력창과 버튼 나란히 배치 */
     align-items: center; /* 세로축 중앙 정렬 */
-    justify-content: space-between; /* 입력창과 버튼 사이에 간격 */
+    justify-content: space-between; /* 버튼과 입력창 간격 */
+    padding: 8px 10px; /* 내부 여백 최소화 */
+    gap: 10px; /* 입력창과 버튼 간격 */
 }
 
+/* 댓글 입력 필드 */
 .comment-input {
-    flex: 1; /* 입력창이 남은 공간을 채우도록 설정 */
-    height: 30px; 
-    margin-right: 10px; 
-    padding: 5px; 
-    border: 1px solid #ddd; 
+    flex: 1; /* 남은 공간을 채우도록 설정 */
+    height: 36px; /* 입력창 높이 조정 */
+    padding: 6px; /* 내부 여백 최소화 */
+    border: 1px solid #ddd;
     border-radius: 5px;
-    resize: none; 
+    resize: none; /* 크기 조정 비활성화 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
+/* 댓글 작성 버튼 */
 .submit-comment {
-    display: flex; 
+    display: flex; /* 버튼 안의 내용 정렬 */
     align-items: center;
     justify-content: center;
-    background-color: #3bbd9e; 
-    color: white; 
-    border: none; 
-    border-radius: 50%; 
-    width: 40px;
-    height: 40px; 
-    cursor: pointer; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    background-color: #3bbd9e; /* 기본 배경색 */
+    color: white; /* 버튼 텍스트 색상 */
+    border: none;
+    border-radius: 50%; /* 동그란 버튼 */
+    width: 36px; /* 버튼 크기 축소 */
+    height: 36px; /* 버튼 크기 축소 */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 버튼 그림자 */
 }
 
+/* 댓글 작성 버튼 호버 효과 */
 .submit-comment:hover {
-    background-color: #32a389; /* 호버 시 배경색 변경 */
+    background-color: #32a389; /* 호버 시 배경색 */
 }
 
+
+/* 아이콘 스타일 */
 .fa-comment {
-    color: #fff; 
-    font-size: 16px; /
+    color: #fff;
+    font-size: 16px;
 }
 
+/* 비활성화된 버튼 */
+.submit-comment:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* 답글 대상 표시 */
+.reply-target {
+    position: absolute; /* 절대 위치 지정 */
+    bottom: 100%; /* 입력창 위로 위치 */
+    left: 0; /* 왼쪽 정렬 */
+    width: 100%; /* 부모 요소 너비에 맞춤 */
+    margin-bottom: 8px; /* 입력창과의 여백 */
+    padding: 8px; /* 내용 여백 */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    display: none; /* 기본적으로 숨김 */
+    z-index: 1; /* 다른 요소 위에 표시 */
+}
+
+/* 답글 대상 텍스트 */
+.reply-target span {
+    font-size: 14px;
+    color: #333;
+}
+
+/* 답글 취소 버튼 */
+.cancel-reply {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* 답글 취소 버튼 호버 효과 */
+.cancel-reply:hover {
+    color: #555;
+}
 
 

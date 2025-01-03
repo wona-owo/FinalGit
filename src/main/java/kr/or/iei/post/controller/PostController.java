@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -289,6 +290,34 @@ public class PostController {
 		ArrayList<Comment> comments = postService.getComment(postNo);
 		return comments;
 	}
+	
+	//댓글 작성
+	@PostMapping(value = "cmtWrite.kh", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public Map<String, Object> writeComment(@RequestBody Comment comment) {
+	    Map<String, Object> response = new HashMap<>();
+
+	    try {
+	        int result = postService.writeComment(comment); 
+
+	        if (result > 0) {
+	            // 성공 시 결과만 반환 (메시지 없이 success만 포함)
+	            response.put("success", true);
+	        } else {
+	            // 실패 시 메시지 포함
+	            response.put("success", false);
+	            response.put("message", "댓글 작성에 실패했습니다. 다시 시도해주세요.");
+	        }
+	    } catch (Exception e) {
+	        // 예외 발생 시 실패 응답
+	        response.put("success", false);
+	        response.put("message", "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+	        e.printStackTrace();
+	    }
+
+	    return response;
+	}
+
 	
 
 }	

@@ -79,6 +79,10 @@ public class PostDao {
 	public List<Comment> getComment(int postNo) {
 		return sqlSession.selectList("post.getComment", postNo);
 	}
+	
+	public int writeComment(Comment comment) {
+		return sqlSession.insert("post.writeComment", comment);
+	}
 
 
 	

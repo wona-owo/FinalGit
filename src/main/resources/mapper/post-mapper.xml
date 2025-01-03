@@ -100,5 +100,23 @@
 		where c.post_no = #{_parameter}
 	</select>
 	
+	<!-- 게시글 댓글 삽입 -->
+	<insert id="writeComment" parameterType="comment">
+		insert into tbl_comment (
+		 	comment_no,
+            user_no, 
+            post_no, 
+            parent_no, 
+            comment_content, 
+            comment_date
+		) values (
+			seq_comment.NEXTVAL, 
+            #{userNo}, 
+            #{postNo},
+            CASE WHEN #{parentNo} = 0 THEN NULL ELSE #{parentNo} END, 
+            #{commentContent}, 
+            SYSDATE		
+		)
+	</insert>
 	
 </mapper>

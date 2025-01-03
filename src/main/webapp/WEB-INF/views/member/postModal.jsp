@@ -58,14 +58,26 @@
 							<%-- 동적으로 댓글이 추가될 위치 --%>
 						</div>
 					</div>
-
-					<div class="comment-form">
-						<textarea class="comment-input" placeholder="댓글달기..."></textarea>
-						<button class="submit-comment">
-							<i class="fa-solid fa-comment"></i>
-						</button>
+					
+					
+					<div class="comment-form-wrapper">
+					    <div class="reply-target" style="display: none;">
+					        <span id="reply-target-text"></span>
+					        <button class="cancel-reply">취소</button>
+					    </div>
+					    
+					    <form id="cmtForm" action="/post/cmtWrite.kh" method="post" enctype="multipart/form-data">
+					        <input type="hidden" name="userNo" value="${sessionScope.loginMember.userNo}">
+					        <input type="hidden" id="parentNo" value="0">
+					        <div class="comment-form">
+					            <textarea class="comment-input" placeholder="댓글 달기..."></textarea>
+					            <button class="submit-comment">
+					                <i class="fa-solid fa-comment"></i>
+					            </button>
+					        </div>
+					    </form>
 					</div>
-
+					
 				</div>
 			</div>
 		</div>
@@ -210,27 +222,25 @@
 		                res.forEach(function (comment) {
 		                    // 부모 댓글 처리
 		                    if (comment.parentNo == 0) {
-		                        $(".comment-list").append(
-		                            `<div class="comment" id="comment-` + comment.commentNo + `">
-		                                <p>
-		                                    <strong>` + comment.userNickname + `</strong>: ` + comment.commentContent + `
-		                                </p>
-		                                <div class="reply" id="reply-` + comment.commentNo + `">
-		                                    <!-- 답글 추가될 영역 -->
-		                                </div>
-		                            </div>`
-		                        );
-		                    } 
-		                    // 답글 처리
-		                    else {
-		                        $(`#reply-` + comment.parentNo).append(
-		                            `<p> ↳ <strong>` + comment.userNickname + `</strong>: ` + comment.commentContent + `</p>`
-		                        );
+	                    	$(".comment-list").append(
+	                                `<div class="comment" id="comment-` + comment.commentNo + `">
+	                                    <p>
+	                                        <strong>` + comment.userNickname + `</strong>: ` + comment.commentContent + `
+	                                    </p>
+	                                    <a href="#" class="reply-link" data-id="` + comment.commentNo + `">답글 달기</a>
+	                                    <div class="reply" id="reply-` + comment.commentNo + `">
+	                                        <!-- 답글 추가될 영역 -->
+	                                    </div>
+	                                </div>`
+	                            );
+	                        } else {
+	                            // 답글
+	                            $(`#reply-` + comment.parentNo).append(
+	                                `<p> ↳ <strong>` + comment.userNickname + `</strong>: ` + comment.commentContent + `</p>`
+	                            );
 		                    }
 		                });
 
-		                // 최종 렌더링 결과 확인
-		                console.log("최종 렌더링된 DOM:", $(".comment-list").html());
 		            },
 		            error: function (xhr, status, error) {
 		                console.error("AJAX 통신 오류:", error);
@@ -238,8 +248,82 @@
 		        });
 		    }
 
-		    
-		    
+		 // 댓글 작성
+		    let currentParentNo = 0;
+
+		    $("#cmtForm").on("submit", function (e) {
+		        e.preventDefault(); // 기본 동작 막기
+
+		        const commentInput = $(".comment-input").val().trim();
+		        const userNo = $("input[name='userNo']").val();
+		        const postNo = $(".post-grid").data("id"); // 게시글 ID 가져오기
+		        const submitButton = $(".submit-comment"); // 제출 버튼 선택
+
+		        if (!commentInput) return; // 입력 값이 없으면 종료
+
+		        // 버튼 비활성화
+		        submitButton.prop("disabled", true);
+
+		        $.ajax({
+		            url: "/post/cmtWrite.kh",
+		            method: "POST",
+		            contentType: "application/json",
+		            data: JSON.stringify({
+		                commentContent: commentInput,
+		                userNo: userNo,
+		                postNo: postNo,
+		                parentNo: currentParentNo
+		            }),
+		            success: function (response) {
+		                if (response.success) {
+		                    callComment(postNo); // 댓글 목록 갱신
+		                    $(".comment-input").val(""); // 입력 필드 초기화
+
+		                    // 답글 대상 초기화
+		                    currentParentNo = 0;
+		                    $("#parentNo").val(0);
+		                    $(".reply-target").hide();
+		                    $("#reply-target-text").text("");
+		                } else {
+		                    alert(response.message);
+		                }
+		            },
+		            error: function () {
+		                alert("댓글 작성 중 오류가 발생했습니다.");
+		            },
+		            complete: function () {
+		                // 버튼 활성화
+		                submitButton.prop("disabled", false);
+		            }
+		        });
+		    });
+
+		 // 답글 달기
+		    $(document).on("click", ".reply-link", function (e) {
+		        e.preventDefault();
+
+		        const parentNo = $(this).data("id"); // 부모 댓글 ID 가져오기
+		        const userNickname = $("#comment-" + parentNo).find("strong").first().text().trim(); // 부모 댓글 닉네임 가져오기
+
+		        currentParentNo = parentNo; // 현재 부모 댓글 ID 설정
+		        $("#parentNo").val(parentNo); // 숨겨진 필드에 부모 댓글 ID 설정
+
+		        // 답글 대상 표시
+		        $("#reply-target-text").text(userNickname + "님에게 답글 작성 중");
+		        $(".reply-target").show(); // 답글 대상 보이기
+		    });
+
+
+		 // "취소" 버튼 클릭 시
+		    $(document).on("click", ".cancel-reply", function () {
+		        currentParentNo = 0; // 부모 댓글 ID 초기화
+		        $("#parentNo").val(0); // 숨겨진 필드 초기화
+
+		        // 답글 대상 숨기기
+		        $(".reply-target").hide(); // 완전히 숨김
+		        $("#reply-target-text").text(""); // 텍스트 초기화
+		    });
+
 
 		    // 포스트 조회 닫기
 		    $(".modal-close").on("click", function () {
