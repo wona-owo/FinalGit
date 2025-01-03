@@ -27,6 +27,9 @@
         <div class="chat-header">
             <h2>채팅방 ${param.roomId}</h2>
         </div>
+        <div>
+        	<a href="#" id="leaveChatRoom">채팅방 나가기</a>
+        </div>
         <div id="chatMessages">
             <c:forEach var="chatMessage" items="${chatMessages}">
                 <div class="message ${chatMessage.senderNo eq loginMember.userNo ? 'sent' : 'received'}">
@@ -136,6 +139,27 @@ $(document).ready(function() {
             e.preventDefault();
             $('#chatForm').submit();
         }
+    });
+    
+    // 채팅방 나가기 버튼 클릭 시
+    $('#leaveChatRoom').on('click', function() {
+        const roomId = $('#roomId').val();
+        $.ajax({
+            url: '/chat/leaveChatRoom.kh',
+            type: 'POST',
+            data: { roomId: roomId },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);
+                    window.location.href = '/chat/chatRoomList.kh';
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert('채팅방 나가기에 실패했습니다.');
+            }
+        });
     });
 });
     </script>
