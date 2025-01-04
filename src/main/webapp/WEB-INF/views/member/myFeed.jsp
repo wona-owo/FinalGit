@@ -296,7 +296,6 @@
 				 </div>	
 				 <div>	
 				 	<button class="profile-button" id="allBook" onclick="location.href='/member/mainFeed.kh'"> 북마크 확인 </button>
-				 	<button class="profile-button" id="mySub" onclick="location.href='/member/mainFeed.kh'"> 내 구독 관리 </button>
 				 </div>			 
 			 </div>
 		</div> 	
