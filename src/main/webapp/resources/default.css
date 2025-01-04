@@ -808,4 +808,40 @@ main {
     color: #555;
 }
 
+/*댓글 수정창*/
+.edit-input {
+    width: 100%; /* 부모 요소에 맞게 너비 설정 */
+    height: 50px; /* 고정된 높이 */
+    resize: none; /* 크기 조정 불가능 */
+    padding: 10px; /* 내부 여백 */
+    border: 1px solid #ddd; /* 테두리 설정 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    font-size: 14px; /* 텍스트 크기 */
+    line-height: 1.5; /* 줄 간격 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    background-color: #f9f9f9; /* 배경색 */
+}
+
+.edit-input:focus {
+    border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+    outline: none; /* 기본 아웃라인 제거 */
+}
+
+.edit-buttons {
+    margin-top: 5px; /* 버튼과 입력창 사이 간격 */
+    text-align: right; /* 버튼 오른쪽 정렬 */
+}
+
+.edit-buttons button {
+    padding: 5px 10px;
+    margin-left: 5px; /* 버튼 간격 */
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.cancel-edit {
+    background-color: #dc3545;
+    color: white;
+}
 

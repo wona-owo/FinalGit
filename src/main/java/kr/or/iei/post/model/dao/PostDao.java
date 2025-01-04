@@ -84,6 +84,14 @@ public class PostDao {
 		return sqlSession.insert("post.writeComment", comment);
 	}
 
+	public int delComment(int commentNo) {
+		return sqlSession.delete("post.delComment", commentNo);
+	}
+
+	public int updComment(Map<String, Object> params) {
+		return sqlSession.update("post.updComment", params);
+	}
+
 
 	
 }

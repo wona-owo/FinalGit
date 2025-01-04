@@ -317,8 +317,50 @@ public class PostController {
 
 	    return response;
 	}
-
 	
+	//댓글 삭제
+	@GetMapping(value = "cmtDelete.kh", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public Map<String, Object> delComment(@RequestParam("commentNo") int commentNo) {
+	    int result = postService.delComment(commentNo);
+	    Map<String, Object> response = new HashMap<>();
+
+	    if (result > 0) {
+	        response.put("success", true);
+	        response.put("message", "댓글이 삭제되었습니다.");
+	    } else {
+	        response.put("success", false);
+	        response.put("message", "댓글 삭제에 실패했습니다.");
+	    }
+
+	    return response; 
+	}
+
+	//댓글 수정
+	@PostMapping(value = "cmtUpdate.kh", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public Map<String, Object> updateComment(@RequestBody Map<String, Object> params) {	
+		
+		 System.out.println("Received params: " + params);
+		
+		
+		// Map으로 받은 데이터를 그대로 서비스에 전달
+	    int result = postService.updComment(params);
+
+	    // 응답 데이터 생성
+	    Map<String, Object> response = new HashMap<>();
+	    if (result > 0) {
+	        response.put("success", true);
+	        response.put("message", "댓글이 성공적으로 수정되었습니다.");
+	    } else {
+	        response.put("success", false);
+	        response.put("message", "댓글 수정에 실패했습니다. 다시 시도해주세요.");
+	    }
+
+	    return response; 
+	}
+
+
 
 }	
 

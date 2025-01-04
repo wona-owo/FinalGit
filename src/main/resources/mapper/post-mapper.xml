@@ -119,4 +119,16 @@
 		)
 	</insert>
 	
+	<!-- 게시글 댓글 삭제 -->
+	<delete id="delComment" parameterType="_int">
+		delete tbl_comment where comment_no = #{_parameter}
+	</delete>
+	
+	<!-- 게시글 댓글 수정 -->
+	<update id="updComment" parameterType="map">
+		update tbl_comment
+			set comment_content = #{commentContent}
+		where user_no = #{userNo} and comment_no = #{commentNo}
+	</update>
+	
 </mapper>

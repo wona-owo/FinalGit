@@ -3,6 +3,7 @@ package kr.or.iei.post.model.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,6 +74,14 @@ public class PostService {
 
 	public int writeComment(Comment comment) {
 		return postDao.writeComment(comment);
+	}
+
+	public int delComment(int commentNo) {
+		return postDao.delComment(commentNo);
+	}
+
+	public int updComment(Map<String, Object> params) {
+		return postDao.updComment(params);
 	}
 	
 }
