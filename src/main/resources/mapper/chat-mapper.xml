@@ -96,15 +96,16 @@
     <!-- 사용자 나가기 시 out_time과 _left 업데이트 (동적 SQL 사용) -->
     <update id="setUserOutTimeAndLeft" parameterType="map">
         UPDATE chat_room
-        SET 
-            <if test="userNo == user1No">
-                user1_out_time = SYSDATE,
-                user1_left = 'Y',
-            </if>
-            <if test="userNo == user2No">
-                user2_out_time = SYSDATE,
-                user2_left = 'Y'
-            </if>
+        <set>
+	        <if test="userNo == user1No">
+	            user1_out_time = SYSDATE,
+	            user1_left = 'Y'
+	        </if>
+	        <if test="userNo == user2No">
+	            user2_out_time = SYSDATE,
+	            user2_left = 'Y'
+	        </if>
+	    </set>
         WHERE room_id = #{roomId}
     </update>
 	
@@ -130,17 +131,17 @@
     </select>
 	
 	<update id="updateChatRoomUser" parameterType="map">
-        UPDATE chat_room
-        SET
-            <trim suffixOverrides=",">
-                <if test="userNo == user1No">
-                    user1_left = 'N',
-                </if>
-                <if test="userNo == user2No">
-                    user2_left = 'N',
-                </if>
-            </trim>
-        WHERE room_id = #{roomId}
+		UPDATE chat_room
+		SET
+		<set>
+			<if test="userNo == user1No">
+				user2_left = 'N'
+			</if>
+			<if test="userNo == user2No">
+				user1_left = 'N'
+			</if>
+		</set>
+		WHERE room_id = #{roomId}
     </update>
 	
 </mapper>

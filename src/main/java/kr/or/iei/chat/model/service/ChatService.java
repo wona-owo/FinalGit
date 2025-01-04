@@ -79,7 +79,8 @@ public class ChatService {
 
         chatDao.setUserOutTimeAndLeft(params);
 
-        // 채팅방이 양쪽 모두 나갔는지 확인 후 삭제
+        // 업데이트 후 채팅방 상태 재조회
+        chatRoom = chatDao.getChatRoomByRoomId(roomId);
         if ("Y".equals(chatRoom.getUser1Left()) && "Y".equals(chatRoom.getUser2Left())) {
             chatDao.deleteChatRoom(roomId);
         }

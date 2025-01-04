@@ -52,11 +52,11 @@ let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 5;
 
 function connectWebSocket() {
-    console.log("WebSocket 연결 시도...");
+    //console.log("WebSocket 연결 시도...");
     socket = new WebSocket("ws://" + window.location.host + "/web");
 
     socket.onopen = function() {
-        console.log("WebSocket 연결됨");
+        //console.log("WebSocket 연결됨");
         reconnectAttempts = 0;
         socket.send(JSON.stringify({
             type: "connect",
@@ -65,7 +65,7 @@ function connectWebSocket() {
     };
 
     socket.onmessage = function(event) {
-        console.log("메시지 수신:", event.data);
+        //console.log("메시지 수신:", event.data);
         try {
             const message = JSON.parse(event.data);
             if (message.type === "chat") {
@@ -80,7 +80,7 @@ function connectWebSocket() {
     };
 
     socket.onclose = function() {
-        console.log("WebSocket 연결 종료");
+        //console.log("WebSocket 연결 종료");
         if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
             setTimeout(connectWebSocket, 2000);
             reconnectAttempts++;
@@ -150,10 +150,10 @@ $(document).ready(function() {
             data: { roomId: roomId },
             success: function(response) {
                 if (response.success) {
-                    alert(response.message);
+                    //alert(response.message);
                     window.location.href = '/chat/chatRoomList.kh';
                 } else {
-                    alert(response.message);
+                    //alert(response.message);
                 }
             },
             error: function() {
