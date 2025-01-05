@@ -528,5 +528,16 @@ CREATE TABLE chat_message (
 CREATE SEQUENCE seq_chat_room;
 CREATE SEQUENCE seq_chat_message;
 
+ALTER TABLE chat_room
+ADD (
+    user1_out_time DATE,
+    user2_out_time DATE
+);
+
+ALTER TABLE chat_room
+ADD (
+    user1_readYN CHAR(1) DEFAULT 'N' CHECK(user1_readYN IN ('Y', 'N')),
+    user2_readYN CHAR(1) DEFAULT 'N' CHECK(user2_readYN IN ('Y', 'N'))
+);
 
 COMMIT;

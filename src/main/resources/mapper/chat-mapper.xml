@@ -8,41 +8,52 @@
                user2_no AS user2No,
                user1_left AS user1Left,
                user2_left AS user2Left,
-               create_date AS createDate
+               create_date AS createDate,
+               user1_out_time AS user1OutTime,
+               user2_out_time AS user2OutTime,
+               user1_readYN AS user1ReadYN,
+               user2_readYN AS user2ReadYN,
+               user1_name AS user1Name,
+               user1_nickname AS user1NickName,
+               user2_name AS user2Name,
+               user2_nickname AS user2NickName
         FROM chat_room
     </select>
 
     <!--  특정 사용자의 채팅방 목록 조회  -->
     <select id="getChatRoomListByUser" resultType="chatRoom">
          SELECT cr.room_id AS roomId,
-           cr.user1_no AS user1No,
-           u1.user_name AS user1Name,
-           u1.user_nickName AS user1NickName,
-           cr.user2_no AS user2No,
-           u2.user_name AS user2Name,
-           u2.user_nickName AS user2NickName,
-           cr.user1_left AS user1Left,
-           cr.user2_left AS user2Left,
-           cr.create_date AS createDate
+	            cr.user1_no AS user1No,
+	            u1.user_name AS user1Name,
+	            u1.user_nickName AS user1NickName,
+	            cr.user2_no AS user2No,
+	            u2.user_name AS user2Name,
+	            u2.user_nickName AS user2NickName,
+	            cr.user1_left AS user1Left,
+	            cr.user2_left AS user2Left,
+	            cr.create_date AS createDate,
+	            cr.user1_out_time AS user1OutTime,
+                cr.user2_out_time AS user2OutTime,
+                cr.user1_readYN AS user1ReadYN,
+                cr.user2_readYN AS user2ReadYN
 	    FROM chat_room cr
 	    JOIN tbl_user u1 ON cr.user1_no = u1.user_no
 	    JOIN tbl_user u2 ON cr.user2_no = u2.user_no
-	    WHERE 
-	        (cr.user1_no = #{userNo} AND cr.user1_left = 'N') 
-	        OR 
-	        (cr.user2_no = #{userNo} AND cr.user2_left = 'N')
+	    WHERE (cr.user1_no = #{userNo} AND cr.user1_left = 'N') OR (cr.user2_no = #{userNo} AND cr.user2_left = 'N')
     </select>
 
     <!--  채팅 메시지 조회  -->
     <select id="getChatMessages" resultType="chatMessage">
-        SELECT message_id AS messageId,
-               room_id AS roomId,
-               sender_no AS senderNo,
-               message_content AS messageContent,
-               send_date AS sendDate
-        FROM chat_message
-        WHERE room_id = #{roomId}
-        ORDER BY send_date ASC
+		    SELECT cm.message_id AS messageId,
+	           cm.room_id AS roomId,
+	           cm.sender_no AS senderNo,
+	           u.user_name AS senderName, 
+	           cm.message_content AS messageContent,
+	           cm.send_date AS sendDate
+	    FROM chat_message cm
+	    JOIN tbl_user u ON cm.sender_no = u.user_no
+	    WHERE cm.room_id = #{roomId}
+	    ORDER BY cm.send_date ASC
     </select>
 
     <!--  사용자 ID로 사용자 번호 조회  -->
@@ -93,7 +104,7 @@
         VALUES (seq_chat_message.nextval, #{roomId}, #{senderNo}, #{messageContent}, SYSDATE)
     </insert>
 
-    <!-- 사용자 나가기 시 out_time과 _left 업데이트 (동적 SQL 사용) -->
+    <!-- 사용자 나가기 시 out_time과 _left 업데이트 -->
     <update id="setUserOutTimeAndLeft" parameterType="map">
         UPDATE chat_room
         <set>
@@ -119,20 +130,22 @@
 	
 	<!-- 마지막 out_time 이후 채팅 메시지 조회 -->
     <select id="getChatMessagesAfterOutTime" resultType="chatMessage">
-        SELECT message_id AS messageId,
-               room_id AS roomId,
-               sender_no AS senderNo,
-               message_content AS messageContent,
-               send_date AS sendDate
-        FROM chat_message
-        WHERE room_id = #{roomId}
-          AND send_date > #{lastOutTime}
-        ORDER BY send_date ASC
+	    SELECT cm.message_id AS messageId,
+	           cm.room_id AS roomId,
+	           cm.sender_no AS senderNo,
+	           u.user_name AS senderName, 
+	           cm.message_content AS messageContent,
+	           cm.send_date AS sendDate
+	    FROM chat_message cm
+	    JOIN tbl_user u ON cm.sender_no = u.user_no
+	    WHERE cm.room_id = #{roomId}
+	      AND cm.send_date > #{lastOutTime}
+	    ORDER BY cm.send_date ASC
     </select>
 	
+	<!-- 채팅 보냈을 시 채팅방 나간 상대방 자동으로 재참가-->
 	<update id="updateChatRoomUser" parameterType="map">
 		UPDATE chat_room
-		SET
 		<set>
 			<if test="userNo == user1No">
 				user2_left = 'N'
@@ -143,5 +156,50 @@
 		</set>
 		WHERE room_id = #{roomId}
     </update>
+    
+    <!-- 채팅방 읽음 상태 업데이트 -->
+	<update id="updateReadStatus" parameterType="map">
+	    UPDATE chat_room
+	    SET 
+	        user1_readYN = CASE WHEN user1_no = #{userNo} THEN #{readStatus} ELSE user1_readYN END,
+            user2_readYN = CASE WHEN user2_no = #{userNo} THEN #{readStatus} ELSE user2_readYN END
+	    WHERE room_id = #{roomId}
+	</update>
 	
+	<!-- 채팅방 읽음 상태 조회 -->
+	<select id="getReadStatus" parameterType="map" resultType="string">
+	    SELECT 
+	        CASE 
+	            WHEN user_no = user1_no THEN user1_readYN
+	            WHEN user_no = user2_no THEN user2_readYN
+	        END AS readStatus
+	    FROM chat_room
+	    WHERE room_id = #{roomId}
+	</select>
+	
+	<!-- 사용자 번호로 사용자 이름 조회 -->
+	<select id="getUserNameByUserNo" resultType="string">
+	    SELECT user_name
+	    FROM tbl_user
+	    WHERE user_no = #{userNo}
+	</select>
+
+    <!--  채팅방의 마지막 메시지 조회 (최적화된 쿼리 사용)  -->
+    <select id="getLastChatMessage" parameterType="int" resultType="chatMessage">
+        SELECT *
+            FROM (
+                SELECT 
+                    cm.message_id AS messageId,
+                    cm.room_id AS roomId,
+                    cm.sender_no AS senderNo,
+                    u.user_name AS senderName, 
+                    cm.message_content AS messageContent,
+                    cm.send_date AS sendDate
+                FROM chat_message cm
+                JOIN tbl_user u ON cm.sender_no = u.user_no
+                WHERE cm.room_id = #{roomId}
+                ORDER BY cm.send_date DESC
+            )
+            WHERE ROWNUM = 1
+    </select>
 </mapper>

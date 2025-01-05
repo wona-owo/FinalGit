@@ -72,9 +72,31 @@ public class ChatDao {
 	        return sqlSession.selectList("chat.getChatMessagesAfterOutTime", params);
 	    }
 
+	    // 채팅방 나간 상대 재참여
 		public int updateChatRoom(HashMap<String, Object> params) {
 			// TODO Auto-generated method stub
 			return sqlSession.update("chat.updateChatRoomUser", params);
 		}
+		
+		// 읽음 상태 업데이트
+		public int updateReadStatus(HashMap<String, Object> params) {
+			// 로그 추가
+			System.out.println("updateReadStatus 실행됨: " + params);
+		    return sqlSession.update("chat.updateReadStatus", params);
+		}
 
+		// 읽음 상태 조회
+		public String getReadStatus(HashMap<String, Object> params) {
+		    return sqlSession.selectOne("chat.getReadStatus", params);
+		}
+
+		// 사용자 번호로 사용자 이름 조회
+	    public String getUserNameByUserNo(int userNo) {
+	        return sqlSession.selectOne("chat.getUserNameByUserNo", userNo);
+	    }
+
+		// 채팅방의 마지막 메시지 조회
+		public ChatMessage getLastChatMessage(int roomId) {
+			return sqlSession.selectOne("chat.getLastChatMessage", roomId);
+		}
 }

@@ -13,7 +13,6 @@ public class ChatRoom {
     private Date user2OutTime;
     private String user1ReadYN;
     private String user2ReadYN;
-    private String unreadFlag;
     //join
     private String user1Name;
     private String user1NickName;
@@ -24,8 +23,8 @@ public class ChatRoom {
 		// TODO Auto-generated constructor stub
 	}
 	public ChatRoom(int roomId, int user1No, int user2No, String user1Left, String user2Left, Date createDate,
-			Date user1OutTime, Date user2OutTime, String user1ReadYN, String user2ReadYN, String unreadFlag,
-			String user1Name, String user1NickName, String user2Name, String user2NickName) {
+			Date user1OutTime, Date user2OutTime, String user1ReadYN, String user2ReadYN, String user1Name,
+			String user1NickName, String user2Name, String user2NickName) {
 		super();
 		this.roomId = roomId;
 		this.user1No = user1No;
@@ -37,7 +36,6 @@ public class ChatRoom {
 		this.user2OutTime = user2OutTime;
 		this.user1ReadYN = user1ReadYN;
 		this.user2ReadYN = user2ReadYN;
-		this.unreadFlag = unreadFlag;
 		this.user1Name = user1Name;
 		this.user1NickName = user1NickName;
 		this.user2Name = user2Name;
@@ -103,12 +101,6 @@ public class ChatRoom {
 	public void setUser2ReadYN(String user2ReadYN) {
 		this.user2ReadYN = user2ReadYN;
 	}
-	public String getUnreadFlag() {
-		return unreadFlag;
-	}
-	public void setUnreadFlag(String unreadFlag) {
-		this.unreadFlag = unreadFlag;
-	}
 	public String getUser1Name() {
 		return user1Name;
 	}
@@ -138,9 +130,11 @@ public class ChatRoom {
 		return "ChatRoom [roomId=" + roomId + ", user1No=" + user1No + ", user2No=" + user2No + ", user1Left="
 				+ user1Left + ", user2Left=" + user2Left + ", createDate=" + createDate + ", user1OutTime="
 				+ user1OutTime + ", user2OutTime=" + user2OutTime + ", user1ReadYN=" + user1ReadYN + ", user2ReadYN="
-				+ user2ReadYN + ", unreadFlag=" + unreadFlag + ", user1Name=" + user1Name + ", user1NickName="
-				+ user1NickName + ", user2Name=" + user2Name + ", user2NickName=" + user2NickName + "]";
+				+ user2ReadYN + ", user1Name=" + user1Name + ", user1NickName=" + user1NickName + ", user2Name="
+				+ user2Name + ", user2NickName=" + user2NickName + "]";
 	}
 	
+    
+    
     
 }

@@ -109,4 +109,36 @@ public class ChatService {
 		return chatDao.updateChatRoom(params);
 	}
 	
+	// 읽음 상태 업데이트
+	public int updateReadStatus(int roomId, int userNo, String readStatus) {
+		// 로그 추가
+        System.out.println("updateReadStatus 호출됨: roomId=" + roomId + ", userNo=" + userNo + ", readStatus=" + readStatus);
+		
+	    HashMap<String, Object> params = new HashMap<>();
+	    params.put("roomId", roomId);
+	    params.put("userNo", userNo);
+	    params.put("readStatus", readStatus);
+	    return chatDao.updateReadStatus(params);
+	}
+
+	// 읽음 상태 조회
+	public String getReadStatus(int roomId, int userNo) {
+	    HashMap<String, Object> params = new HashMap<>();
+	    params.put("roomId", roomId);
+	    params.put("userNo", userNo);
+	    return chatDao.getReadStatus(params);
+	}
+
+	 // 사용자 번호로 사용자 이름 조회
+    public String getUserNameByUserNo(int userNo) {
+        return chatDao.getUserNameByUserNo(userNo);
+    }
+
+	
+	// 채팅방의 마지막 메시지 조회
+	public ChatMessage getLastChatMessage(int roomId) {
+		return chatDao.getLastChatMessage(roomId);
+	}
+
+	
 }

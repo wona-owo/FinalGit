@@ -56,6 +56,9 @@ public class ChatController {
 	        return "redirect:/chat/chatRoomList.kh";
 	    }
 
+	    //읽음 상태 업데이트
+	    chatService.updateReadStatus(roomId, loginMember.getUserNo(), "Y");
+	    
 	    int receiverNo = (chatRoom.getUser1No() == loginMember.getUserNo()) ? chatRoom.getUser2No()
 	            : chatRoom.getUser1No();
 
@@ -73,7 +76,13 @@ public class ChatController {
 	    } else {
 	        chatMessages = chatService.getChatMessages(roomId);
 	    }
+	    
+	    
 
+	    //마지막 메시지 정보 추가
+	    ChatMessage lastMessage = chatMessages.isEmpty() ? null : chatMessages.get(chatMessages.size() - 1);
+	    model.addAttribute("lastMessage", lastMessage);
+	    
 	    model.addAttribute("chatMessages", chatMessages);
 	    model.addAttribute("receiverNo", receiverNo);
 	    model.addAttribute("roomId", roomId);
@@ -99,7 +108,7 @@ public class ChatController {
 		return "redirect:/chat/chatRoom.kh?roomId=" + roomId;
 	}
 
-	// 새로운 채팅방을 시작하는 메소드
+	//새로운 채팅방을 시작하는 메소드
 	@GetMapping("startChat.kh")
 	@ResponseBody
 	public HashMap<String, Object> startChat(@RequestParam("userId") String userId, HttpSession session) {
@@ -163,4 +172,20 @@ public class ChatController {
         result.put("message", "채팅방을 나갔습니다.");
         return result;
     }
+    
+    // 채팅방 목록 부분을 조회하는 메소드
+    @GetMapping("chatRoomListPartial.kh")
+    public String chatRoomListPartial(HttpSession session, Model model) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            return ""; // 로그인하지 않은 경우 빈 문자열 반환
+        }
+
+        ArrayList<ChatRoom> chatRoomList = chatService.getChatRoomListByUser(loginMember.getUserNo());
+        model.addAttribute("chatRoomList", chatRoomList);
+        model.addAttribute("currentUserNo", loginMember.getUserNo());
+        return "chat/chatRoomListPartial"; // 부분 JSP 경로
+    }
+    
+ 
 }
