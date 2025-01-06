@@ -42,11 +42,12 @@
 }
 
 .story-image-container {
-	position: relative;
+	position: absolute;
+    left: 0;
 	width: 100%;
 	height: 500px; /* 고정 높이 */
 	background-color: #f3f3f3;
-	display: flex;
+	display: none;
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
@@ -54,10 +55,15 @@
 	border-bottom: 1px solid #ddd;
 }
 
-.story-image-container img {
-	max-width: 100%;
-	max-height: 100%;
-	object-fit: contain;
+.story-image-container.active {
+    display: flex;
+}
+
+.story-image-container img,
+.story-image-container video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 .story-header {
@@ -67,6 +73,16 @@
 	gap: 15px;
 	padding: 10px;
 }
+
+.story-header .story-item{
+	position: absolute;
+    left: 0px;
+    top: 3px;
+}
+.story-header p{
+	margin: 0px;
+}
+
 
 .story-footer {
 	position: absolute;
@@ -194,18 +210,25 @@
 	<button onclick="location.href='/member/mainFeed.kh'">메인화면</button>
 	<script>
 	$(document).ready(function () {
+		searchMyStory();
 		searchStoryFollowList();		
 	});
 	
 	// 스토리를 올린 유저 목록과 각 유저의 스토리를 담을 변수
-	const storyFollowList = [{
+	let storyFollowList = [{
 			userNo: "",
 			userNickname: "",
 			userImage: "",
 			userIndex: "",
 			fileList: []
 	}];
-	//	let storyList; 이후 삭제할지 확인
+	let myStory = {
+		userNo: "",
+		userNickname: "",
+		userImage: "",
+		userIndex: "",
+		fileList: []
+};
 	
 	function escapeHtml(text) {
 	    const map = {
@@ -237,9 +260,21 @@
 	    return html;
 	}
 	
+	// 내 스토리 가져오기
+	function searchMyStory(){
+		$.ajax({
+			url: '/story/myStory.kh',
+			type: 'POST',
+			data: {userNo: "${loginMember.userNo}"},
+		 	success: function(res){	
+		 		myStory = res;
+		 	},
+			error: function(xhr, status, error) {
+		        console.log("내 스토리 정보를 가져오지 못했습니다.");
+		    }
+		});
+	}
 	
-		    
-		    
 	// 팔로우 목록 중 스토리 올린사람
 	function searchStoryFollowList(){
 		$.ajax({
@@ -250,13 +285,15 @@
 				const $storiesContainer = $('.stories-container');
 		        // "내 스토리 추가" 버튼을 제외한 모든 기존 스토리 아이템을 제거
 		        $storiesContainer.find('.story-item').not('.add-story').remove();
-		        console.log(res);
 		        
-		        if (Array.isArray(res)) {
+		        // res 데이터를 storyFollowList에 재할당
+		        storyFollowList = res;
+		        
+		        if (Array.isArray(storyFollowList)) {
 		            let storyHtml = '';
 		            
-		            for (let i = 0; i < res.length; i++) {
-		                const item = res[i];
+		            for (let i = 0; i < storyFollowList.length; i++) {
+		                const item = storyFollowList[i];
 		
 		                storyHtml += createStoryItem(item);
 		            }
@@ -277,57 +314,92 @@
 		});
 	}
 	
-	// 스토리 올린사람 파일 가져오기
-	function searchStoryFile(){
-		$.ajax({
-			url: 'story/storyFileList.kh',
-			type: 'POST',
-			data: {userNo}
+	function createStoryModal(selectUser){
+		const imageSrc = selectUser.userImage
+        ? escapeHtml(selectUser.userImage)
+        : '/resources/profile_file/default_profile.png';
+
+    	const safeNickname = escapeHtml(selectUser.userNickname);
+    	
+    	const loginUserNo = "${loginMember.userNo}";
+    	
+		let html = '';
+		html += '<div id="storyModalBackdrop" class="story-modal-backdrop">';
+		html += '<div class="story-modal-content">';
+		html += '<div class="story-header">';
+		html += '<div class="story-item" data-user-no="' + selectUser.userNo + '">';
+		html += '<div class="story-image">';
+		html += '<img src="' + imageSrc + '" alt="프로필 이미지" />';
+		html += '</div>';
+		html += '</div>';
+		html += '<p>' + safeNickname + '</p>';
+		html += '<button id="stCloseBtn" class="story-close-btn">';
+		html += '<span class="material-icons">close</span>';
+		html += '</button>';
+		html += '</div>';
+		selectUser.storyFileList.forEach(function(file, index) {
+			const activeClass = index === 0 ? ' active' : '';
+			const mimeType = file.mimeType;
+			console.log(mimeType);
+			html += '<div class="story-image-container' + activeClass + '">';
+			html += '<button class="story-nav-btn story-prev-btn">';
+			html += '<span class="material-icons">navigate_before</span>';
+			html += '</button>';
+			
+			if (mimeType.startsWith('image/')) {
+				html += '<img id="storyImage" src="' + file.storyFileName + '" alt="스토리를 추가해주세요." />';
+		    } else if (mimeType.startsWith('video/')) {
+		        html += '<video id="storyVideo" autoplay loop muted>';
+		        html += '<source src="' + file.storyFileName + '" type="' + mimeType + '">';
+		        html += '</video>';
+		    }
+			
+			html += '<button class="story-nav-btn story-next-btn">';
+			html += '<span class="material-icons">navigate_next</span>';
+			html += '</button>';
+			html += '</div>';
 		});
+		
+		html += '<div class="story-footer">';
+		
+		if (loginUserNo === String(selectUser.userNo)) {
+			html += '<input type="file" id="fileInput" name="files" accept="video/*, image/*"'
+				 +	'style="display: none;" multiple>';
+			html +=	'<button id="stAddBtn" class="story-action-btn">';
+			html +=	'<span class="material-icons">post_add</span>';
+			html += '</button>';
+			html += '<button id="stDeleteBtn" class="story-action-btn">';
+			html +=	'<span class="material-icons">delete_outline</span>';
+			html += '</button>';
+		}
+		html += '</div>' +
+		'</div>' +
+		'</div>';
+		
+		return html;
 	}
 	
+	// 스토리 프로필 클릭시 불러올 modal
 	$('.stories-container').on('click', '.story-item', function() {
-	    const userNo = $(this).data('user-no');
 		const loginUserNo = "${loginMember.userNo}";
-		console.log(typeof String(userNo));
-		console.log(typeof loginUserNo);
-		
-	    var storyModalHtml =
-	    	'<div id="storyModalBackdrop" class="story-modal-backdrop">' +
-	        	'<div class="story-modal-content">' +
-	            	'<input type="file" id="fileInput" name="files" accept="video/*, .jpg, .png" style="display: none;" multiple>' +
-	            	'<div class="story-header">' +
-						'<button id="stCloseBtn" class="story-close-btn">' +
-							'<span class="material-icons">close</span>' +
-						'</button>' +
-					'</div>' +
-					'<div class="story-image-container">' +
-						'<button class="story-nav-btn story-prev-btn">' +
-							'<span class="material-icons">navigate_before</span>' +
-						'</button>' +
-						'<img id="storyImage" alt="스토리를 추가해주세요" />' +
-						'<button class="story-nav-btn story-next-btn">' +
-							'<span class="material-icons">navigate_next</span>' +
-						'</button>' +
-					'</div>' +
-					'<div class="story-footer">';
-		if (loginUserNo === String(userNo)) {
-	            	console.log("h2");
-	    	storyModalHtml +=
-						'<button id="stAddBtn" class="story-action-btn">' +
-							'<span class="material-icons">post_add</span>' +
-						'</button>' +
-						'<button id="stDeleteBtn" class="story-action-btn">' +
-							'<span class="material-icons">delete_outline</span>' +
-						'</button>';
+		// 프로필 누른 userNo
+	    const userNo = $(this).data('user-no');
+		// 스토리 올린 유저 중, 내가 누른 유저 스토리 정보
+		let selectUser;
+		// 내 스토리와 다른유저 스토리 구분
+		if(loginUserNo === String(userNo)){
+			selectUser = myStory;
+		}else{
+			selectUser = storyFollowList.find(item => item.userNo === userNo);
 		}
-		storyModalHtml +=
-					'</div>' +
-				'</div>' +
-			'</div>';
-			
+		
+		// 동적 storyModal
+		let storyModalHtml = '';
+		storyModalHtml += createStoryModal(selectUser);
+
 		$('body').prepend(storyModalHtml);
-	      
+	    
+		$("#storyModalBackdrop").fadeIn(200);
 		$("#storyModalBackdrop").css("display", "block");
 		
 		// 추가 버튼 클릭시 input 호출
@@ -355,26 +427,35 @@
 	        
 	           // FormData 생성
 	           const formData = new FormData();
+	           formData.append("userNo", "${loginMember.userNo}");
 	           Array.from(files).forEach(file => {
 	               formData.append('files', file);
-	           console.log(file);
+	               console.log(file);
 	           });
 	           
-	           /* $.ajax({
-	               url: '',
+	           $.ajax({
+	               url: 'storyWrite.kh',
 	               type: 'POST',
 	               data: formData,
 	               processData: false,
 	               contentType: false,
 	               success: function (response) {
-	                   alert('파일 업로드 성공!');
-	                   console.log(response);
+	            	   if (response === 'success') {
+	            		   alert('스토리가 정상적으로 업로드 되었습니다.');
+		 	               stClose();
+		 	            } else if (response === 'storyFileFail') {
+		 	                alert('파일 업로드 중 에러가 발생했습니다.');
+		 	            } else if (response === 'storyFail'){
+		 	            	alert('스토리 업로드 중 에러가 발생했습니다..');
+		 	            } else {
+		 	                alert('파일이 없습니다. 다시 시도해주세요.');
+		 	            }
 	               },
-	               error: function (error) {
+	               error: function (response) {
 	                   alert('파일 업로드 실패!');
-	                   console.error(error);
+	                   console.log(response);
 	               }
-	           }); */
+	           });
 	
 	           // 파일 입력 초기화
 	           $(this).val('');
@@ -395,6 +476,9 @@
 		// 스토리 닫기
 		function stClose(){
 			$("#storyModalBackdrop").remove();
+			// 스토리를 닫을 때 마다 최신 스토리 불러오기
+			searchMyStory();
+			searchStoryFollowList();
 		}
 		
 		// 스토리 삭제

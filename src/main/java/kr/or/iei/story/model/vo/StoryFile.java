@@ -4,6 +4,7 @@ public class StoryFile {
 	private int storyFileNo;
 	private int storyNo;
 	private String storyFileName;
+	private String mimeType;
 
 	private int userNo;
 
@@ -12,11 +13,12 @@ public class StoryFile {
 		// TODO Auto-generated constructor stub
 	}
 
-	public StoryFile(int storyFileNo, int storyNo, String storyFileName, int userNo) {
+	public StoryFile(int storyFileNo, int storyNo, String storyFileName, String mimeType, int userNo) {
 		super();
 		this.storyFileNo = storyFileNo;
 		this.storyNo = storyNo;
 		this.storyFileName = storyFileName;
+		this.mimeType = mimeType;
 		this.userNo = userNo;
 	}
 
@@ -42,6 +44,14 @@ public class StoryFile {
 
 	public void setStoryFileName(String storyFileName) {
 		this.storyFileName = storyFileName;
+	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
 	public int getUserNo() {

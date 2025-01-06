@@ -164,7 +164,8 @@ create table story(
 create table story_file(
     story_file_no number primary key,
     story_no number not null references story(story_no) on delete cascade,
-    story_file_name varchar2(200) not null
+    story_file_name varchar2(200) not null,
+    mime_type varchar2(30) not null
 );
 
 -- 좋아요 테이블
