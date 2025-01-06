@@ -5,17 +5,23 @@
 	<!-- 게시글 데이터 조회 -->
 	<select id="postData" parameterType="_int"
 	resultType="post">
-		
-		select f.post_file_no as postFileNo,
-			   f.post_no as postNo,
-			   f.post_file_name as postFileName,
-			   p.user_no as userNo,
-			   p.post_content as postContent,
-			   p.post_date as postDate
-	      from post_file f
-		 join post p on (f.post_no = p.post_no)	  
-		 where p.user_no = ${_parameter} and (substr(f.post_file_name,-5,1) = '1')
-		 order by post_date desc  		
+		SELECT 
+            f.post_file_no AS postFileNo,
+            f.post_no AS postNo,
+            f.post_file_name AS postFileName,
+            p.user_no AS userNo,
+            p.post_content AS postContent,
+            p.post_date AS postDate
+        FROM 
+            post_file f
+        JOIN 
+            post p ON (f.post_no = p.post_no)	  
+        WHERE 
+            p.user_no = #{_parameter} 
+            AND SUBSTR(f.post_file_name, INSTR(f.post_file_name, '_', -1, 1) + 1, 1) = '1'
+            AND REGEXP_LIKE(f.post_file_name, '\.(jpg|jpeg|gif|png|wmv)$', 'i')
+        ORDER BY 
+            post_date DESC
 	</select>
 	
 	<!-- 게시글 이미지 리스트 조회 -->
