@@ -11,21 +11,23 @@ public class Post {
 	//join으로 인한 객체 통합
 	private int postFileNo;
 	private String postFileName;
-	
+	private String userImage;
+	private String userNickname;
+	private int likeCount;
+    private int commentCount;
 	
 	//hashtag 테이블 join
 	private int hashNo;
 	private ArrayList<String> hashName; //태그 배열
 	
-
-
 	public Post() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	public Post(int postNo, int userNo, String postContent, String postDate, int postFileNo, String postFileName,
-			int hashNo, ArrayList<String> hashName, String postThumbnail) {
+			String userImage, String userNickname, int likeCount, int commentCount, int hashNo,
+			ArrayList<String> hashName) {
 		super();
 		this.postNo = postNo;
 		this.userNo = userNo;
@@ -33,9 +35,12 @@ public class Post {
 		this.postDate = postDate;
 		this.postFileNo = postFileNo;
 		this.postFileName = postFileName;
+		this.userImage = userImage;
+		this.userNickname = userNickname;
+		this.likeCount = likeCount;
+		this.commentCount = commentCount;
 		this.hashNo = hashNo;
 		this.hashName = hashName;
-
 	}
 
 	public int getPostNo() {
@@ -86,6 +91,38 @@ public class Post {
 		this.postFileName = postFileName;
 	}
 
+	public String getUserImage() {
+		return userImage;
+	}
+
+	public void setUserImage(String userImage) {
+		this.userImage = userImage;
+	}
+
+	public String getUserNickname() {
+		return userNickname;
+	}
+
+	public void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
+	}
+
+	public int getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+
+	public int getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(int commentCount) {
+		this.commentCount = commentCount;
+	}
+
 	public int getHashNo() {
 		return hashNo;
 	}
@@ -101,8 +138,15 @@ public class Post {
 	public void setHashName(ArrayList<String> hashName) {
 		this.hashName = hashName;
 	}
+
+	@Override
+	public String toString() {
+		return "Post [postNo=" + postNo + ", userNo=" + userNo + ", postContent=" + postContent + ", postDate="
+				+ postDate + ", postFileNo=" + postFileNo + ", postFileName=" + postFileName + ", userImage="
+				+ userImage + ", userNickname=" + userNickname + ", likeCount=" + likeCount + ", commentCount="
+				+ commentCount + ", hashNo=" + hashNo + ", hashName=" + hashName + "]";
+	}
 	
-	
-	
+
 	
 }

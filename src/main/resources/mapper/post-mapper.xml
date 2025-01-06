@@ -175,4 +175,107 @@
           AND target_type = #{targetType}
     </select>
     
+    <!-- 팔로우한 사람의 최근 2일 이내 랜덤 5개 게시물 -->
+    <select id="getRecentFollowPosts" parameterType="int" resultType="post">
+         SELECT *
+        FROM (
+            SELECT 
+                p.post_no AS postNo,
+                p.user_no AS userNo,
+                p.post_content AS postContent,
+                TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
+                pf.post_file_no AS postFileNo,
+                pf.post_file_name AS postFileName,
+                u.user_image AS userImage,
+                u.user_nickname AS userNickname,
+                (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
+                (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount,
+                DBMS_RANDOM.VALUE AS rand_val
+            FROM 
+                post p
+            JOIN 
+                tbl_user u ON p.user_no = u.user_no
+            LEFT JOIN 
+                post_file pf ON p.post_no = pf.post_no
+            WHERE 
+                p.user_no IN (
+                    SELECT following_no FROM follow WHERE follower_no = #{userNo}
+                )
+                AND p.post_date &gt;= SYSDATE - 2
+            ORDER BY 
+                rand_val
+        )
+        WHERE ROWNUM &lt;= 5
+    </select>
+
+    <!-- 전체 게시물 중 중복되지 않은 랜덤 게시물 가져오기 -->
+    <select id="getRandomPosts" parameterType="map" resultType="post">
+        SELECT *
+        FROM (
+            SELECT 
+                p.post_no AS postNo,
+                p.user_no AS userNo,
+                p.post_content AS postContent,
+                TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
+                pf.post_file_no AS postFileNo,
+                pf.post_file_name AS postFileName,
+                u.user_image AS userImage,
+                u.user_nickname AS userNickname,
+                (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
+                (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount,
+                DBMS_RANDOM.VALUE AS rand_val,
+                ROWNUM AS rn
+            FROM 
+                post p
+            JOIN 
+                tbl_user u ON p.user_no = u.user_no
+            LEFT JOIN 
+                post_file pf ON p.post_no = pf.post_no
+            WHERE 
+                p.post_no NOT IN (
+                    SELECT p.post_no
+                    FROM post p
+                    WHERE p.user_no IN (
+                        SELECT following_no FROM follow WHERE follower_no = #{userNo}
+                    )
+                    AND p.post_date &gt;= SYSDATE - 2
+                )
+            ORDER BY 
+                rand_val
+        )
+        WHERE rn &lt;= #{limit}
+    </select>
+
+    <!-- 무한 스크롤 시 추가 게시물 가져오기 -->
+    <select id="getMorePosts" parameterType="map" resultType="post">
+	    SELECT * FROM (
+            SELECT 
+                inner_query.*,
+                ROWNUM AS rn
+            FROM (
+                SELECT 
+                    p.post_no AS postNo,
+                    p.user_no AS userNo,
+                    p.post_content AS postContent,
+                    TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
+                    pf.post_file_no AS postFileNo,
+                    pf.post_file_name AS postFileName,
+                    u.user_image AS userImage,
+                    u.user_nickname AS userNickname,
+                    (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
+                    (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount
+                FROM 
+                    post p
+                JOIN 
+                    tbl_user u ON p.user_no = u.user_no
+                LEFT JOIN 
+                    post_file pf ON p.post_no = pf.post_no
+                ORDER BY 
+                    p.post_date DESC
+            ) inner_query
+            WHERE ROWNUM &lt;= #{endRow}
+        )
+        WHERE rn > #{startRow}
+    </select>
+    
 </mapper>

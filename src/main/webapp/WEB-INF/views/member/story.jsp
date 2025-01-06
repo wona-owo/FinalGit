@@ -434,7 +434,7 @@
 	           });
 	           
 	           $.ajax({
-	               url: 'storyWrite.kh',
+	               url: '/story/storyWrite.kh',
 	               type: 'POST',
 	               data: formData,
 	               processData: false,

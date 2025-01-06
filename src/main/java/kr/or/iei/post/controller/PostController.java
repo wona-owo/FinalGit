@@ -30,7 +30,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import kr.or.iei.common.util.DateUtil;
 import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
@@ -469,6 +471,88 @@ public class PostController {
 	    // 좋아요 상태에 따라 결과 반환
 	    return intRes > 0 ? "true" : "false";
 	}
+	
+	@GetMapping(value = "initialPosts.kh", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getInitialPosts(HttpSession session, HttpServletRequest request) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        // 로그인 안 된 경우 빈 리스트를 Gson으로 변환해서 리턴
+	        return new Gson().toJson(new ArrayList<Post>());
+	    }
+	    
+	    int userNo = loginMember.getUserNo();
+	    // 초기 게시물 로드
+	    List<Post> initialPosts = postService.getInitialPosts(userNo);
 
+	    // 이미지 경로 수정: 루트 상대 경로로 설정
+	    for (Post post : initialPosts) {
+	        String userImage = post.getUserImage();
+	        if (userImage != null && !userImage.isEmpty()) {
+	            post.setUserImage(userImage);
+	        } else {
+	            post.setUserImage("/resources/profile_file/default_profile.png");
+	        }
+
+	        String postFileName = post.getPostFileName();
+	        if (postFileName != null && !postFileName.isEmpty()) {
+	            post.setPostFileName("/resources/post_file/" + postFileName);
+	        }
+
+	        // 날짜 포맷팅
+	        String formattedDate = DateUtil.calculateDate(post.getPostDate());
+	        post.setPostDate(formattedDate);
+	    }
+
+	    // 로그 출력으로 데이터 확인
+	    for (Post post : initialPosts) {
+	        System.out.println(post.toString());
+	    }
+
+	    // Gson 인스턴스 생성
+	    Gson gson = new GsonBuilder().create();
+
+	    // List<Post> -> JSON 문자열로 변환
+	    String jsonStr = gson.toJson(initialPosts);
+	    return jsonStr;
+	}
+
+	@GetMapping(value = "loadMorePosts.kh", produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String loadMorePosts(int offset, HttpSession session) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        return new Gson().toJson(new ArrayList<Post>());
+	    }
+	    
+	    int userNo = loginMember.getUserNo();
+	    // 추가 게시물 로드
+	    List<Post> morePosts = postService.getMorePosts(userNo, offset);
+
+	    // 이미지 경로 수정: 루트 상대 경로로 설정
+	    for (Post post : morePosts) {
+	        String userImage = post.getUserImage();
+	        if (userImage != null && !userImage.isEmpty()) {
+	            post.setUserImage(userImage);
+	        } else {
+	            post.setUserImage("/resources/profile_file/default_profile.png");
+	        }
+
+	        String postFileName = post.getPostFileName();
+	        if (postFileName != null && !postFileName.isEmpty()) {
+	            post.setPostFileName(postFileName);
+	        }
+
+	        // 날짜 포맷팅
+	        String formattedDate = DateUtil.calculateDate(post.getPostDate());
+	        post.setPostDate(formattedDate);
+	    }
+
+	    // Gson 인스턴스 생성
+	    Gson gson = new Gson();
+	    // List<Post> -> JSON 문자열
+	    String jsonStr = gson.toJson(morePosts);
+	    return jsonStr;
+	}
 }	
 

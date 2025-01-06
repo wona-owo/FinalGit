@@ -2,8 +2,10 @@ package kr.or.iei.post.model.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -100,6 +102,50 @@ public class PostService {
 	public int isLiked(Like like) {
 	    return postDao.isLiked(like);
 	}
-	
+	// 초기 게시물 로드
+    public List<Post> getInitialPosts(int userNo) {
+        // 팔로우한 사람의 최근 2일 이내 랜덤 5개 게시물
+        List<Post> followPosts = getRecentFollowPosts(userNo);
+
+        // 전체 게시물 중 랜덤으로 10개 가져오기
+        List<Post> randomPosts = getRandomPosts(userNo, 10);
+
+        // 두 리스트를 합치고 중복 제거
+        Set<Post> initialPostsSet = new LinkedHashSet<>();
+        initialPostsSet.addAll(followPosts);
+        initialPostsSet.addAll(randomPosts);
+
+        // 리스트로 변환
+        List<Post> initialPosts = new ArrayList<>(initialPostsSet);
+
+        // 최대 15개로 제한
+        if (initialPosts.size() > 15) {
+            initialPosts = initialPosts.subList(0, 15);
+        }
+
+        return initialPosts;
+    }
+
+    // 팔로우한 사람의 최근 게시물 가져오기
+    public List<Post> getRecentFollowPosts(int userNo) {
+        return postDao.getRecentFollowPosts(userNo);
+    }
+
+    // 랜덤 게시물 가져오기
+    public List<Post> getRandomPosts(int userNo, int limit) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userNo", userNo);
+        params.put("limit", limit);
+        return postDao.getRandomPosts(params);
+    }
+
+    // 무한 스크롤 시 추가 게시물 가져오기
+    public List<Post> getMorePosts(int userNo, int offset) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userNo", userNo);
+        params.put("offset", offset);
+        params.put("limit", 15);
+        return postDao.getMorePosts(params);
+    }
 	
 }
