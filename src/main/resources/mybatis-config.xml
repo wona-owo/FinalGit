@@ -11,6 +11,7 @@
 			<typeAlias type="kr.or.iei.naver.model.vo.NaverUser" alias="naverUser"/>
 			<typeAlias type="kr.or.iei.post.model.vo.Post" alias="post"/>
 			<typeAlias type="kr.or.iei.post.model.vo.Comment" alias="comment"/>
+			<typeAlias type="kr.or.iei.post.model.vo.Like" alias="like"/>
 			<typeAlias type="kr.or.iei.member.model.vo.HashTag" alias="hashTag"/>
 			<typeAlias type="kr.or.iei.member.model.vo.Search" alias="search"/>
 			<typeAlias type="kr.or.iei.follor.model.vo.Follow" alias="follow"/>

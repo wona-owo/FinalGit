@@ -37,6 +37,7 @@ import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Mypet;
 import kr.or.iei.post.model.service.PostService;
 import kr.or.iei.post.model.vo.Comment;
+import kr.or.iei.post.model.vo.Like;
 import kr.or.iei.post.model.vo.Post;
 @RequestMapping("/post/")
 @Controller
@@ -361,6 +362,113 @@ public class PostController {
 	}
 
 
+	// 게시글 좋아요 추가
+	@GetMapping(value = "postLike.kh", produces = "text/html; charset=utf-8")
+	@ResponseBody
+	public String postLike(@RequestParam("postNo") int postNo, @RequestParam("userNo") int userNo,@RequestParam("targetType") char targetType) {
+	    Like like = new Like(postNo, userNo, targetType);
+	    int result = postService.insertLike(like);
+
+	    if (result > 0) {
+	        return "success";
+	    } else {
+	        return "fail";
+	    }
+	}
+
+	// 게시글 좋아요 취소
+	@GetMapping(value = "postLikeDel.kh", produces = "text/html; charset=utf-8")
+	@ResponseBody
+	public String postLikeDel(@RequestParam("postNo") int postNo, @RequestParam("userNo") int userNo, @RequestParam("targetType") char targetType) {
+	    Like like = new Like(postNo, userNo, targetType);
+	    int result = postService.deleteLike(like);
+
+	    if (result > 0) {
+	        return "success";
+	    } else {
+	        return "fail";
+	    }
+	}
+	
+	// 게시글 좋아요 개수 조회
+	@GetMapping(value = "postLikeCnt.kh", produces = "text/html; charset=utf-8")
+	@ResponseBody
+	public String postLikeCnt(@RequestParam("postNo") int postNo) {
+		
+		Map<String, Object> likeCnt = new HashMap<>();
+		likeCnt.put("targetNo", postNo);
+		likeCnt.put("targetType", 'C');
+
+	    int likeCount = postService.countLike(likeCnt);
+
+	    if (likeCount >= 0) { // 개수는 항상 0 이상
+	        return String.valueOf(likeCount);
+	    } else {
+	        return "fail";
+	    }
+	}
+	
+	// 댓글 좋아요
+	@GetMapping("commentLike.kh")
+	@ResponseBody
+	public String commentLike(@RequestParam("commentNo") int commentNo, @RequestParam("userNo") int userNo, @RequestParam("targetType") char targetType) {
+		 	Like like = new Like(commentNo, userNo, targetType);
+		    int result = postService.insertLike(like);
+
+		    if (result > 0) {
+		        return "success";
+		    } else {
+		        return "fail";
+		    }
+	}
+
+	// 댓글 좋아요 취소
+	@GetMapping("commentLikeDel.kh")
+	@ResponseBody
+	public String commentLikeDel(@RequestParam("commentNo") int commentNo, @RequestParam("userNo") int userNo, @RequestParam("targetType") char targetType) {
+			Like like = new Like(commentNo, userNo, targetType);
+		    int result = postService.deleteLike(like);
+
+		    if (result > 0) {
+		        return "success";
+		    } else {
+		        return "fail";
+		    }
+	}
+
+	// 댓글 좋아요 개수 조회
+	@GetMapping("commentLikeCnt.kh")
+	@ResponseBody
+	public String commentLikeCnt(@RequestParam("commentNo") int commentNo) {
+		 	
+			Map<String, Object> likeCnt = new HashMap<>();
+			likeCnt.put("targetNo", commentNo);
+			likeCnt.put("targetType", 'C');
+
+		    int likeCount = postService.countLike(likeCnt);
+
+		    if (likeCount >= 0) { // 개수는 항상 0 이상
+		        return String.valueOf(likeCount);
+		    } else {
+		        return "fail";
+		    }
+	}
+	
+	//좋아요 여부 확인
+	@GetMapping(value = "isLiked.kh", produces = "text/html; charset=utf-8")
+	@ResponseBody
+	public String isLiked(@RequestParam("targetNo") int targetNo, 
+	                      @RequestParam("userNo") int userNo, 
+	                      @RequestParam("targetType") char targetType) {
+	    // Like 객체 생성
+	    Like like = new Like(targetNo, userNo, targetType);
+
+	    // 좋아요 여부 확인
+	    int intRes = postService.isLiked(like);
+
+	    // 좋아요 상태에 따라 결과 반환
+	    return intRes > 0 ? "true" : "false";
+	}
 
 }	
 

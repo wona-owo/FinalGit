@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.vo.Comment;
+import kr.or.iei.post.model.vo.Like;
 import kr.or.iei.post.model.vo.Post;
 
 @Repository("postDao")
@@ -92,6 +93,20 @@ public class PostDao {
 		return sqlSession.update("post.updComment", params);
 	}
 
+	public int insertLike(Like like) {
+		return sqlSession.insert("post.insertLike",like);
+	}
 
+	public int deleteLike(Like like) {
+		return sqlSession.delete("post.deleteLikel",like);
+	}
+
+	public int countLike(Map<String, Object> likeCnt) {
+		return sqlSession.selectOne("post.countLike", likeCnt);
+	}
+
+	public int isLiked(Like like) {
+	    return sqlSession.selectOne("post.isLiked", like);
+	}
 	
 }

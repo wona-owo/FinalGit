@@ -131,4 +131,42 @@
 		where user_no = #{userNo} and comment_no = #{commentNo}
 	</update>
 	
+	 <!-- 좋아요 추가 -->
+    <insert id="insertLike" parameterType="like">
+        INSERT INTO tbl_like (
+            target_no,
+            user_no,
+            target_type
+        ) VALUES (
+            #{targetNo},
+            #{userNo},
+            #{targetType}
+        )
+    </insert>
+    
+    <!-- 좋아요 여부 확인 -->
+    <select id="isLiked" parameterType="like" resultType="_int">
+         SELECT COUNT(*)
+		    FROM tbl_like
+		    WHERE target_no = #{targetNo}
+		      AND user_no = #{userNo}
+		      AND target_type = #{targetType}
+    </select>
+	
+	<!-- 좋아요 삭제 -->
+    <delete id="deleteLike" parameterType="like">
+        DELETE FROM tbl_like
+        WHERE target_no = #{targetNo} 
+          AND user_no = #{userNo} 
+          AND target_type = #{targetType}
+    </delete>
+
+    <!-- 좋아요 개수 조회 -->
+    <select id="countLike" parameterType="map" resultType="_int">
+        SELECT COUNT(*) 
+        FROM tbl_like
+        WHERE target_no = #{targetNo} 
+          AND target_type = #{targetType}
+    </select>
+    
 </mapper>

@@ -845,3 +845,45 @@ main {
     color: white;
 }
 
+/* 좋아요 버튼 기본 스타일 */
+.like-btn {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-left: 8px; /* 댓글 오른쪽 정렬 */
+}
+
+/* 아이콘 크기 및 기본 색상 */
+.like-btn i {
+    font-size: 16px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* 좋아요 숫자 스타일 */
+.like-btn .like-count {
+    font-size: 14px;
+    margin-left: 5px;
+    color: #555;
+    transition: color 0.2s ease;
+}
+
+/* 좋아요 추가 상태 (채워진 하트) */
+.like-btn[data-liked="true"] i {
+    color: #e74c3c; /* 빨간색 */
+    transform: scale(1.2); /* 살짝 커짐 */
+}
+
+/* 좋아요 해제 상태 (빈 하트) */
+.like-btn[data-liked="false"] i {
+    color: #ccc; /* 회색 */
+    transform: scale(1);
+}
+
+/* 좋아요 클릭 시 애니메이션 */
+.like-btn i:active {
+    transform: scale(1.4);
+    transition: transform 0.1s ease;
+}
+
+

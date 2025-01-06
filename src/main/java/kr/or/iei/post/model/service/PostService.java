@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.post.model.dao.PostDao;
 import kr.or.iei.post.model.vo.Comment;
+import kr.or.iei.post.model.vo.Like;
 import kr.or.iei.post.model.vo.Post;
 
 @Service("postService")
@@ -83,5 +84,22 @@ public class PostService {
 	public int updComment(Map<String, Object> params) {
 		return postDao.updComment(params);
 	}
+
+	public int insertLike(Like like) {
+		return postDao.insertLike(like);
+	}
+
+	public int deleteLike(Like like) {
+		return postDao.deleteLike(like);
+	}
+
+	public int countLike(Map<String, Object> likeCnt) {
+		return postDao.countLike(likeCnt);
+	}
+	
+	public int isLiked(Like like) {
+	    return postDao.isLiked(like);
+	}
+	
 	
 }
