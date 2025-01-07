@@ -174,6 +174,9 @@
 		</div>
 	 	<div>
 	 		 <div id="feed-container" class="main-feed-container"></div>
+	 		 <div id="loading">
+	 		  	<i class="fa fa-spinner fa-spin"></i> 로딩중...
+	 		</div>
 	 	</div>
 	</main>
 	
@@ -182,6 +185,7 @@
 	<script>
 	let offset = 0;       // 현재까지 로드된 게시물 수
     let isLoading = false; // 중복 로딩 방지
+    let loadedPostIds = []; // 이미 로딩된 postNo 목록
 
     $(document).ready(function() {
         // 페이지 로드 시 초기 게시물 로딩
@@ -205,10 +209,14 @@
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                console.log("[loadInitialPosts] data:", data);
+                //console.log("[loadInitialPosts] data:", data);
                 if (data.length > 0) {
                     offset += data.length;
                     renderPosts(data);
+                 	// 여기서 받아온 게시물의 postNo를 loadedPostIds에 넣어줌
+                    data.forEach(post => {
+                        loadedPostIds.push(post.postNo);
+                    });
                 }
                 isLoading = false;
             },
@@ -223,13 +231,17 @@
     function loadMorePosts() {
         isLoading = true;
         $('#loading').show();
+        console.log(loadedPostIds);
         $.ajax({
             url: '/post/loadMorePosts.kh',
             type: 'GET',
-            data: { offset: offset },
+            data: { 
+            	offset: offset,
+            	'excludeList[]': loadedPostIds  // 배열 형태로 전송
+            	},
             dataType: 'json',
             success: function(data) {
-                console.log("[loadMorePosts] data:", data);
+                //console.log("[loadMorePosts] data:", data);
                 if (data.length > 0) {
                     offset += data.length;
                     renderPosts(data);
@@ -248,9 +260,38 @@
     // 받아온 posts 배열을 HTML로 변환 후 화면에 추가
     function renderPosts(posts) {
         let container = $('#feed-container');
-        console.log("renderPosts() 호출, posts:", posts);
+        //console.log("renderPosts() 호출, posts:", posts);
 
         posts.forEach(function(post, index) {
+        	// 1) 현재 게시물 번호를 loadedPostIds에 추가 (중복 로딩 방지)
+            loadedPostIds.push(post.postNo);
+
+            // 2) 파일 확장자 추출 (소문자로 변환)
+            let extension = '';
+            if(post.postFileName) {
+                // 예: "/resources/post_file/파일.확장자"
+                let filePath = post.postFileName.toLowerCase(); 
+                // filePath 중 마지막 '.' 뒤 문자열
+                extension = filePath.substring(filePath.lastIndexOf('.') + 1);
+            }
+
+            // 3) 확장자에 따라 <img> 또는 <video> HTML 만들기
+            let mediaTag = '';
+            if(extension === 'mp4' || extension === 'wmv' || extension === 'mov') {
+                // 동영상 태그
+                mediaTag = 
+                    '<video controls width="500" style="max-height:500px;">' +
+                        '<source src="' + post.postFileName + '" type="video/' + extension + '">'
+                        + '동영상을 재생할 수 없습니다.' +
+                    '</video>'
+                ;
+            } else {
+                // 그 외(jpg, jpeg, png, gif 등) → 이미지 태그
+                mediaTag = 
+                    '<img src="' + post.postFileName + '" alt="Post Image" style="max-width:500px; max-height:500px;">'
+                ;
+            }
+            
             // 혹시 댓글 n개 모두 보기가 필요한 경우
             let commentLink = '';
             if (post.commentCount > 1) {
@@ -293,7 +334,7 @@
 
                     '<div class="main-feed-content">' +
                         '<div class="main-feed-content-img">' +
-                            '<img src="' + post.postFileName + '" alt="Post Image">' +
+                        	mediaTag +
                         '</div>' +
                     '</div>' +
 

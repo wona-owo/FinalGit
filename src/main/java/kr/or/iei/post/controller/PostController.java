@@ -472,87 +472,77 @@ public class PostController {
 	    return intRes > 0 ? "true" : "false";
 	}
 	
-	@GetMapping(value = "initialPosts.kh", produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String getInitialPosts(HttpSession session, HttpServletRequest request) {
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember == null) {
-	        // 로그인 안 된 경우 빈 리스트를 Gson으로 변환해서 리턴
-	        return new Gson().toJson(new ArrayList<Post>());
-	    }
-	    
-	    int userNo = loginMember.getUserNo();
-	    // 초기 게시물 로드
-	    List<Post> initialPosts = postService.getInitialPosts(userNo);
+	// 초기 게시물 로드: 팔로우한 사람 5개 + 전체 게시물 5개
+    @GetMapping(value = "initialPosts.kh", produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String getInitialPosts(HttpSession session, HttpServletRequest request) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            // 로그인 안 된 경우 빈 리스트를 Gson으로 변환해서 리턴
+            return new Gson().toJson(new ArrayList<Post>());
+        }
+        
+        int userNo = loginMember.getUserNo();
+        // 초기 게시물 로드
+        List<Post> initialPosts = postService.getInitialPosts(userNo);
 
-	    // 이미지 경로 수정: 루트 상대 경로로 설정
-	    for (Post post : initialPosts) {
-	        String userImage = post.getUserImage();
-	        if (userImage != null && !userImage.isEmpty()) {
-	            post.setUserImage(userImage);
-	        } else {
-	            post.setUserImage("/resources/profile_file/default_profile.png");
-	        }
+        for (Post post : initialPosts) {
+            // 프로필 이미지
+            String userImage = post.getUserImage();
+            if (userImage != null && !userImage.isEmpty()) {
+                post.setUserImage(userImage);
+            } else {
+                post.setUserImage("/resources/profile_file/default_profile.png");
+            }
+            // 게시글 대표 이미지
+            String postFileName = post.getPostFileName();
+            if (postFileName != null && !postFileName.isEmpty()) {
+                post.setPostFileName("/resources/post_file/" + postFileName);
+            }
+            // 날짜 포맷팅 (ex: ~분/~시간 전 등)
+            String formattedDate = DateUtil.calculateDate(post.getPostDate());
+            post.setPostDate(formattedDate);
+        }
 
-	        String postFileName = post.getPostFileName();
-	        if (postFileName != null && !postFileName.isEmpty()) {
-	            post.setPostFileName("/resources/post_file/" + postFileName);
-	        }
+        Gson gson = new GsonBuilder().create();
+        String jsonStr = gson.toJson(initialPosts);
+        return jsonStr;
+    }
 
-	        // 날짜 포맷팅
-	        String formattedDate = DateUtil.calculateDate(post.getPostDate());
-	        post.setPostDate(formattedDate);
-	    }
+    // 무한 스크롤 시 전체 게시물 추가 로드 (예: 10개씩)
+    @GetMapping(value = "loadMorePosts.kh", produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String loadMorePosts(int offset, HttpSession session) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            return new Gson().toJson(new ArrayList<Post>());
+        }
+        
+        int userNo = loginMember.getUserNo();
+        // 추가 게시물 로드
+        List<Post> morePosts = postService.getMorePosts(userNo, offset);
 
-	    // 로그 출력으로 데이터 확인
-	    for (Post post : initialPosts) {
-	        System.out.println(post.toString());
-	    }
+        for (Post post : morePosts) {
+            // 프로필 이미지
+            String userImage = post.getUserImage();
+            if (userImage != null && !userImage.isEmpty()) {
+                post.setUserImage(userImage);
+            } else {
+                post.setUserImage("/resources/profile_file/default_profile.png");
+            }
+            // 게시글 대표 이미지
+            String postFileName = post.getPostFileName();
+            if (postFileName != null && !postFileName.isEmpty()) {
+                post.setPostFileName("/resources/post_file/" + postFileName);
+            }
+            // 날짜 포맷팅
+            String formattedDate = DateUtil.calculateDate(post.getPostDate());
+            post.setPostDate(formattedDate);
+        }
 
-	    // Gson 인스턴스 생성
-	    Gson gson = new GsonBuilder().create();
-
-	    // List<Post> -> JSON 문자열로 변환
-	    String jsonStr = gson.toJson(initialPosts);
-	    return jsonStr;
-	}
-
-	@GetMapping(value = "loadMorePosts.kh", produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String loadMorePosts(int offset, HttpSession session) {
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember == null) {
-	        return new Gson().toJson(new ArrayList<Post>());
-	    }
-	    
-	    int userNo = loginMember.getUserNo();
-	    // 추가 게시물 로드
-	    List<Post> morePosts = postService.getMorePosts(userNo, offset);
-
-	    // 이미지 경로 수정: 루트 상대 경로로 설정
-	    for (Post post : morePosts) {
-	        String userImage = post.getUserImage();
-	        if (userImage != null && !userImage.isEmpty()) {
-	            post.setUserImage(userImage);
-	        } else {
-	            post.setUserImage("/resources/profile_file/default_profile.png");
-	        }
-
-	        String postFileName = post.getPostFileName();
-	        if (postFileName != null && !postFileName.isEmpty()) {
-	            post.setPostFileName(postFileName);
-	        }
-
-	        // 날짜 포맷팅
-	        String formattedDate = DateUtil.calculateDate(post.getPostDate());
-	        post.setPostDate(formattedDate);
-	    }
-
-	    // Gson 인스턴스 생성
-	    Gson gson = new Gson();
-	    // List<Post> -> JSON 문자열
-	    String jsonStr = gson.toJson(morePosts);
-	    return jsonStr;
-	}
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(morePosts);
+        return jsonStr;
+    }
 }	
 

@@ -201,9 +201,8 @@
                 p.user_no IN (
                     SELECT following_no FROM follow WHERE follower_no = #{userNo}
                 )
-                AND p.post_date &gt;= SYSDATE - 2
             ORDER BY 
-                rand_val
+                DBMS_RANDOM.VALUE
         )
         WHERE ROWNUM &lt;= 5
     </select>
@@ -223,33 +222,28 @@
                 u.user_nickname AS userNickname,
                 (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
                 (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount,
-                DBMS_RANDOM.VALUE AS rand_val,
-                ROWNUM AS rn
+                DBMS_RANDOM.VALUE AS rand_val
             FROM 
                 post p
             JOIN 
                 tbl_user u ON p.user_no = u.user_no
             LEFT JOIN 
                 post_file pf ON p.post_no = pf.post_no
-            WHERE 
-                p.post_no NOT IN (
-                    SELECT p.post_no
-                    FROM post p
-                    WHERE p.user_no IN (
-                        SELECT following_no FROM follow WHERE follower_no = #{userNo}
-                    )
-                    AND p.post_date &gt;= SYSDATE - 2
-                )
             ORDER BY 
-                rand_val
+                DBMS_RANDOM.VALUE
         )
-        WHERE rn &lt;= #{limit}
+        WHERE ROWNUM &lt;= #{limit}
     </select>
 
     <!-- 무한 스크롤 시 추가 게시물 가져오기 -->
     <select id="getMorePosts" parameterType="map" resultType="post">
-	    SELECT * FROM (
-            SELECT 
+	    <!--
+            startRow와 endRow를 페이징 계산해서 사용하거나,
+            (offset, offset+limit) 식으로도 자유롭게 가공해서 쓰면 됩니다.
+        -->
+        SELECT *
+        FROM (
+            SELECT
                 inner_query.*,
                 ROWNUM AS rn
             FROM (
