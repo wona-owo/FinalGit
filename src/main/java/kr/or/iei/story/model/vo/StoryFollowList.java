@@ -6,19 +6,21 @@ public class StoryFollowList {
 	private int userNo;
 	private String userNickname;
 	private String userImage;
+	private String userIndex;
 	private ArrayList<StoryFile> storyFileList;
-	
-	
+
 	public StoryFollowList() {
 		super();
 		this.storyFileList = new ArrayList<>();
 	}
 
-	public StoryFollowList(int userNo, String userNickname, String userImage, ArrayList<StoryFile> storyFileList) {
+	public StoryFollowList(int userNo, String userNickname, String userImage, String userIndex,
+			ArrayList<StoryFile> storyFileList) {
 		super();
 		this.userNo = userNo;
 		this.userNickname = userNickname;
 		this.userImage = userImage;
+		this.userIndex = userIndex;
 		this.storyFileList = storyFileList;
 	}
 
@@ -44,6 +46,14 @@ public class StoryFollowList {
 
 	public void setUserImage(String userImage) {
 		this.userImage = userImage;
+	}
+
+	public String getUserIndex() {
+		return userIndex;
+	}
+
+	public void setUserIndex(String userIndex) {
+		this.userIndex = userIndex;
 	}
 
 	public ArrayList<StoryFile> getStoryFileList() {

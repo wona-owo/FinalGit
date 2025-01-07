@@ -78,4 +78,10 @@
 		INSERT INTO story_file (story_file_no, story_no, story_file_name, mime_type)
 			 VALUES (seq_story_file.nextval, #{storyNo}, #{storyFileName}, #{mimeType})
 	</insert>
+	
+	<!-- 스토리 삭제 -->
+	<delete id="deleteStory" parameterType="string">
+		DELETE FROM story
+		 WHERE story_no = #{_parameter}
+	</delete>
 </mapper>

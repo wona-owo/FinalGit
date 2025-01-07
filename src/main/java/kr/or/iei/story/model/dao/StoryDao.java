@@ -48,4 +48,8 @@ public class StoryDao {
 		return sqlSession.insert("story.insertStoryFile", storyFileInfo);
 	}
 
+	public int deleteStory(String storyNo) {
+		return sqlSession.delete("story.deleteStory", storyNo);
+	}
+
 }
