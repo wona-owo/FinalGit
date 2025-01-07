@@ -109,18 +109,24 @@ public class PostDao {
 	    return sqlSession.selectOne("post.isLiked", like);
 	}
 	
-	// 팔로우한 사람의 게시물 중 랜덤 5개
+	// 팔로우한 사용자의 최근 2일 이내 랜덤 5개 게시물
     public List<Post> getRecentFollowPosts(int userNo) {
         return sqlSession.selectList("post.getRecentFollowPosts", userNo);
     }
 
     // 전체 게시물 중 랜덤 limit개
-    public List<Post> getRandomPosts(Map<String, Object> params) {
-        return sqlSession.selectList("post.getRandomPosts", params);
+    public List<Post> getRandomPosts(int limit) {
+        return sqlSession.selectList("post.getRandomPosts", limit);
     }
 
-    // 무한 스크롤 - 전체 게시물 최신순으로 (startRow+1 ~ endRow)
+    // 무한 스크롤 시 추가 게시물 가져오기
     public List<Post> getMorePosts(Map<String, Object> params) {
-        return sqlSession.selectList("post.getMorePosts", params);
+    	
+    	return sqlSession.selectList("post.getMorePosts", params);
+    }
+
+    // 다중 이미지 조회
+    public List<String> getPostImages(int postNo) {
+        return sqlSession.selectList("post.getPostImages", postNo);
     }
 }
