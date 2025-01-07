@@ -314,8 +314,6 @@
 
     	const safeNickname = escapeHtml(selectUser.userNickname);
     	
-    	//const loginUserNo = "${loginMember.userNo}";
-    	
     	const uploadTime = selectUser.storyFileList.length > 0
 	        ? calculateRelativeTime(selectUser.storyFileList[currentStoryIndex].storyCreateDate)
 	        : "";
@@ -351,51 +349,6 @@
 	        html += '</button>';
 	    }
 	    
-		/*
-		if (selectUser.storyFileList && selectUser.storyFileList.length > 0) {
-		    selectUser.storyFileList.forEach(function(file, index) {
-			const activeClass = index === 0 ? ' active' : '';
-			const mimeType = file.mimeType;
-			
-			html += '<div class="story-image-container' + activeClass + '">';
-			html += '<button class="story-nav-btn story-prev-btn">';
-			html += '<span class="material-icons nav-icons">navigate_before</span>';
-			html += '</button>';
-			
-				if (mimeType.startsWith('image/')) {
-					html += '<img id="storyImage" src="' + file.storyFileName + '" alt="스토리를 추가해주세요." />';
-			    } else if (mimeType.startsWith('video/')) {
-			        html += '<video id="storyVideo" autoplay loop muted>';
-			        html += '<source src="' + file.storyFileName + '" type="' + mimeType + '">';
-			        html += '</video>';
-			    }
-				
-				html += '<button class="story-nav-btn story-next-btn">';
-				html += '<span class="material-icons nav-icons">navigate_next</span>';
-				html += '</button>';
-				html += '</div>';
-			});
-		} else {
-		    // 스토리가 없을 경우 표시할 내용
-		    html += '<div class="story-image-container active">';
-		    html += '<p>스토리가 없습니다. 스토리를 추가해보세요!</p>';
-		    html += '</div>';
-		}
-		
-		html += '<div class="story-footer">';
-		
-		if (loginUserNo === String(selectUser.userNo)) {
-			html += '<input type="file" id="fileInput" name="files" accept="video/*, image/*"'
-				 +	'style="display: none;" multiple>';
-			html +=	'<button id="stAddBtn" class="story-action-btn">';
-			html +=	'<span class="material-icons">post_add</span>';
-			html += '</button>';
-			html += '<button id="stDeleteBtn" class="story-action-btn">';
-			html +=	'<span class="material-icons">delete_outline</span>';
-			html += '</button>';
-		}
-		
-		*/
 		html += '</div>' +
 		'</div>' +
 		'</div>';
@@ -490,7 +443,7 @@
             currentUserIndex--;
             if (currentUserIndex === -1) {
                 // 이제 내 스토리 보기
-                currentStoryIndex = 0;
+                currentStoryIndex = myStory.storyFileList.length - 1; // 수정된 부분
             } else {
                 // 이전 유저의 마지막 스토리로 설정
                 const previousUser = storyFollowList[currentUserIndex];
@@ -565,13 +518,6 @@
 		// 첫 번째 스토리 표시
 	    showCurrentStory();
 		
-		/*
-	    // 모든 스토리 이미지 컨테이너 선택
-	    const $storyImageContainers = $('.story-image-container');
-	    $storyImageContainers.removeClass('active').css('display', 'none');
-	    $storyImageContainers.eq(currentIndex).css('display', 'flex').addClass('active');
-		*/
-		
 		// 추가 버튼 클릭시 input 호출
 		$('#storyModalBackdrop #stAddBtn').on('click', function () {
             $('#storyModalBackdrop #fileInput').click();
@@ -635,38 +581,6 @@
 		
 		// (이벤트) 삭제 버튼
 		$('#storyModalBackdrop').on('click', '#stDeleteBtn', stDelete);
-		
-		/*
-		// (이벤트) 이전 버튼
-		$('.story-prev-btn').on('click', function(e) {
-	        e.stopPropagation(); // 이벤트 버블링 방지
-	        if(currentIndex > 0) {
-	            $storyImageContainers.eq(currentIndex).removeClass('active').hide();
-	            currentIndex--;
-	            $storyImageContainers.eq(currentIndex).addClass('active').show();
-	            
-	         	// 시간 업데이트
-	            const newDate = selectUser.storyFileList[currentIndex].storyCreateDate;
-	            uploadTime = calculateRelativeTime(newDate);
-	            $('#storyDate').text(uploadTime);
-	        }
-	    });
-		
-		// (이벤트) 다음 버튼
-		$('.story-next-btn').on('click', function(e) {
-	        e.stopPropagation(); // 이벤트 버블링 방지
-	        if(currentIndex < $storyImageContainers.length - 1) {
-	            $storyImageContainers.eq(currentIndex).removeClass('active').hide();
-	            currentIndex++;
-	            $storyImageContainers.eq(currentIndex).addClass('active').show();
-	            
-	         	// 시간 업데이트
-	            const newDate = selectUser.storyFileList[currentIndex].storyCreateDate;
-	         	uploadTime = calculateRelativeTime(newDate);
-	            $('#storyDate').text(uploadTime);
-	        }
-	    });
-		*/
 		
 		// 스토리 닫기
 		function stClose(){
