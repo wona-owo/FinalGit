@@ -1,6 +1,8 @@
 package kr.or.iei.post.model.vo;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Post {
 	private int postNo;
@@ -20,14 +22,17 @@ public class Post {
 	private int hashNo;
 	private ArrayList<String> hashName; //태그 배열
 	
-	public Post() {
+	//여러 이미지 지원을 위한 필드 추가
+    private List<String> postFileNames; // 이미지 파일명 리스트
+    
+    public Post() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	public Post(int postNo, int userNo, String postContent, String postDate, int postFileNo, String postFileName,
 			String userImage, String userNickname, int likeCount, int commentCount, int hashNo,
-			ArrayList<String> hashName) {
+			ArrayList<String> hashName, List<String> postFileNames) {
 		super();
 		this.postNo = postNo;
 		this.userNo = userNo;
@@ -41,6 +46,7 @@ public class Post {
 		this.commentCount = commentCount;
 		this.hashNo = hashNo;
 		this.hashName = hashName;
+		this.postFileNames = postFileNames;
 	}
 
 	public int getPostNo() {
@@ -139,14 +145,36 @@ public class Post {
 		this.hashName = hashName;
 	}
 
+	public List<String> getPostFileNames() {
+		return postFileNames;
+	}
+
+	public void setPostFileNames(List<String> postFileNames) {
+		this.postFileNames = postFileNames;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Post post = (Post) o;
+        return postNo == post.postNo;
+    }
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(postNo);
+	}
+
 	@Override
 	public String toString() {
 		return "Post [postNo=" + postNo + ", userNo=" + userNo + ", postContent=" + postContent + ", postDate="
 				+ postDate + ", postFileNo=" + postFileNo + ", postFileName=" + postFileName + ", userImage="
 				+ userImage + ", userNickname=" + userNickname + ", likeCount=" + likeCount + ", commentCount="
-				+ commentCount + ", hashNo=" + hashNo + ", hashName=" + hashName + "]";
+				+ commentCount + ", hashNo=" + hashNo + ", hashName=" + hashName + ", postFileNames=" + postFileNames
+				+ "]";
 	}
 	
-
 	
 }
