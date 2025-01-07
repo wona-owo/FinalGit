@@ -3,14 +3,14 @@ package kr.or.iei.post.model.vo;
 public class Like {
 	private int targetNo;
 	private int userNo;
-	private char targetType;
+	private String targetType;
 	
 	public Like() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Like(int targetNo, int userNo, char targetType) {
+	public Like(int targetNo, int userNo, String targetType) {
 		super();
 		this.targetNo = targetNo;
 		this.userNo = userNo;
@@ -33,14 +33,14 @@ public class Like {
 		this.userNo = userNo;
 	}
 
-	public char getTargetType() {
+	public String getTargetType() {
 		return targetType;
 	}
 
-	public void setTargetType(char targetType) {
+	public void setTargetType(String targetType) {
 		this.targetType = targetType;
 	}
-	 
+
 	
 	
 }

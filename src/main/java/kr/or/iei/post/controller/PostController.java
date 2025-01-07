@@ -344,7 +344,6 @@ public class PostController {
 	@ResponseBody
 	public Map<String, Object> updateComment(@RequestBody Map<String, Object> params) {	
 		
-		 System.out.println("Received params: " + params);
 		
 		
 		// Map으로 받은 데이터를 그대로 서비스에 전달
@@ -364,104 +363,118 @@ public class PostController {
 	}
 
 
-	// 게시글 좋아요 추가
-	@GetMapping(value = "postLike.kh", produces = "text/html; charset=utf-8")
-	@ResponseBody
-	public String postLike(@RequestParam("postNo") int postNo, @RequestParam("userNo") int userNo,@RequestParam("targetType") char targetType) {
-	    Like like = new Like(postNo, userNo, targetType);
-	    int result = postService.insertLike(like);
+	 // 게시글 좋아요 추가
+    @GetMapping(value = "postLike.kh", produces = "text/html; charset=utf-8")
+    @ResponseBody
+    public String postLike(@RequestParam("targetNo") int postNo, 
+                           @RequestParam("userNo") int userNo,
+                           @RequestParam("targetType") String targetType) {
+        Like like = new Like(postNo, userNo, targetType);
+        int result = postService.insertLike(like);
 
-	    if (result > 0) {
-	        return "success";
-	    } else {
-	        return "fail";
-	    }
-	}
-
-	// 게시글 좋아요 취소
-	@GetMapping(value = "postLikeDel.kh", produces = "text/html; charset=utf-8")
-	@ResponseBody
-	public String postLikeDel(@RequestParam("postNo") int postNo, @RequestParam("userNo") int userNo, @RequestParam("targetType") char targetType) {
-	    Like like = new Like(postNo, userNo, targetType);
-	    int result = postService.deleteLike(like);
-
-	    if (result > 0) {
-	        return "success";
-	    } else {
-	        return "fail";
-	    }
-	}
-	
-	// 게시글 좋아요 개수 조회
-	@GetMapping(value = "postLikeCnt.kh", produces = "text/html; charset=utf-8")
-	@ResponseBody
-	public String postLikeCnt(@RequestParam("postNo") int postNo) {
-		
-		Map<String, Object> likeCnt = new HashMap<>();
-		likeCnt.put("targetNo", postNo);
-		likeCnt.put("targetType", 'C');
-
-	    int likeCount = postService.countLike(likeCnt);
-
-	    if (likeCount >= 0) { // 개수는 항상 0 이상
-	        return String.valueOf(likeCount);
-	    } else {
-	        return "fail";
-	    }
-	}
-	
-	// 댓글 좋아요
-	@GetMapping("commentLike.kh")
-	@ResponseBody
-	public String commentLike(@RequestParam("commentNo") int commentNo, @RequestParam("userNo") int userNo, @RequestParam("targetType") char targetType) {
-		 	Like like = new Like(commentNo, userNo, targetType);
-		    int result = postService.insertLike(like);
-
-		    if (result > 0) {
+        if (result > 0) {
 		        return "success";
 		    } else {
 		        return "fail";
 		    }
-	}
+    }
+    
+    // 댓글 좋아요 추가
+ 	@GetMapping("commentLike.kh")
+ 	@ResponseBody
+ 	public String commentLike(@RequestParam("targetNo") int commentNo, 
+ 							  @RequestParam("userNo") int userNo, 
+ 							  @RequestParam("targetType") String targetType) {
+ 			
+ 		 	Like like = new Like(commentNo, userNo, targetType);
+ 		    int result = postService.insertLike(like);
 
-	// 댓글 좋아요 취소
-	@GetMapping("commentLikeDel.kh")
-	@ResponseBody
-	public String commentLikeDel(@RequestParam("commentNo") int commentNo, @RequestParam("userNo") int userNo, @RequestParam("targetType") char targetType) {
-			Like like = new Like(commentNo, userNo, targetType);
-		    int result = postService.deleteLike(like);
+ 		    if (result > 0) {
+ 		        return "success";
+ 		    } else {
+ 		        return "fail";
+ 		    }
+ 	}
 
-		    if (result > 0) {
+    
+    // 게시글 좋아요 취소
+    @GetMapping(value = "postLikeDel.kh", produces = "text/html; charset=utf-8")
+    @ResponseBody
+    public String postLikeDel(@RequestParam("targetNo") int postNo, 
+                              @RequestParam("userNo") int userNo,
+                              @RequestParam("targetType") String targetType) {
+        Like like = new Like(postNo, userNo, targetType);
+        int result = postService.deleteLike(like);
+
+       		if (result > 0) {
 		        return "success";
 		    } else {
 		        return "fail";
 		    }
-	}
+    }
+    
+    // 댓글 좋아요 취소
+ 	@GetMapping("commentLikeDel.kh")
+ 	@ResponseBody
+ 	public String commentLikeDel(@RequestParam("targetNo") int commentNo, 
+ 								 @RequestParam("userNo") int userNo, 
+ 								 @RequestParam("targetType") String targetType) {
+ 		
+ 			Like like = new Like(commentNo, userNo, targetType);
+ 		    int result = postService.deleteLike(like);
 
-	// 댓글 좋아요 개수 조회
-	@GetMapping("commentLikeCnt.kh")
-	@ResponseBody
-	public String commentLikeCnt(@RequestParam("commentNo") int commentNo) {
-		 	
-			Map<String, Object> likeCnt = new HashMap<>();
-			likeCnt.put("targetNo", commentNo);
-			likeCnt.put("targetType", 'C');
+ 		    if (result > 0) {
+ 		        return "success";
+ 		    } else {
+ 		        return "fail";
+ 		    }
+ 	}
+	
 
-		    int likeCount = postService.countLike(likeCnt);
+    // 게시글 좋아요 개수 조회
+    @GetMapping(value = "postlikeCnt.kh", produces = "text/html; charset=utf-8")
+    @ResponseBody
+    public String postLikeCnt(@RequestParam("targetNo") int postNo) {
+        Map<String, Object> likeCnt = new HashMap<>();
+        likeCnt.put("targetNo", postNo);
+        likeCnt.put("targetType", "P");
 
-		    if (likeCount >= 0) { // 개수는 항상 0 이상
+        int likeCount = postService.countLike(likeCnt);
+
+        if (likeCount >= 0) { // 개수는 항상 0 이상
 		        return String.valueOf(likeCount);
 		    } else {
 		        return "fail";
 		    }
-	}
+    }
+    
+    // 댓글 좋아요 개수 조회
+ 	@GetMapping("commentLikeCnt.kh")
+ 	@ResponseBody
+ 	public String commentLikeCnt(@RequestParam("targetNo") int commentNo) {
+ 		 	
+ 			Map<String, Object> likeCnt = new HashMap<>();
+ 			likeCnt.put("targetNo", commentNo);
+ 			likeCnt.put("targetType", "C");
+
+ 		    int likeCount = postService.countLike(likeCnt);
+
+ 		    if (likeCount >= 0) { // 개수는 항상 0 이상
+ 		        return String.valueOf(likeCount);
+ 		    } else {
+ 		        return "fail";
+ 		    }
+ 	}
+	
 	
 	//좋아요 여부 확인
 	@GetMapping(value = "isLiked.kh", produces = "text/html; charset=utf-8")
 	@ResponseBody
 	public String isLiked(@RequestParam("targetNo") int targetNo, 
 	                      @RequestParam("userNo") int userNo, 
-	                      @RequestParam("targetType") char targetType) {
+	                      @RequestParam("targetType") String targetType) {
+		
+		
 	    // Like 객체 생성
 	    Like like = new Like(targetNo, userNo, targetType);
 
@@ -471,6 +484,8 @@ public class PostController {
 	    // 좋아요 상태에 따라 결과 반환
 	    return intRes > 0 ? "true" : "false";
 	}
+	
+	
 	
 	// 초기 게시물 로드: 팔로우한 사람 5개 + 전체 게시물 5개
     @GetMapping(value = "initialPosts.kh", produces = "application/json; charset=utf-8")

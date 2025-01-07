@@ -98,7 +98,7 @@ public class PostDao {
 	}
 
 	public int deleteLike(Like like) {
-		return sqlSession.delete("post.deleteLikel",like);
+		return sqlSession.delete("post.deleteLike",like);
 	}
 
 	public int countLike(Map<String, Object> likeCnt) {
