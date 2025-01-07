@@ -178,98 +178,140 @@
     <!-- 팔로우한 사람의 최근 2일 이내 랜덤 5개 게시물 -->
     <select id="getRecentFollowPosts" parameterType="int" resultType="post">
          SELECT *
-        FROM (
-            SELECT 
-                p.post_no AS postNo,
-                p.user_no AS userNo,
-                p.post_content AS postContent,
-                TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
-                pf.post_file_no AS postFileNo,
-                pf.post_file_name AS postFileName,
-                u.user_image AS userImage,
-                u.user_nickname AS userNickname,
-                (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
-                (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount,
-                DBMS_RANDOM.VALUE AS rand_val
-            FROM 
-                post p
-            JOIN 
-                tbl_user u ON p.user_no = u.user_no
-            LEFT JOIN 
-                post_file pf ON p.post_no = pf.post_no
-            WHERE 
-                p.user_no IN (
-                    SELECT following_no FROM follow WHERE follower_no = #{userNo}
-                )
-            ORDER BY 
-                DBMS_RANDOM.VALUE
-        )
+		    FROM (
+		        SELECT 
+		            p.post_no AS postNo,
+		            p.user_no AS userNo,
+		            p.post_content AS postContent,
+		            TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
+		            u.user_image AS userImage,
+		            u.user_nickname AS userNickname,
+		            (SELECT COUNT(*) 
+		               FROM tbl_like l 
+		              WHERE l.target_no = p.post_no 
+		                AND l.target_type = 'P') AS likeCount,
+		            (SELECT COUNT(*) 
+		               FROM tbl_comment c 
+		              WHERE c.post_no = p.post_no) AS commentCount,
+		              
+		           	  LISTAGG(pf.post_file_name, ',') 
+		                WITHIN GROUP (ORDER BY pf.post_file_no) AS postFileName,
+		            
+		            DBMS_RANDOM.VALUE AS rand_val
+		        FROM 
+		            post p
+		            JOIN tbl_user u 
+		              ON p.user_no = u.user_no
+		            LEFT JOIN post_file pf 
+		              ON p.post_no = pf.post_no
+		        WHERE 
+		            p.user_no IN (
+		                SELECT following_no 
+		                  FROM follow 
+		                 WHERE follower_no = #{userNo}
+		            ) <!--AND p.post_date &gt;= SYSDATE - 2 --> 
+		        GROUP BY
+		            p.post_no,
+		            p.user_no,
+		            p.post_content,
+		            p.post_date,
+		            u.user_image,
+		            u.user_nickname
+		        ORDER BY 
+		            DBMS_RANDOM.VALUE
+		    )
         WHERE ROWNUM &lt;= 5
     </select>
 
     <!-- 전체 게시물 중 중복되지 않은 랜덤 게시물 가져오기 -->
-    <select id="getRandomPosts" parameterType="map" resultType="post">
-        SELECT *
-        FROM (
+	<select id="getRandomPosts" parameterType="int" resultType="post">
+	    SELECT * FROM (
+	        SELECT 
+	            p.post_no AS postNo,
+	            p.user_no AS userNo,
+	            p.post_content AS postContent,
+	            TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
+	            u.user_image AS userImage,
+	            u.user_nickname AS userNickname,
+	            (SELECT COUNT(*) 
+	               FROM tbl_like l 
+	              WHERE l.target_no = p.post_no 
+	                AND l.target_type = 'P') AS likeCount,
+	            (SELECT COUNT(*) 
+	               FROM tbl_comment c 
+	              WHERE c.post_no = p.post_no) AS commentCount,
+	            LISTAGG(pf.post_file_name, ',') 
+	                WITHIN GROUP (ORDER BY pf.post_file_no) AS postFileName,
+	            DBMS_RANDOM.VALUE AS rand_val
+	        FROM 
+	            post p
+	            JOIN tbl_user u ON p.user_no = u.user_no
+	            LEFT JOIN post_file pf ON p.post_no = pf.post_no
+	        GROUP BY
+	            p.post_no,
+	            p.user_no,
+	            p.post_content,
+	            p.post_date,
+	            u.user_image,
+	            u.user_nickname
+	        ORDER BY 
+	            DBMS_RANDOM.VALUE
+	    )
+	    WHERE ROWNUM &lt;= #{limit}
+	</select>
+
+    <!-- 무한 스크롤 시 추가 게시물 가져오기 -->
+    <select id="getMorePosts" parameterType="map" resultType="post">
+	    SELECT DISTINCT * FROM (
+        SELECT inner_query.*, ROWNUM AS rn FROM (
             SELECT 
                 p.post_no AS postNo,
                 p.user_no AS userNo,
                 p.post_content AS postContent,
                 TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
-                pf.post_file_no AS postFileNo,
-                pf.post_file_name AS postFileName,
                 u.user_image AS userImage,
                 u.user_nickname AS userNickname,
                 (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
                 (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount,
-                DBMS_RANDOM.VALUE AS rand_val
+                LISTAGG(pf.post_file_name, ',') 
+                    WITHIN GROUP (ORDER BY pf.post_file_no) AS postFileName
             FROM 
                 post p
-            JOIN 
-                tbl_user u ON p.user_no = u.user_no
-            LEFT JOIN 
-                post_file pf ON p.post_no = pf.post_no
+                JOIN tbl_user u ON p.user_no = u.user_no
+                LEFT JOIN post_file pf ON p.post_no = pf.post_no
+            <where>
+                <if test="excludeList != null and excludeList.size() > 0">
+                    AND p.post_no NOT IN
+                    <foreach item="item" index="index" collection="excludeList" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </if>
+            </where>
+            GROUP BY
+                p.post_no,
+                p.user_no,
+                p.post_content,
+                p.post_date,
+                u.user_image,
+                u.user_nickname
             ORDER BY 
                 DBMS_RANDOM.VALUE
-        )
-        WHERE ROWNUM &lt;= #{limit}
+        ) inner_query
+        WHERE ROWNUM &lt;= #{endRow}
+    )
     </select>
-
-    <!-- 무한 스크롤 시 추가 게시물 가져오기 -->
-    <select id="getMorePosts" parameterType="map" resultType="post">
-	    <!--
-            startRow와 endRow를 페이징 계산해서 사용하거나,
-            (offset, offset+limit) 식으로도 자유롭게 가공해서 쓰면 됩니다.
-        -->
-        SELECT *
-        FROM (
-            SELECT
-                inner_query.*,
-                ROWNUM AS rn
-            FROM (
-                SELECT 
-                    p.post_no AS postNo,
-                    p.user_no AS userNo,
-                    p.post_content AS postContent,
-                    TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
-                    pf.post_file_no AS postFileNo,
-                    pf.post_file_name AS postFileName,
-                    u.user_image AS userImage,
-                    u.user_nickname AS userNickname,
-                    (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
-                    (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount
-                FROM 
-                    post p
-                JOIN 
-                    tbl_user u ON p.user_no = u.user_no
-                LEFT JOIN 
-                    post_file pf ON p.post_no = pf.post_no
-                ORDER BY 
-                    p.post_date DESC
-            ) inner_query
-            WHERE ROWNUM &lt;= #{endRow}
-        )
-        WHERE rn > #{startRow}
+    
+    <!-- 다중 이미지 조회 쿼리 추가 -->
+    <select id="getPostImages" parameterType="int" resultType="String">
+        SELECT 
+            post_file_name AS postFileName
+        FROM 
+            post_file
+        WHERE 
+            post_no = #{postNo}
+            AND REGEXP_LIKE(post_file_name, '\\.(jpg|jpeg|gif|png|wmv)$', 'i')
+        ORDER BY 
+            post_file_no ASC
     </select>
     
     <!-- 게시글 작성자 아이디 조회 -->

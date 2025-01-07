@@ -173,4 +173,17 @@ public class StoryController {
 		}
 		return "success";
 	}
+	
+	@PostMapping("deleteStory.kh")
+	@ResponseBody
+	public String deleteStory(@RequestParam String storyNo) {
+		System.out.println(storyNo);
+		int result = service.deleteStory(storyNo);
+
+		if(result > 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+	}
 }

@@ -36,11 +36,6 @@
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
 					<a href="/chat/chatRoomList.kh" class="menu-link">메시지</a>
 				</div>
-				
-				<div class="one-menu">
-					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/story/modalTest.kh" class="menu-link">정기구독</a>
-				</div>
 			</div>		
 			
 			<div class="profile">

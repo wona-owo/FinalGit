@@ -48,4 +48,8 @@ public class StoryService {
 	public int insertStoryFile(Map<String, Object> storyFileInfo) {
 		return dao.insertStoryFile(storyFileInfo);
 	}
+
+	public int deleteStory(String storyNo) {
+		return dao.deleteStory(storyNo);
+	}
 }

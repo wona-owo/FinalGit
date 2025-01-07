@@ -185,7 +185,9 @@
 	<script>
 	let offset = 0;       // 현재까지 로드된 게시물 수
     let isLoading = false; // 중복 로딩 방지
-    let loadedPostIds = []; // 이미 로딩된 postNo 목록
+    let noMorePosts = false; // 새 게시물이 더이상 없는 상태인지 여부
+    const limit = 10;  
+    const loadedPostIds = new Set();
 
     $(document).ready(function() {
         // 페이지 로드 시 초기 게시물 로딩
@@ -193,6 +195,11 @@
         
         // 스크롤 이벤트 감지: 끝부분 근접 시 추가 로딩
         $(window).scroll(function() {
+        	
+        	if (noMorePosts) {
+                return;
+            }
+        	
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
                 if (!isLoading) {
                     loadMorePosts();
@@ -209,15 +216,22 @@
             type: 'GET',
             dataType: 'json',
             success: function(data) {
+            	// 새로운 게시물만 필터링
+                let newPosts = data.filter(post => !loadedPostIds.has(post.postNo));
                 //console.log("[loadInitialPosts] data:", data);
-                if (data.length > 0) {
-                    offset += data.length;
-                    renderPosts(data);
-                 	// 여기서 받아온 게시물의 postNo를 loadedPostIds에 넣어줌
-                    data.forEach(post => {
-                        loadedPostIds.push(post.postNo);
-                    });
-                }
+                if (newPosts.length > 0) {
+                offset += newPosts.length;
+                renderPosts(newPosts);
+                // 새로운 게시물의 postNo를 loadedPostIds에 추가
+                newPosts.forEach(post => {
+                    loadedPostIds.add(post.postNo);
+                });
+            } else {
+                // 새로운 게시물이 없으면 무한 스크롤 중지
+                noMorePosts = true;
+                $('#feed-container').append('<p style="text-align:center;">더 이상 게시물이 없습니다.</p>');
+            }
+                
                 isLoading = false;
             },
             error: function() {
@@ -231,20 +245,28 @@
     function loadMorePosts() {
         isLoading = true;
         $('#loading').show();
-        console.log(loadedPostIds);
         $.ajax({
             url: '/post/loadMorePosts.kh',
             type: 'GET',
             data: { 
             	offset: offset,
-            	'excludeList[]': loadedPostIds  // 배열 형태로 전송
+                limit: limit,
+                excludeList: Array.from(loadedPostIds)   // Set을 배열로 변환하여 전송
             	},
+            traditional: true, // 배열 직렬화 옵션 추가
             dataType: 'json',
             success: function(data) {
-                //console.log("[loadMorePosts] data:", data);
-                if (data.length > 0) {
+            	if (data.length > 0) {
+            		renderPosts(data);
+                    // 새로운 게시물의 postNo를 loadedPostIds에 추가 (Set을 사용하여 중복 없이 추가)
+                    data.forEach(post => {
+                        loadedPostIds.add(post.postNo);
+                    });
                     offset += data.length;
-                    renderPosts(data);
+                } else {
+                    // 새로운 게시물이 없으면 무한 스크롤 중지
+                    noMorePosts = true;
+                    $('#feed-container').append('<p style="text-align:center;">더 이상 게시물이 없습니다.</p>');
                 }
                 $('#loading').hide();
                 isLoading = false;
@@ -263,33 +285,29 @@
         //console.log("renderPosts() 호출, posts:", posts);
 
         posts.forEach(function(post, index) {
-        	// 1) 현재 게시물 번호를 loadedPostIds에 추가 (중복 로딩 방지)
-            loadedPostIds.push(post.postNo);
-
-            // 2) 파일 확장자 추출 (소문자로 변환)
-            let extension = '';
-            if(post.postFileName) {
-                // 예: "/resources/post_file/파일.확장자"
-                let filePath = post.postFileName.toLowerCase(); 
-                // filePath 중 마지막 '.' 뒤 문자열
-                extension = filePath.substring(filePath.lastIndexOf('.') + 1);
-            }
-
-            // 3) 확장자에 따라 <img> 또는 <video> HTML 만들기
-            let mediaTag = '';
-            if(extension === 'mp4' || extension === 'wmv' || extension === 'mov') {
-                // 동영상 태그
-                mediaTag = 
-                    '<video controls width="500" style="max-height:500px;">' +
-                        '<source src="' + post.postFileName + '" type="video/' + extension + '">'
-                        + '동영상을 재생할 수 없습니다.' +
-                    '</video>'
-                ;
+            let mediaHtml = '';
+            if(post.postFileNames && post.postFileNames.length > 0) {
+                // 이미지 여러 장이라면, 슬라이더나 캐러셀로 보여주는 방식도 가능
+                post.postFileNames.forEach(function(fileUrl) {
+                    // 파일 확장자 체크
+                    let lowerUrl = fileUrl.toLowerCase();
+                    let ext = lowerUrl.substring(lowerUrl.lastIndexOf('.')+1);
+                    if(ext === 'mp4' || ext === 'wmv' || ext === 'mov') {
+                        mediaHtml += 
+                          '<video controls width="500" style="max-height:500px;">'
+                         + '  <source src="' + fileUrl + '" type="video/' + ext + '" />'
+                         + '동영상을 재생할 수 없습니다.'
+                         + '</video>';
+                    } else {
+                        mediaHtml += 
+                          '<img src="' + fileUrl + '" '
+                         + '     alt="Post Image" style="max-width:500px; max-height:500px;">';
+                    }
+                });
             } else {
-                // 그 외(jpg, jpeg, png, gif 등) → 이미지 태그
-                mediaTag = 
-                    '<img src="' + post.postFileName + '" alt="Post Image" style="max-width:500px; max-height:500px;">'
-                ;
+                // 이미지가 없는 경우(텍스트만 있는 경우)
+                // 혹은 기본 이미지를 보여줄 수도 있음
+                mediaHtml = '<p>이미지 없음</p>';
             }
             
             // 혹시 댓글 n개 모두 보기가 필요한 경우
@@ -334,7 +352,7 @@
 
                     '<div class="main-feed-content">' +
                         '<div class="main-feed-content-img">' +
-                        	mediaTag +
+                        	mediaHtml +
                         '</div>' +
                     '</div>' +
 

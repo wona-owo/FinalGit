@@ -1,6 +1,7 @@
 package kr.or.iei.post.model.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -104,55 +105,60 @@ public class PostService {
 	}
 	
 	/*
-	 * 초기 게시물 로드 시: - getRecentFollowPosts(5개) - getRandomPosts(5개) 합쳐서 중복 제거 후 최대
-	 * 10개로 제한
-	 */
-	public List<Post> getInitialPosts(int userNo) {
-		// 내가 팔로우한 사람 중 랜덤 5개
-		List<Post> followPosts = getRecentFollowPosts(userNo);
-		// 전체 게시물 중 랜덤 5개
-		List<Post> randomPosts = getRandomPosts(userNo, 5);
+     * 초기 게시물 로드 시: 
+     * - getRecentFollowPosts(5개)
+     * - getRandomPosts(5개)
+     * 합쳐서 중복 제거 후 최대 10개로 제한
+     */
+    public List<Post> getInitialPosts(int userNo) {
+        // 내가 팔로우한 사람 중 랜덤 5개
+        List<Post> followPosts = getRecentFollowPosts(userNo);
+        // 전체 게시물 중 랜덤 5개 (팔로우 게시물이 없을 경우 10개로 조정)
+        int randomLimit = followPosts.isEmpty() ? 10 : 5;
+        List<Post> randomPosts = getRandomPosts(randomLimit);
 
-		// 두 리스트 합치기 + 중복 제거
-		Set<Post> initialPostsSet = new LinkedHashSet<>();
-		initialPostsSet.addAll(followPosts);
-		initialPostsSet.addAll(randomPosts);
+        // 두 리스트 합치기 + 중복 제거
+        Set<Post> initialPostsSet = new LinkedHashSet<>();
+        initialPostsSet.addAll(followPosts);
+        initialPostsSet.addAll(randomPosts);
 
-		// 리스트 변환
-		List<Post> initialPosts = new ArrayList<>(initialPostsSet);
+        // 리스트 변환
+        List<Post> initialPosts = new ArrayList<>(initialPostsSet);
 
-		// 최대 10개로 제한
-		if (initialPosts.size() > 10) {
-			initialPosts = initialPosts.subList(0, 10);
-		}
-		return initialPosts;
-	}
+        // 최대 10개로 제한
+        if (initialPosts.size() > 10) {
+            initialPosts = initialPosts.subList(0, 10);
+        }
+        return initialPosts;
+    }
 
-	// 팔로우한 사람의 게시물 중 랜덤 5개
-	public List<Post> getRecentFollowPosts(int userNo) {
-		return postDao.getRecentFollowPosts(userNo);
-	}
+ // 팔로우한 사람의 게시물 중 랜덤 5개
+    public List<Post> getRecentFollowPosts(int userNo) {
+        return postDao.getRecentFollowPosts(userNo);
+    }
 
-	// 전체 게시물 중 랜덤 limit개
-	public List<Post> getRandomPosts(int userNo, int limit) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("userNo", userNo);
-		params.put("limit", limit);
-		return postDao.getRandomPosts(params);
-	}
+    // 전체 게시물 중 랜덤 limit개
+    public List<Post> getRandomPosts(int limit) {
+        return postDao.getRandomPosts(limit);
+    }
 
-	/*
-	* 무한 스크롤: 전체 게시물을 최신순으로 10개씩 로드 offset(지금까지 몇 개 로드했는지)에 따라 다음 row 구간을 계산
-	*/
-	public List<Post> getMorePosts(int userNo, int offset) {
-		Map<String, Object> params = new HashMap<>();
-		// 예: offset = 0이면 1~10, offset=10이면 11~20
-		int startRow = offset; // 0 -> ROWNUM > 0
-		int endRow = offset + 10; // 10
-		params.put("startRow", startRow);
-		params.put("endRow", endRow);
-		params.put("userNo", userNo);
-		
+    // 무한 스크롤 시 추가 게시물 로드
+    public List<Post> getMorePosts(int userNo, int offset,int limit, List<Integer> excludeList) {
+    	 // 중복된 excludeList 제거
+	    if (excludeList != null) {
+	        excludeList = new ArrayList<>(new LinkedHashSet<>(excludeList));
+	    } else {
+	        excludeList = new ArrayList<>();
+	    }
+	    
+	    int startRow = offset;
+	    int endRow = offset + limit;
+	    
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("userNo", userNo);
+	    params.put("startRow", startRow);
+	    params.put("endRow", endRow);
+	    params.put("excludeList", excludeList != null ? excludeList : Collections.emptyList());
 
 		return postDao.getMorePosts(params);
 	}
@@ -161,4 +167,5 @@ public class PostService {
 	public int getPostOwnerId(int postNo) {
 		return postDao.getPostOwnerId(postNo);
 	}
+    
 }
