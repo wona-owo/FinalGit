@@ -272,4 +272,11 @@
         WHERE rn > #{startRow}
     </select>
     
+    <!-- 게시글 작성자 아이디 조회 -->
+    <select id="getPostOwnerId" parameterType="_int" resultType="_int">
+    	select user_no
+    	from post
+    	where post_no =#{_parameter}
+    </select>
+    
 </mapper>

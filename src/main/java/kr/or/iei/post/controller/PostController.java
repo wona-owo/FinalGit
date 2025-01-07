@@ -37,6 +37,7 @@ import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Mypet;
+import kr.or.iei.notify.model.service.NotifyService;
 import kr.or.iei.post.model.service.PostService;
 import kr.or.iei.post.model.vo.Comment;
 import kr.or.iei.post.model.vo.Like;
@@ -59,6 +60,10 @@ public class PostController {
 	@Autowired
 	@Qualifier("service")
 	private MemberService memberService;
+	
+	@Autowired
+	@Qualifier("notifyService")
+	private NotifyService notifyService;
 	
 	//유저 피드 데이터 불러오기(포스트 이미지, 콘텐츠, 팔로우 수, 썸네일 리스트)
 	@GetMapping("myFeedFrm.kh") //메뉴 버튼이랑 매핑
@@ -301,18 +306,25 @@ public class PostController {
 	    Map<String, Object> response = new HashMap<>();
 
 	    try {
-	        int result = postService.writeComment(comment); 
+	        int result = postService.writeComment(comment);
 
 	        if (result > 0) {
-	            // 성공 시 결과만 반환 (메시지 없이 success만 포함)
 	            response.put("success", true);
+
+	            // 알림 생성 로직 추가
+	            int postOwnerId = postService.getPostOwnerId(comment.getPostNo()); // 게시글 작성자 ID 조회
+	           // if (postOwnerId != comment.getUserNo()) {} // 자신에게는 알림 생성하지 않음
+	                notifyService.generateNotification(
+	                    postOwnerId, // 게시글 작성자
+	                    2, // 이벤트 타입 (예: 2 = 댓글)
+	                    comment.getUserNickname() + "님이 당신의 게시글에 댓글을 남겼습니다."
+	                );
+	            
 	        } else {
-	            // 실패 시 메시지 포함
 	            response.put("success", false);
 	            response.put("message", "댓글 작성에 실패했습니다. 다시 시도해주세요.");
 	        }
 	    } catch (Exception e) {
-	        // 예외 발생 시 실패 응답
 	        response.put("success", false);
 	        response.put("message", "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
 	        e.printStackTrace();
@@ -320,6 +332,7 @@ public class PostController {
 
 	    return response;
 	}
+
 	
 	//댓글 삭제
 	@GetMapping(value = "cmtDelete.kh", produces = "application/json; charset=utf-8")

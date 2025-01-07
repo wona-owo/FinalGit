@@ -5,6 +5,14 @@ public class Notify {
 	private int notifyId; // 알림 ID (Primary Key)
     private int userNo; // 사용자 번호
     private int eventType; // 이벤트 타입
+    /*
+    1	채팅 알림
+	2	내 게시물 댓글
+	3	내 게시물 좋아요
+	4	내 댓글 좋아요
+	5	내 댓글 답글
+	6	팔로워 알림 
+     */
     private String notifyContent; // 알림 내용
     private String isRead; // 읽음 여부 ('Y' 또는 'N')
     private String notifyDate;

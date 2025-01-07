@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notify">
+
+    <!-- 새 알림 추가 -->
+    <insert id="insert" parameterType="notify">
+        INSERT INTO notify 
+        (notify_id, user_no, event_type, notify_content, is_read, notify_date)
+        VALUES 
+        (seq_notify.nextval, #{userNo}, #{eventType}, #{notifyContent}, #{isRead}, sysdate)
+    </insert>
+
+    <!-- 특정 사용자의 읽지 않은 알림 가져오기 -->
+    <select id="getUnread" parameterType="_int" resultType="notify">
+        SELECT 
+        notify_id as notifyId, 
+        user_no as userNo, 
+        event_type as eventType, 
+        notify_content as notifyContent, 
+        is_read as isRead, 
+        notify_date as notifyDate
+        FROM notify
+        WHERE user_no = #{_parameter} AND is_read = 'N'
+        ORDER BY notify_date DESC
+    </select>
+
+    <!-- 단일 알림 읽음 상태 업데이트 -->
+    <update id="updateRead" parameterType="_int">
+        UPDATE notify
+        SET is_read = 'Y'
+        WHERE notify_id = #{_parameter}
+    </update>
+
+    <!-- 다중 알림 읽음 상태 업데이트 -->
+    <update id="updateMultipleRead" parameterType="list">
+        UPDATE notify
+        SET is_read = 'Y'
+        WHERE notify_id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

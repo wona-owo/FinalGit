@@ -156,4 +156,9 @@ public class PostService {
 
 		return postDao.getMorePosts(params);
 	}
+
+	//게시글 작성자 조회
+	public int getPostOwnerId(int postNo) {
+		return postDao.getPostOwnerId(postNo);
+	}
 }

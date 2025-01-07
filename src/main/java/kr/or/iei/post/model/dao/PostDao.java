@@ -123,4 +123,8 @@ public class PostDao {
     public List<Post> getMorePosts(Map<String, Object> params) {
         return sqlSession.selectList("post.getMorePosts", params);
     }
+
+	public int getPostOwnerId(int postNo) {
+		return sqlSession.selectOne("post.getPostOwnerId", postNo);
+	}
 }
