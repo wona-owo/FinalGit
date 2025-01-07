@@ -5,6 +5,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
 <link rel="stylesheet" href="/resources/default.css">
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -104,9 +106,13 @@
 		        // 초기 모달 설정
 		        $(".modal").css("display", "block");
 		        $(".modal .modal-image").html(`
-		            <div class="previous">◀</div>
+        		   <button class="story-nav-btn story-prev-btn previous">
+                  	 <span class="material-icons nav-icons">navigate_before</span>
+                   </button>
 		            <img id="current-image" src="" alt="thumbnail">
-		            <div class="next">▶</div>
+		            <button class="story-nav-btn story-next-btn next">
+                    	<span class="material-icons nav-icons">navigate_next</span>
+                   </button>
 		        `);
 		        $(".modal .post-content-text").text(postContent);
 	
@@ -174,7 +180,7 @@
 		        // 다른 함수에도 postNo 전달
 		        handlePostLike(postNo);
 		        handleCommentLike(); 
-		        loadLikeStatus(postNo);
+		        loadPostLikeStatus(postNo);
 		       
 		    });	  
 		
@@ -524,138 +530,132 @@
 			
 			 
 			// 게시글 좋아요 상태 초기화
-			  function loadLikeStatus(postNo) {
-			      $(".post-like").each(function () {
-			          const $btn = $(this);
-			          const userNo = $btn.data("user-no") || $("input[name='userNo']").val();
+			function loadPostLikeStatus(postNo) {
+			    const $likeBtn = $(".post-like"); // 좋아요 버튼
+			    const userNo = $("input[name='userNo']").val(); // 로그인 사용자 ID
+			
+			    if (!postNo || !userNo) {
+			        console.error("게시글 ID 또는 사용자 ID가 누락되었습니다.");
+			        return;
+			    }
+			
+			    // 서버에서 좋아요 상태 확인
+			    $.ajax({
+			        url: "/post/isLiked.kh", // 서버에서 좋아요 상태 확인
+			        type: "GET",
+			        data: { targetNo: postNo, userNo: userNo, targetType: "P" }, // targetType: "P"는 게시글
+			        success: function (isLikedResponse) {
+			            const isLiked = isLikedResponse === "true"; // 서버 응답이 "true"일 경우 좋아요 상태
+			            $likeBtn.data("liked", isLiked); // 좋아요 상태를 data 속성에 저장
+			            $likeBtn.attr("data-liked", isLiked); // HTML 속성 업데이트
+			
+			            // 좋아요 상태에 따라 아이콘 클래스 설정
+			            $likeBtn.find("i")
+			                .toggleClass("fa-solid", isLiked) // 활성화 상태
+			                .toggleClass("fa-regular", !isLiked); // 비활성화 상태
+			        },
+			        error: function () {
+			            console.error("좋아요 상태 초기화 실패");
+			        }
+			    });
+			
+			    // 서버에서 좋아요 개수 확인
+			    $.ajax({
+			        url: "/post/postlikeCnt.kh", // 좋아요 개수 확인
+			        type: "GET",
+			        data: { targetNo: postNo },
+			        success: function (likeCountResponse) {
+			            const likeCount = parseInt(likeCountResponse) || 0;
+			            $likeBtn.find(".like-count").text(likeCount); // 좋아요 개수 업데이트
+			        },
+			        error: function () {
+			            console.error("좋아요 개수 초기화 실패");
+			        }
+			    });
+			}
 
-			          if (!postNo || !userNo) return;
-
-			          // 좋아요 상태 조회
-			          $.ajax({
-			              url: "/post/isLiked.kh",
-			              type: "GET",
-			              data: { targetNo: postNo, userNo: userNo, targetType: "P" },
-			              success: function (isLikedResponse) {
-			                  const isLiked = isLikedResponse === "true";
-
-			                  // 좋아요 개수 조회
-			                  $.ajax({
-			                      url: "/post/postlikeCnt.kh",
-			                      type: "GET",
-			                      data: { targetNo: postNo },
-			                      success: function (likeCountResponse) {
-			                          const likeCount = parseInt(likeCountResponse) || 0;
-
-			                          // 좋아요 상태 및 UI 동기화
-			                          $btn.data("liked", isLiked);
-			                          $btn.attr("data-liked", isLiked);
-			                          $btn.find(".like-count").text(likeCount);
-			                          $btn.find("i").toggleClass("fa-solid", isLiked).toggleClass("fa-regular", !isLiked);
-			                      },
-			                  });
-			              },
-			          });
-			      });
-			  }
 				
 			  
-				// 댓글 좋아요 처리
-							
+				// 댓글 좋아요 처리						
 				function handleCommentLike() {
-				    $(document).on("click", ".comment-like", function () {
-				        const $btn = $(this);
-				        const targetNo = $btn.data("id"); // 댓글 ID
-				        const userNo = $("input[name='userNo']").val(); // 로그인 사용자 ID
-				        const isLiked = $btn.data("liked") === true; // 현재 좋아요 상태
-				        const url = isLiked ? "/post/commentLikeDel.kh" : "/post/commentLike.kh";
-				
-				        // 무조건 반대 요청
-				        $.ajax({
-				            url: url,
-				            type: "GET",
-				            data: { targetNo: targetNo, userNo: userNo, targetType: "C" },
-				            success: function (response) {
-				                if (response === "success") {
-				                    const likeCount = $btn.find(".like-count");
-				                    const currentCount = parseInt(likeCount.text()) || 0;
-				
-				                    // 좋아요 상태 반대로 처리
-				                    const newIsLiked = !isLiked;
-				                    const newCount = newIsLiked ? currentCount + 1 : Math.max(currentCount - 1, 0);
-				
-				                    // UI 업데이트
-				                    $btn.data("liked", newIsLiked); // 좋아요 상태 업데이트
-				                    $btn.attr("data-liked", newIsLiked); // HTML 속성 동기화
-				                    likeCount.text(newCount); // 좋아요 개수 업데이트
-				                    $btn.find("i")
-				                        .toggleClass("fa-solid", newIsLiked)
-				                        .toggleClass("fa-regular", !newIsLiked);
-				
-				                    console.log("[DEBUG] 댓글 좋아요 상태 업데이트:", { targetNo, newIsLiked, newCount });
-				                } else {
-				                    alert("댓글 좋아요 업데이트 실패");
-				                }
-				            },
-				            error: function () {
-				                console.error("[ERROR] 댓글 좋아요 등록/취소 AJAX 요청 실패 - targetNo:", targetNo);
-				            },
-				        });
-				    });
+					// 좋아요 버튼 클릭 이벤트 수정
+					$(document).on("click", ".comment-like", function () {
+					    const $btn = $(this);
+					    const targetNo = $btn.data("id"); // 댓글 또는 답글 고유 ID
+					    const userNo = $("input[name='userNo']").val();
+					    const isLiked = $btn.data("liked");
+					    const url = isLiked ? "/post/commentLikeDel.kh" : "/post/commentLike.kh";
+
+					    $.ajax({
+					        url: url,
+					        type: "GET",
+					        data: { targetNo: targetNo, userNo: userNo, targetType: "C" },
+					        success: function (response) {
+					            if (response === "success") {
+					                const likeCount = $btn.find(".like-count");
+					                const currentCount = parseInt(likeCount.text()) || 0;
+					                const newCount = isLiked ? Math.max(currentCount - 1, 0) : currentCount + 1;
+
+					                // 좋아요 상태 및 UI 업데이트
+					                $btn.data("liked", !isLiked);
+					                $btn.attr("data-liked", !isLiked); // DOM 속성 업데이트
+					                $btn.find("i").toggleClass("fa-solid", !isLiked).toggleClass("fa-regular", isLiked);
+					                likeCount.text(newCount);
+					            } else {
+					                alert("좋아요 처리 실패");
+					            }
+					        },
+					        error: function () {
+					            console.error("좋아요 요청 실패");
+					        }
+					    });
+					});
+
 				}
 
 		
 			// 댓글 좋아요 상태 및 개수 초기화
-			 function updateCommentLikeStatus() {
-				    $(".comment-list .comment").each(function () {
-				        const $comment = $(this); // 현재 댓글
-				        const $likeBtn = $comment.find(".comment-like"); // 댓글의 좋아요 버튼
-				        const commentNo = $likeBtn.data("id"); // 댓글 ID
-				        const userNo = $("input[name='userNo']").val(); // 사용자 ID
-				
-				        // 필수 데이터 검증
-				        if (!commentNo || !userNo) {
-				            console.error("[ERROR] 댓글 ID 또는 사용자 ID가 누락되었습니다.", { commentNo, userNo });
-				            return;
-				        }
-				
-				        // 좋아요 상태 확인
-				        $.ajax({
-				            url: "/post/isLiked.kh", // 좋아요 여부 확인 URL
-				            type: "GET",
-				            data: { targetNo: commentNo, userNo: userNo, targetType: "C" },
-				            success: function (isLikedResponse) {
-				
-				                const isLiked = isLikedResponse === "true"; // 문자열 비교
-				
-				                // 좋아요 개수 확인
-				                $.ajax({
-				                    url: "/post/commentLikeCnt.kh", // 좋아요 개수 확인 URL
-				                    type: "GET",
-				                    data: { targetNo: commentNo },
-				                    success: function (likeCountResponse) {
-				                        console.log("[DEBUG] 좋아요 개수 응답:", likeCountResponse); // 응답 디버깅
-				                        const likeCount = parseInt(likeCountResponse) || 0; // 숫자로 변환
-				
-				                        // 좋아요 상태 및 UI 업데이트
-				                        $likeBtn.data("liked", isLiked);
-				                        $likeBtn.attr("data-liked", isLiked); // HTML 속성 업데이트
-				                        $likeBtn.find(".like-count").text(likeCount); // 좋아요 개수 표시
-				                        $likeBtn.find("i")
-				                            .toggleClass("fa-solid", isLiked) // 활성화 아이콘
-				                            .toggleClass("fa-regular", !isLiked); // 비활성화 아이콘
-				                    },
-				                    error: function (xhr, status, error) {
-				                        console.error("[ERROR] 좋아요 개수 조회 실패:", { status, error });
-				                    },
-				                });
-				            },
-				            error: function (xhr, status, error) {
-				                console.error("[ERROR] 좋아요 상태 확인 실패:", { status, error });
-				            },
-				        });
-				    });
-				}
+			function updateCommentLikeStatus() {
+			    $(".comment-like").each(function () {
+			        const $btn = $(this);
+			        const commentNo = $btn.data("id"); // 댓글/답글 고유 ID
+			        const userNo = $("input[name='userNo']").val();
+			
+			        if (!commentNo || !userNo) return;
+			
+			        // 서버에서 개별 좋아요 상태 확인
+			        $.ajax({
+			            url: "/post/isLiked.kh",
+			            type: "GET",
+			            data: { targetNo: commentNo, userNo: userNo, targetType: "C" },
+			            success: function (isLikedResponse) {
+			                const isLiked = isLikedResponse === "true";
+			
+			                // 좋아요 상태 및 UI 업데이트
+			                $btn.data("liked", isLiked);
+			                $btn.attr("data-liked", isLiked);
+			                $btn.find("i").toggleClass("fa-solid", isLiked).toggleClass("fa-regular", !isLiked);
+			            },
+			            error: function () {
+			                console.error("[ERROR] 좋아요 상태 초기화 실패");
+			            }
+			        });
+			
+			        // 서버에서 좋아요 개수 확인
+			        $.ajax({
+			            url: "/post/commentLikeCnt.kh",
+			            type: "GET",
+			            data: { targetNo: commentNo },
+			            success: function (likeCountResponse) {
+			                const likeCount = parseInt(likeCountResponse) || 0;
+			                $btn.find(".like-count").text(likeCount); // 좋아요 개수 업데이트
+			            },
+			            error: function () {
+			                console.error("[ERROR] 좋아요 개수 초기화 실패");
+			            }
+			        });
+			    });
+			}
 
 
 	 

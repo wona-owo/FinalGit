@@ -473,14 +473,16 @@ main {
 
 .previous,
 .next {
-    position: absolute; 
-    top: 50%; /* 세로 가운데 */
-    transform: translateY(-50%); /* 가운데 정렬 */
-    font-size: 2rem; 
-    color: white; 
-    cursor: pointer; 
-    z-index: 10; 
-    user-select: none; /* 텍스트 선택 방지 */
+    position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+	border: none;
+	padding: 5px;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 10;
 }
 
 .previous {
@@ -490,6 +492,15 @@ main {
 .next {
     right: 10px; /* 오른쪽 여백 */
 }
+
+.previous:hover {
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+.next:hover {
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
 /* 모달 본문 상단 */
 .modal-body .top {
     padding: 20px;
