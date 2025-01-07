@@ -886,4 +886,48 @@ main {
     transition: transform 0.1s ease;
 }
 
+/*알림창*/
+.notification-sidebar {
+   position: fixed;
+   top: 0;
+   left: -300px;
+   width: 300px;
+   height: 100%;
+   background-color: white;
+   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+   transition: left 0.3s ease, visibility 0.3s ease;
+   padding: 20px;
+   visibility: hidden;
+ }
 
+ .notification-sidebar.open {
+   left: 0;
+   visibility: visible;
+ }
+
+ .notification-header {
+   font-size: 1.5em;
+   margin-bottom: 10px;
+ }
+
+ .notification-content {
+   margin-bottom: 20px;
+ }
+
+ .close-sidebar-btn {
+   background-color: #007bff;
+   color: white;
+   border: none;
+   padding: 10px 20px;
+   border-radius: 5px;
+   cursor: pointer;
+ }
+
+ .close-sidebar-btn:hover {
+   background-color: #0056b3;
+ }
+ 
+ .open-notification-btn:hover{
+ 	cursor: pointer;
+ }
+ 

@@ -10,6 +10,7 @@ create sequence seq_hashtag; -- 해시태그 고유번호
 create sequence seq_comment; -- 댓글 고유번호
 create sequence seq_story; -- 스토리 고유번호
 create sequence seq_story_file; -- 스토리 파일 고유번호
+create sequence seq_notify; -- 알림 고유번호
 
 -------------------------------------------------------------------------------
 -- 유저 테이블
@@ -539,6 +540,17 @@ ALTER TABLE chat_room
 ADD (
     user1_readYN CHAR(1) DEFAULT 'N' CHECK(user1_readYN IN ('Y', 'N')),
     user2_readYN CHAR(1) DEFAULT 'N' CHECK(user2_readYN IN ('Y', 'N'))
+);
+
+
+-- 알림 테이블
+CREATE TABLE notify (
+    notify_id NUMBER PRIMARY KEY,
+    user_no NUMBER REFERENCES tbl_user(user_no) ON DELETE CASCADE,
+    event_type NUMBER NOT NULL,
+    notify_content varchar2(20),
+    is_read CHAR(1) DEFAULT 'N' CHECK(is_read IN ('Y', 'N')) not null,
+    notify_date DATE DEFAULT SYSDATE NOT NULL
 );
 
 COMMIT;
