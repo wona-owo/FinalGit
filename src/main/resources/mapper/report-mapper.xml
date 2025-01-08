@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="report">
+
+	<!-- 신고 생성 -->
+	<insert id="insertReport" parameterType="report">
+		INSERT INTO report (report_no, user_no, target_no, target_type, report_reason)
+		VALUES (seq_report.nextval, #{userNo}, #{targetNo}, #{targetType}, #{reportReason})
+	</insert>
+</mapper>

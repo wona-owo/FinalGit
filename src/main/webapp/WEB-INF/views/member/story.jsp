@@ -51,7 +51,6 @@
 	display: flex;
     flex-direction: column;
 	overflow: hidden;
-	
 }
 
 .story-image-container {
@@ -185,6 +184,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 </style>
 </head>
 <body>

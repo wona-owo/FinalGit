@@ -23,6 +23,7 @@
 			<typeAlias type="kr.or.iei.chat.model.vo.ChatRoom" alias="chatRoom"/>
 			<typeAlias type="kr.or.iei.chat.model.vo.ChatMessage" alias="chatMessage"/>
 			<typeAlias type="kr.or.iei.notify.model.vo.Notify" alias="notify"/>
+			<typeAlias type="kr.or.iei.report.model.vo.Report" alias="report"/>
 		</typeAliases>
 
 </configuration>

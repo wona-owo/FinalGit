@@ -43,11 +43,6 @@ public class StoryController {
 	@Qualifier("storyService")
 	private StoryService service;
 	
-	@GetMapping("modalTest.kh")
-	public String modalTest() {
-		return "member/story";
-	}
-	
 	// 내 스토리 정보
 	@PostMapping(value="myStory.kh", produces="application/json; charset=utf-8")
 	@ResponseBody

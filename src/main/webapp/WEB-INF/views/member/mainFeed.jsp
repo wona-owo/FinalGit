@@ -179,6 +179,70 @@
 .comment-input{
 	width: 100%;
 }
+
+/* ===========신고 모달============ */
+.report-modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.report-header h2 {
+    font-size: 18px;
+    text-align: center;
+    margin: 0;
+}
+.report-reason label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.report-reason {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2열로 정렬 */
+    gap: 10px;
+}
+.reportRadio{
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+}
+.report-footer {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.report-footer .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+}
+.btn-delete {
+    background-color: #f7d3d3;
+    color: #a33;
+}
+.btn-delete:hover {
+    background-color: #f5bcbc;
+}
+.cancel-btn {
+    background-color: #ccc;
+}
+.cancel-btn:hover {
+    background-color: #bbb;
+}
 </style>
 </head>
 <body>
@@ -463,7 +527,99 @@
             // feed-container 내부에 게시물 DOM 추가
             container.append(postHtml);
         });
-     	
+        
+        // 신고 modalHTML
+        function createReportModal(targetType){
+            
+            let html = '';
+            html += '<div id="storyModalBackdrop" class="story-modal-backdrop">';
+            html += '<div class="report-modal-content">';
+            html += '<div class="report-header">';
+                if(targetType === 'P'){
+                    html += '<h2>해당 게시물을 신고하시겠습니까?</h2>';
+                } else if (targetType === 'C'){
+                    html += '<h2>해당 댓글을 신고하시겠습니까?</h2>';
+                }
+            html += '</div>';
+            html += '<div class="report-item">';
+            html += '<div class="report-reason">';
+            html += '<label><input class="reportRadio" type="radio" name="reportReason" value="영리목적/홍보성"/>영리목적/홍보성</label>';
+            html += '<label><input class="reportRadio" type="radio" name="reportReason" value="개인정보노출"/>개인정보노출</label>';
+            html += '<label><input class="reportRadio" type="radio" name="reportReason" value="불법정보"/>불법정보</label>';
+            html += '<label><input class="reportRadio" type="radio" name="reportReason" value="음란성/선정성"/>음란성/선정성</label>';
+            html += '<label><input class="reportRadio" type="radio" name="reportReason" value="욕설/인신공격"/>욕설/인신공격</label>';
+            html += '<label><input class="reportRadio" type="radio" name="reportReason" value="도배성"/>도배성</label>';
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="report-footer">';
+            html += '<button class="btn btn-delete" id="reportBtn">신고</button>';
+            html += '<button class="btn cancel-btn" id="cancelBtn">취소</button>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+            
+            return html;
+        }
+        
+        // 게시물에서 '''버튼 클릭 시
+        $('.report-Btn').on('click', function() {
+            const loginUserNo = "${loginMember.userNo}";
+            const targetNo = $(this).data('target-no');
+            const targetType = $(this).data('target-type');
+            
+            const reportModalHtml = createReportModal(targetType);
+            $('body').prepend(reportModalHtml);
+            
+            // (이벤트) 신고 버튼
+            $('.report-modal-content').on('click', '#reportBtn', executeReport);
+            
+             // (이벤트) 닫기 버튼
+            $('.report-modal-content').on('click', '#cancelBtn', cancelReport);
+            
+             function executeReport(){
+                 const selectedReason = $('input[name="reportReason"]:checked').val();
+                 
+                 if (!confirm("정말 신고를 하시겠습니까?")) return;
+                 
+                 if (!selectedReason) {
+                    alert('신고 사유를 선택해주세요.');
+                    return;
+                }
+                 
+                 const formData = new FormData();
+                formData.append("userNo", loginUserNo);
+                formData.append("targetNo", targetNo);
+                formData.append("targetType", targetType);
+                formData.append("reportReason", selectedReason);
+                 
+                 $.ajax({
+                    url: '/report/insertReport.kh',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // 데이터를 쿼리 문자열로 변환하지 않음
+                    contentType: false, // 콘텐츠 타입을 설정하지 않음 (브라우저가 자동으로 설정)
+                    success: function(response) {
+                        if (response === 'success') {
+                            alert('신고가 정상적으로 접수되었습니다.');
+                            cancelReport();
+                        } else if (response === 'error') {
+                            alert('신고 중 오류가 발생했습니다.');
+                        } else {
+                            alert('알 수 없는 오류가 발생했습니다.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('신고에 실패했습니다.');
+                        console.log(error);
+                    }
+                });
+                 
+             }
+             
+             function cancelReport(){
+                 $("#storyModalBackdrop").remove();
+             }
+        });
     }
     </script>
 </body>
