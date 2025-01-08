@@ -248,9 +248,12 @@ public class MemberController {
 	        int followingCount = followService.getFollowingCount(targetUserNo); // 내가 팔로우 중인 사람 수
 
 	        ArrayList<Mypet> mypets = memberService.selectMyPetList(targetUserNo);
-			
+	        ArrayList<Post> postData = postService.postData(targetUserNo);
+	        
+	        
 			model.addAttribute("mypetList", mypets);
 	        model.addAttribute("member", member);
+	        model.addAttribute("post", postData);
 	        model.addAttribute("followerCount", followerCount);
 	        model.addAttribute("followingCount", followingCount);
 			model.addAttribute("myFollowCount", myFollowCount);
@@ -616,9 +619,11 @@ public class MemberController {
 	        int followerCount  = followService.getFollowerCount(targetUserNo);  // 나를 팔로우하는 사람 수
 	        int followingCount = followService.getFollowingCount(targetUserNo); // 내가 팔로우하는 사람 수
 	        ArrayList<Mypet> mypets = memberService.selectMyPetList(targetUserNo);
-			
+	        ArrayList<Post> postData = postService.postData(targetUserNo);
+	        
 			model.addAttribute("mypetList", mypets);
 			model.addAttribute("member", member);
+			model.addAttribute("post", postData);
 			model.addAttribute("myFollowCount", myFollowCount);
 			model.addAttribute("theyFollowCount", theyFollowCount);
 			model.addAttribute("followerCount", followerCount);
@@ -896,5 +901,57 @@ public class MemberController {
             return "fail";
         }
     }
+    
+	//유저프로필 이동
+	@GetMapping("profile.kh")
+	public String profileFrm(@RequestParam("userNo") int userNo, String type, HttpSession session, Model model) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			return "redirect:/"; // 로그인 안 된 경우
+		}
+		
+		
+		int myNo = loginMember.getUserNo();
+
+		// 나의 유저 번호가 a링크로 이동한 userNo랑 같을 시
+		if (myNo == userNo) {
+			int followerCount = followService.getFollowerCount(myNo); // 나를 팔로우하는 사람 수
+			int followingCount = followService.getFollowingCount(myNo); // 내가 팔로우하는 사람 수
+
+			ArrayList<Post> postData = postService.postData(myNo); // 내가 작성한 글
+			ArrayList<Mypet> mypets = memberService.selectMyPetList(myNo);
+
+			model.addAttribute("member", loginMember);
+			model.addAttribute("mypetList", mypets);
+			model.addAttribute("post", postData);
+			model.addAttribute("followerCount", followerCount);
+			model.addAttribute("followingCount", followingCount);
+
+			return "member/myFeed";
+		}
+		Member member = memberService.searchUserData(userNo);
+		// 내가 상대방(targetNo)을 팔로우하고 있는지 여부를 DB에서 조회한 결과
+		int myFollowCount = followService.selectCheckFollor(myNo, userNo);
+
+		// 상대방(targetNo)이 나를 팔로우하고 있는지 여부를 DB에서 조회한 결과
+		int theyFollowCount = followService.selectCheckFollor(userNo, myNo);
+
+		// 상대방의 팔로잉/팔로워 수
+		// (해당 프로필 주인의 userNo=targetUserNo 로 조회)
+		int followerCount = followService.getFollowerCount(userNo); // 나를 팔로우하는 사람 수
+		int followingCount = followService.getFollowingCount(userNo); // 내가 팔로우하는 사람 수
+		ArrayList<Mypet> mypets = memberService.selectMyPetList(userNo);
+		ArrayList<Post> postData = postService.postData(userNo);
+
+		model.addAttribute("mypetList", mypets);
+		model.addAttribute("member", member);
+		model.addAttribute("post", postData);
+		model.addAttribute("myFollowCount", myFollowCount);
+		model.addAttribute("theyFollowCount", theyFollowCount);
+		model.addAttribute("followerCount", followerCount);
+		model.addAttribute("followingCount", followingCount);
+
+		return "member/userProfile";
+	}
 }
 

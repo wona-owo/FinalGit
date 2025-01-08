@@ -102,40 +102,10 @@
 	   		</c:forEach>
 	    </div>
 	    
-	    <%-- 콘텐츠 모달창 --%>
-	    <div class="modal">
-	    	<div class="modal-place">
-		    <div class="modal-contents"> 		     
-			    <div class="modal-image">
-		    	  <c:forEach var="post" items="${post}">
-		    	    <img src="/resources/post_file/${post.postFileName}" alt="thumbnail" class="post-modal">
-		    	  </c:forEach>
-			    </div>
-			    
-		     	 <div class="modal-body">
-		     	  	<div class="top">
-			    	   <div class="modal-user">
-			    	   	<div class="profile-frame" id="modal-profile"></div>
-			    	    <p>${loginMember.userNickname}</p>
-			    	   </div>
-			    	   <a href="#" class="modal-close">X</a>
-			    	 </div>
-			    	 
-			    	 <div class="post-content">
-			    	 	<div class="post-content-text"></div>
-			    	 </div>		
-			    	     	 
-			    	 <%-- 나중에 댓글 넣기 --%>
-		        </div>		        
-		    </div>
-		    </div>   	        
-	    </div>
+	    <%--포스트 modal--%>
+	    <%@ include file="/WEB-INF/views/member/postModal.jsp" %>
 	    
-	     <%-- 포스트 작성 모달창 --%>
-	    <div class="modal">
-	    	<div class="modal-place">
-	    	</div>
-	    </div>
+	     
 	    			    
 	</main>
 	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
@@ -202,32 +172,6 @@
 	        });
 	    });
 	});
-		//모달창 노출
-		const modal = $(".modal");
-		
-		const postText = $(".post-content-text");
-		const postCon = $(".hidden-post-content").text();
-		
-		$(".feed-thumbnail").on("click",function(){
-			modal.css("display","block");
-			
-			//콘텐츠 노출
-			postText.text(postCon);
-			
-		});
-		
-		//모달창 닫기
-		$(".modal-close").on("click", function(){
-			modal.css("display", "none");
-		})
-		
-		
-		//포스트 작성
-		$("#post-button").on("click",function(){
-			
-			
-		});
-		
 	</script>
 </body>
 </html>
