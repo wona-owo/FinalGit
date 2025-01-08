@@ -174,10 +174,10 @@ public class StoryController {
 		return "success";
 	}
 	
+	// 스토리 삭제
 	@PostMapping("deleteStory.kh")
 	@ResponseBody
 	public String deleteStory(@RequestParam String storyNo) {
-		System.out.println(storyNo);
 		int result = service.deleteStory(storyNo);
 
 		if(result > 0) {

@@ -17,6 +17,8 @@ public class Post {
 	private String userNickname;
 	private int likeCount;
     private int commentCount;
+    private String firstCommentContent;
+    private String firstCommentUserNickname;
 	
 	//hashtag 테이블 join
 	private int hashNo;
@@ -24,15 +26,15 @@ public class Post {
 	
 	//여러 이미지 지원을 위한 필드 추가
     private List<String> postFileNames; // 이미지 파일명 리스트
-    
-    public Post() {
+
+	public Post() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	public Post(int postNo, int userNo, String postContent, String postDate, int postFileNo, String postFileName,
-			String userImage, String userNickname, int likeCount, int commentCount, int hashNo,
-			ArrayList<String> hashName, List<String> postFileNames) {
+			String userImage, String userNickname, int likeCount, int commentCount, String firstCommentContent,
+			String firstCommentUserNickname, int hashNo, ArrayList<String> hashName, List<String> postFileNames) {
 		super();
 		this.postNo = postNo;
 		this.userNo = userNo;
@@ -44,6 +46,8 @@ public class Post {
 		this.userNickname = userNickname;
 		this.likeCount = likeCount;
 		this.commentCount = commentCount;
+		this.firstCommentContent = firstCommentContent;
+		this.firstCommentUserNickname = firstCommentUserNickname;
 		this.hashNo = hashNo;
 		this.hashName = hashName;
 		this.postFileNames = postFileNames;
@@ -129,6 +133,22 @@ public class Post {
 		this.commentCount = commentCount;
 	}
 
+	public String getFirstCommentContent() {
+		return firstCommentContent;
+	}
+
+	public void setFirstCommentContent(String firstCommentContent) {
+		this.firstCommentContent = firstCommentContent;
+	}
+
+	public String getFirstCommentUserNickname() {
+		return firstCommentUserNickname;
+	}
+
+	public void setFirstCommentUserNickname(String firstCommentUserNickname) {
+		this.firstCommentUserNickname = firstCommentUserNickname;
+	}
+
 	public int getHashNo() {
 		return hashNo;
 	}
@@ -172,9 +192,9 @@ public class Post {
 		return "Post [postNo=" + postNo + ", userNo=" + userNo + ", postContent=" + postContent + ", postDate="
 				+ postDate + ", postFileNo=" + postFileNo + ", postFileName=" + postFileName + ", userImage="
 				+ userImage + ", userNickname=" + userNickname + ", likeCount=" + likeCount + ", commentCount="
-				+ commentCount + ", hashNo=" + hashNo + ", hashName=" + hashName + ", postFileNames=" + postFileNames
-				+ "]";
+				+ commentCount + ", firstCommentContent=" + firstCommentContent + ", firstCommentUserNickname="
+				+ firstCommentUserNickname + ", hashNo=" + hashNo + ", hashName=" + hashName + ", postFileNames="
+				+ postFileNames + "]";
 	}
-	
 	
 }

@@ -67,7 +67,6 @@ public class ChatService {
     public void leaveChatRoom(int roomId, int userNo) {
         ChatRoom chatRoom = chatDao.getChatRoomByRoomId(roomId);
         if (chatRoom == null) {
-            // 채팅방이 존재하지 않으면 예외 처리 또는 로그 추가
             return;
         }
 
@@ -112,7 +111,7 @@ public class ChatService {
 	// 읽음 상태 업데이트
 	public int updateReadStatus(int roomId, int userNo, String readStatus) {
 		// 로그 추가
-        System.out.println("updateReadStatus 호출됨: roomId=" + roomId + ", userNo=" + userNo + ", readStatus=" + readStatus);
+        //System.out.println("updateReadStatus 호출됨: roomId=" + roomId + ", userNo=" + userNo + ", readStatus=" + readStatus);
 		
 	    HashMap<String, Object> params = new HashMap<>();
 	    params.put("roomId", roomId);

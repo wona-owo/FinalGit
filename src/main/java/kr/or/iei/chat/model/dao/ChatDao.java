@@ -81,7 +81,7 @@ public class ChatDao {
 		// 읽음 상태 업데이트
 		public int updateReadStatus(HashMap<String, Object> params) {
 			// 로그 추가
-			System.out.println("updateReadStatus 실행됨: " + params);
+			//System.out.println("updateReadStatus 실행됨: " + params);
 		    return sqlSession.update("chat.updateReadStatus", params);
 		}
 

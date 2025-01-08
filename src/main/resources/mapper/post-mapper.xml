@@ -186,6 +186,8 @@
 		            TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
 		            u.user_image AS userImage,
 		            u.user_nickname AS userNickname,
+					fc.firstCommentContent AS firstCommentContent,
+            		fc.firstCommentUserNickname AS firstCommentUserNickname,
 		            (SELECT COUNT(*) 
 		               FROM tbl_like l 
 		              WHERE l.target_no = p.post_no 
@@ -204,6 +206,23 @@
 		              ON p.user_no = u.user_no
 		            LEFT JOIN post_file pf 
 		              ON p.post_no = pf.post_no
+					LEFT JOIN (
+						SELECT 
+							c.post_no, 
+							c.comment_content AS firstCommentContent, 
+							u_c.user_nickname AS firstCommentUserNickname
+						FROM 
+							tbl_comment c
+							JOIN tbl_user u_c 
+							ON c.user_no = u_c.user_no
+						WHERE 
+							c.comment_no = (
+								SELECT MIN(c2.comment_no)
+								FROM tbl_comment c2
+								WHERE c2.post_no = c.post_no
+							)
+					) fc 
+					ON p.post_no = fc.post_no
 		        WHERE 
 		            p.user_no IN (
 		                SELECT following_no 
@@ -216,7 +235,9 @@
 		            p.post_content,
 		            p.post_date,
 		            u.user_image,
-		            u.user_nickname
+		            u.user_nickname,
+					fc.firstCommentContent,
+           			fc.firstCommentUserNickname
 		        ORDER BY 
 		            DBMS_RANDOM.VALUE
 		    )
@@ -233,6 +254,8 @@
 	            TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
 	            u.user_image AS userImage,
 	            u.user_nickname AS userNickname,
+				fc.firstCommentContent AS firstCommentContent,
+				fc.firstCommentUserNickname AS firstCommentUserNickname,
 	            (SELECT COUNT(*) 
 	               FROM tbl_like l 
 	              WHERE l.target_no = p.post_no 
@@ -245,15 +268,32 @@
 	            DBMS_RANDOM.VALUE AS rand_val
 	        FROM 
 	            post p
-	            JOIN tbl_user u ON p.user_no = u.user_no
-	            LEFT JOIN post_file pf ON p.post_no = pf.post_no
+	        JOIN tbl_user u ON p.user_no = u.user_no
+	        LEFT JOIN post_file pf ON p.post_no = pf.post_no
+			LEFT JOIN (
+				SELECT 
+					c.post_no, 
+					c.comment_content AS firstCommentContent, 
+					u_c.user_nickname AS firstCommentUserNickname
+				FROM 
+					tbl_comment c
+				JOIN tbl_user u_c ON c.user_no = u_c.user_no
+				WHERE 
+					c.comment_no = (
+						SELECT MIN(c2.comment_no)
+						FROM tbl_comment c2
+						WHERE c2.post_no = c.post_no
+					)
+			) fc ON p.post_no = fc.post_no
 	        GROUP BY
 	            p.post_no,
 	            p.user_no,
 	            p.post_content,
 	            p.post_date,
 	            u.user_image,
-	            u.user_nickname
+	            u.user_nickname,
+				fc.firstCommentContent,
+            	fc.firstCommentUserNickname
 	        ORDER BY 
 	            DBMS_RANDOM.VALUE
 	    )
@@ -271,6 +311,8 @@
                 TO_CHAR(p.post_date, 'YYYY-MM-DD HH24:MI:SS') AS postDate,
                 u.user_image AS userImage,
                 u.user_nickname AS userNickname,
+				fc.firstCommentContent AS firstCommentContent,
+                fc.firstCommentUserNickname AS firstCommentUserNickname,
                 (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
                 (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount,
                 LISTAGG(pf.post_file_name, ',') 
@@ -279,6 +321,21 @@
                 post p
                 JOIN tbl_user u ON p.user_no = u.user_no
                 LEFT JOIN post_file pf ON p.post_no = pf.post_no
+				LEFT JOIN (
+                SELECT 
+                    c.post_no, 
+                    c.comment_content AS firstCommentContent, 
+                    u_c.user_nickname AS firstCommentUserNickname
+                FROM 
+                    tbl_comment c
+                JOIN tbl_user u_c ON c.user_no = u_c.user_no
+                WHERE 
+                    c.comment_no = (
+                        SELECT MIN(c2.comment_no)
+                        FROM tbl_comment c2
+                        WHERE c2.post_no = c.post_no
+                    )
+            ) fc ON p.post_no = fc.post_no
             <where>
                 <if test="excludeList != null and excludeList.size() > 0">
                     AND p.post_no NOT IN
@@ -293,7 +350,9 @@
                 p.post_content,
                 p.post_date,
                 u.user_image,
-                u.user_nickname
+                u.user_nickname,
+				fc.firstCommentContent,
+                fc.firstCommentUserNickname
             ORDER BY 
                 DBMS_RANDOM.VALUE
         ) inner_query

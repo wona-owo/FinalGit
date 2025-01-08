@@ -188,7 +188,7 @@ public class SocketHandler extends TextWebSocketHandler {
 		   }
 
 		   // 로그 추가
-		   System.out.println("leaveTime: " + leaveTime + ", lastMessageTime: " + lastMessageTime + ", readStatus: " + readStatus);
+		   //System.out.println("leaveTime: " + leaveTime + ", lastMessageTime: " + lastMessageTime + ", readStatus: " + readStatus);
         
 		   // 읽음 상태 업데이트
 		   chatService.updateReadStatus(roomId, userNo, readStatus);

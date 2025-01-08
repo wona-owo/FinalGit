@@ -216,5 +216,10 @@ public class MemberService {
 		return (ArrayList<Member>) memberDao.selectUserImages(userIds);
 	}
 
+	public Member searchUserData(int userNo) {
+		// TODO Auto-generated method stub
+		return memberDao.searchUserData(userNo);
+	}
+
 	
 }

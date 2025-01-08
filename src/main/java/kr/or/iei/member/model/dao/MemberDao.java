@@ -184,5 +184,10 @@ public class MemberDao {
 		return sqlSession.selectList("member.selectUserImages", userIds);
 	}
 
+	public Member searchUserData(int userNo) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("member.searchUserData", userNo);
+	}
+
 	
 }

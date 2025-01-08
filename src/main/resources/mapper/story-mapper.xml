@@ -84,4 +84,11 @@
 		DELETE FROM story
 		 WHERE story_no = #{_parameter}
 	</delete>
+	
+	<!-- 만료된 스토리 삭제 -->
+	<delete id="deleteExpiredStory">
+		DELETE FROM story
+        WHERE SYSDATE >= end_date
+	</delete>
+	
 </mapper>

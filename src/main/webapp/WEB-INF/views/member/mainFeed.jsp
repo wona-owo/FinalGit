@@ -34,6 +34,11 @@
   align-items: center;
   padding: 8px;               /* 헤더 안쪽 여백 */
 }
+.header-left-user{
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
 
 /* 왼쪽: 프로필 사진 + 닉네임 + 작성일 */
 .main-feed-header-left {
@@ -61,6 +66,7 @@
 .hearder-left-user{
 	display: flex;
 	align-items: center;
+	
 }
 /* 닉네임 */
 .main-feed-header-left-nickname {
@@ -112,7 +118,10 @@
   align-items: center;
   float: right;               /* 오른쪽 배치 */
 }
-
+.all-comment{
+	display: flex;
+	margin-bottom: 8px;
+}
 /* 아이콘 자체 스타일 (여백 등) */
 .main-feed-like,
 .main-feed-comment,
@@ -145,8 +154,13 @@
 .main-feed-content-text span:first-child {
   font-weight: bold;          /* 닉네임 볼드 처리 */
   margin-right: 6px;
+  margin-bottom: 6px;
 }
-
+.user-comment{
+	margin-bottom: 6px;
+	font-size: 0.95rem;
+	line-height: 1.4;
+}
 .main-feed-like svg {
   display: flex;          /* 링크 자체가 flex 컨테이너가 되도록 */
   align-items: center;    /* 내부 SVG를 수직 중앙 정렬 */
@@ -161,6 +175,9 @@
 #loading i {
 	font-size: 24px;
 	color: #555;
+}
+.comment-input{
+	width: 100%;
 }
 </style>
 </head>
@@ -314,17 +331,26 @@
             let commentLink = '';
             if (post.commentCount > 1) {
                 commentLink =
-                    '<a href="#">' +
+                	'<span class="user-comment">' +
+                		post.firstCommentUserNickname + ' ' +
+                		post.firstCommentContent +
+                	'</span>' + 
+                    '<a class="all-comment" href="#">' +
                     '    <span>댓글 ' + post.commentCount + '개 모두 보기</span>' +
                     '</a>';
+            } else if(post.commentCount == 1){
+            	commentLink =
+            		'<span class="user-comment">' +
+	            		post.firstCommentUserNickname + ' ' +
+	            		post.firstCommentContent +
+	            	'</span>'
             }
-
             // 게시물 하나에 대한 HTML (문자열 연결)
             let postHtml =
                 '<div class="main-post-container">' +
                     '<div class="main-feed-header">' +
                         '<div class="main-feed-header-left">' +
-                            '<a class="header-left-user">' +
+                            '<a class="header-left-user"  href="/member/profile.kh?userNo=' + post.userNo + '"  data-type="Post">' +
                                 '<div class="main-feed-header-left-img">' +
                                     '<img src="' + post.userImage + '" alt="User Image" class="main-feed-profile-img">' +
                                 '</div>' +
@@ -337,7 +363,7 @@
                             '</div>' +
                         '</div>' +
                         '<div class="main-feed-header-right">' +
-                            '<a href="#">' +
+                            '<a class="report-Btn" href="#" data-target-no="'+ post.postNo + '" data-target-type="P">' +
                                 '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"' +
                                     'class="bi bi-three-dots" viewBox="0 0 16 16">' +
                                     '<path d="M3 9.5a1.5 1.5 0 1 1 0-3' +
@@ -437,6 +463,7 @@
             // feed-container 내부에 게시물 DOM 추가
             container.append(postHtml);
         });
+     	
     }
     </script>
 </body>

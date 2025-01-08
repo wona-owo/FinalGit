@@ -79,6 +79,7 @@
 }
 .story-footer {
 	justify-content: right;
+	height: 40px;
 }
 
 .story-header p{
@@ -390,7 +391,6 @@
 
 	     	// 현재 스토리의 storyNo 저장
             currentStoryNo = file.storyNo
-            console.log(currentStoryNo);
 	     	
 	        // 이전 버튼 추가
 	        if (currentStoryIndex > 0 || currentUserIndex > -1) {
@@ -428,9 +428,9 @@
 	    
 	    // 다른 사람 스토리를 볼 시 input 및 delete 숨김
 	    if (currentUserIndex !== -1) {
-            $('#storyModalBackdrop .story-footer').hide();
+            $('#storyModalBackdrop .story-action-btn').hide();
         } else {
-            $('#storyModalBackdrop .story-footer').show();
+            $('#storyModalBackdrop .story-action-btn').show();
         }
 	}
 	
