@@ -13,7 +13,7 @@
 <style>
 /* 가운데 정렬이 안되서 width값 1200으로 고정시킴 */
 .main-feed-container {
-  width: 1200px;
+  width: 55vw;
 }
 /* 전체 카드 감싸는 컨테이너 */
 .main-post-container {

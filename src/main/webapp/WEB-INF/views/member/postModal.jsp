@@ -34,7 +34,9 @@
 						<div class="top">
 							<div class="modal-user">
 								<div class="profile-frame" id="modal-profile">
-									<img id="profileImagePreview" alt="프로필 이미지" />
+									<img class="profileImage"
+				                            src="${not empty loginMember.userImage ? loginMember.userImage : '/resources/profile_file/default_profile.png'}"
+				                            alt="프로필 이미지" />
 								</div>
 								<p>${loginMember.userNickname}</p>
 							</div>
@@ -370,7 +372,7 @@
 		  $(document).on("click", ".delete-comment", function () {
 			    const commentNo = $(this).data("id");
 			    const postNo = $(".post-grid").data("id"); // 현재 게시글 ID 가져오기
-			
+				
 			    if (confirm("정말로 삭제하시겠습니까?")) {
 			        $.ajax({
 			            url: "/post/cmtDelete.kh",
