@@ -75,7 +75,26 @@ public class NotifyController {
     }
 
     
-    
+   //알림 불러오기(롱풀링 방식)
+    @GetMapping("/poll/{userNo}")
+    public List<Notify> pollNewNotify(@PathVariable int userNo) throws InterruptedException {
+        List<Notify> notifications;
+
+        // 최대 대기 시간: 30초
+        for (int i = 0; i < 30; i++) {
+            notifications = notifyService.getNewNotify(userNo);
+
+            if (notifications != null && !notifications.isEmpty()) {
+                return notifications; // 알림이 있으면 반환
+            }
+
+            Thread.sleep(1000); // 1초 대기
+        }
+
+        // 알림이 없으면 빈 리스트 반환
+        return List.of();
+    }
+}
     
 	
-}
+

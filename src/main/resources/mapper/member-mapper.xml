@@ -393,7 +393,7 @@
     	where user_no = #{_parameter}
     </select>
     
-=======
+
     <select id="searchUserData" parameterType="int" resultType="member">
 		select user_no as userNo,
            	   user_id as userId,

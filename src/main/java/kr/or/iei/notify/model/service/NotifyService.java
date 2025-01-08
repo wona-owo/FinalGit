@@ -24,5 +24,9 @@ public class NotifyService {
 		return notifyDao.srchUserName(sendUserNo);
 	}
 
+	public List<Notify> getNewNotify(int userNo) {
+		return notifyDao.getNewNotify(userNo);
+	}
+
 	
 }

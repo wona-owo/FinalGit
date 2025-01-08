@@ -26,5 +26,9 @@ public class NotifyDao {
 	public String srchUserName(int sendUserNo) {
 		return sqlSession.selectOne("notify.srchUserName", sendUserNo);
 	}
+
+	public List<Notify> getNewNotify(int userNo) {
+		return sqlSession.selectList("notify.getNewNotify", userNo);
+	}
 	
 }

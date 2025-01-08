@@ -946,3 +946,37 @@ main {
    cursor: pointer;
  }
  
+ .notification-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #eaeaea;
+}
+
+.notification-item:hover {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notification-item .item-text {
+    font-size: 14px;
+    color: #333333;
+    flex: 1; /* 내용이 길어지면 적절히 확장 */
+    margin-right: 10px;
+    word-wrap: break-word;
+}
+
+.notification-item .item-time {
+    font-size: 12px;
+    color: #999999;
+    white-space: nowrap; /* 시간을 한 줄로 표시 */
+    margin-left: auto;
+}
+ 
+ 
