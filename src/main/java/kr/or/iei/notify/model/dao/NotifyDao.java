@@ -23,19 +23,8 @@ public class NotifyDao {
         return sqlSession.insert("notify.insert", notify);
     }
 
-    // 특정 사용자의 읽지 않은 알림 가져오기
-    public List<Notify> getUnreadNotifications(int userNo) {
-        return sqlSession.selectList("notify.getUnread", userNo);
-    }
-
-    // 단일 알림 읽음 처리
-    public int updateNotificationReadStatus(int notifyId) {
-        return sqlSession.update("notify.updateRead", notifyId);
-    }
-
-    // 다중 알림 읽음 처리
-    public int updateMultipleRead(List<Integer> notifyIds) {
-        return sqlSession.update("notify.updateMultipleRead", notifyIds);
-    }
+	public String srchUserName(int sendUserNo) {
+		return sqlSession.selectOne("notify.srchUserName", sendUserNo);
+	}
 	
 }

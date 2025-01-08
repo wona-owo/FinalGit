@@ -133,4 +133,8 @@ public class PostDao {
 	public int getPostOwnerId(int postNo) {
 		return sqlSession.selectOne("post.getPostOwnerId", postNo);
 	}
+
+	public int getCommentOwnerId(int commentNo) {
+		return sqlSession.selectOne("post.commentOwnerId", commentNo);
+	}
 }

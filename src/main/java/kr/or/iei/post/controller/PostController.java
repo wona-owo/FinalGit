@@ -38,6 +38,7 @@ import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Mypet;
+import kr.or.iei.notify.controller.NotifyController;
 import kr.or.iei.notify.model.service.NotifyService;
 import kr.or.iei.post.model.service.PostService;
 import kr.or.iei.post.model.vo.Comment;
@@ -65,6 +66,10 @@ public class PostController {
 	@Autowired
 	@Qualifier("notifyService")
 	private NotifyService notifyService;
+	
+	@Autowired
+	@Qualifier("notifyController")
+	private NotifyController notifyController;
 	
 	//유저 피드 데이터 불러오기(포스트 이미지, 콘텐츠, 팔로우 수, 썸네일 리스트)
 	@GetMapping("myFeedFrm.kh") //메뉴 버튼이랑 매핑
@@ -311,15 +316,20 @@ public class PostController {
 
 	        if (result > 0) {
 	            response.put("success", true);
-
-	            // 알림 생성 로직 추가
-	            int postOwnerId = postService.getPostOwnerId(comment.getPostNo()); // 게시글 작성자 ID 조회
-	           // if (postOwnerId != comment.getUserNo()) {} // 자신에게는 알림 생성하지 않음
-	                notifyService.generateNotification(
-	                    postOwnerId, // 게시글 작성자
-	                    2, // 이벤트 타입 (예: 2 = 댓글)
-	                    comment.getUserNickname() + "님이 당신의 게시글에 댓글을 남겼습니다."
-	                );
+	            
+	            //알림 생성 로직
+	            if(comment.getParentNo() != 0) {
+	            	//알림 생성 호출(case4)
+	            	int commentOwnerId = postService.getCommentOwnerId(comment.getParentNo()); // 댓글 작성자 No 조회
+	                notifyController.sendNotification(comment.getUserNo(), commentOwnerId, 4);
+	            	
+	            }else {           	
+	            	// 알림 생성 호출(case1)
+	            	int postOwnerId = postService.getPostOwnerId(comment.getPostNo()); // 게시글 작성자 No 조회
+	            	notifyController.sendNotification(comment.getUserNo(), postOwnerId, 1);
+	            }
+	            
+	            
 	            
 	        } else {
 	            response.put("success", false);
@@ -387,6 +397,9 @@ public class PostController {
         int result = postService.insertLike(like);
 
         if (result > 0) {
+	        	// 알림 생성 호출(case2)
+	            int postOwnerId = postService.getPostOwnerId(postNo); // 게시글 작성자 No 조회
+	            notifyController.sendNotification(like.getUserNo(), postOwnerId, 2);
 		        return "success";
 		    } else {
 		        return "fail";
@@ -402,6 +415,10 @@ public class PostController {
  			
  		 	Like like = new Like(commentNo, userNo, targetType);
  		    int result = postService.insertLike(like);
+ 		    
+ 		   // 알림 생성 호출(case3)
+            int commentOwnerId = postService.getCommentOwnerId(commentNo); // 댓글 작성자 No 조회
+            notifyController.sendNotification(userNo, commentOwnerId, 3);
 
  		    if (result > 0) {
  		        return "success";

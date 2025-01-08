@@ -386,5 +386,12 @@
         where user_no = #{userNo}
     </select>
     
+     <!-- 알림 발생자 닉네임 가져오기 -->
+    <select id="srchUserName" parameterType="_int" resultType="string">
+    	select user_nickname
+    	from tbl_user
+    	where user_no = #{_parameter}
+    </select>
+    
     
 </mapper>

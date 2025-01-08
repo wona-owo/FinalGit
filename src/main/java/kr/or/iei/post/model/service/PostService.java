@@ -167,5 +167,10 @@ public class PostService {
 	public int getPostOwnerId(int postNo) {
 		return postDao.getPostOwnerId(postNo);
 	}
+	
+	//댓글 작성자 조회
+	public int getCommentOwnerId(int commentNo) {
+		return postDao.getCommentOwnerId(commentNo);
+	}
     
 }

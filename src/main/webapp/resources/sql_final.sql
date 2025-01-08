@@ -546,9 +546,10 @@ ADD (
 -- 알림 테이블
 CREATE TABLE notify (
     notify_id NUMBER PRIMARY KEY,
-    user_no NUMBER REFERENCES tbl_user(user_no) ON DELETE CASCADE,
+    send_user_no NUMBER REFERENCES tbl_user(user_no) ON DELETE CASCADE,
+    accept_user_no NUMBER REFERENCES tbl_user(user_no) ON DELETE CASCADE,
     event_type NUMBER NOT NULL,
-    notify_content varchar2(20),
+    notify_content varchar2(225),
     is_read CHAR(1) DEFAULT 'N' CHECK(is_read IN ('Y', 'N')) not null,
     notify_date DATE DEFAULT SYSDATE NOT NULL
 );

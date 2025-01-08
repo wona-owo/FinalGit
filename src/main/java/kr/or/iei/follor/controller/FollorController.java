@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import kr.or.iei.follor.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.notify.controller.NotifyController;
 
 @Controller
 @RequestMapping("/follor/")
@@ -30,6 +31,10 @@ public class FollorController {
 	@Autowired
 	@Qualifier("service")
 	private MemberService memberService;
+	
+	@Autowired
+	@Qualifier("notifyController")
+	private NotifyController notifyController;
 	
 	
 	@PostMapping("/follow")
@@ -72,6 +77,10 @@ public class FollorController {
 						resultMap.put("message", "팔로우 성공");
 						resultMap.put("followerCount", followerCount);
 						resultMap.put("followingCount", followingCount);
+						
+						//알림 삽입 로직(case6)
+		                notifyController.sendNotification(myNo, targetNo, 6);
+						
 					} else {
 						resultMap.put("success", false);
 						resultMap.put("isFollowing", false);
