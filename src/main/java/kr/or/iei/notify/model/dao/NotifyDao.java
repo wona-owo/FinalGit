@@ -31,4 +31,12 @@ public class NotifyDao {
 		return sqlSession.selectList("notify.getNewNotify", userNo);
 	}
 	
+	 public int updateReadStatus(int notifyId) {
+        return sqlSession.update("notify.updateReadStatus", notifyId);
+    }
+
+    public int updateAllRead(int userNo) {
+        return sqlSession.update("notify.updateAllRead", userNo);
+    }
+	
 }

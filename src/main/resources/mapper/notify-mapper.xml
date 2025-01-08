@@ -32,5 +32,14 @@
       AND is_read = 'N'
     ORDER BY notify_date DESC
 	</select>
+
+	<!-- 모든 알림 읽음 처리 -->
+	<update id="updateAllRead" parameterType="_int">
+	    UPDATE notify
+	    SET is_read = 'Y'
+	    WHERE accept_user_no = #{_parameter} AND is_read = 'N'
+	</update>
+	
+	
 	
 </mapper>

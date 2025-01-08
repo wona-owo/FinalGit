@@ -55,72 +55,100 @@
 	</div>
 	
 	
-	  <div class="notification-sidebar" id="notificationSidebar">
-	    <button class="close-sidebar-btn">&times;</button> <!-- X 버튼 -->
-	    <div class="notification-header">알림</div>
-	    <div class="notification-content">
-	        <p>알림 데이터를 불러오는 중...</p>
-	    </div>
-	</div>
+	 <div class="notification-sidebar" id="notificationSidebar">
+		    <button class="close-sidebar-btn">&times;</button> <!-- X 버튼 -->
+		    <div class="notification-header">
+		        <span>알림</span>
+		        <button class="mark-all-read-btn">지우기</button>
+		    </div>
+		    <div class="notification-content">
+		        <p>읽지 않은 알림이 없습니다.</p>
+		    </div>
+		</div>
 
+		
+		
+   <script>
+	    $(document).ready(function () {
+	        // JSP에서 사용자 번호를 전달받음
+	        let userNo = ${loginMember.userNo}; // JSP 변수
 	
-	<script>
-		  $(document).ready(function () {
-		      // JSP에서 사용자 번호를 전달받음
-		      const userNo = ${loginMember.userNo}; // JSP 변수
-		
-		      // 알림 사이드바 열기
-		      $('.open-notification-btn').click(function () {
-		          $('#notificationSidebar').addClass('open');
-		          fetchNotifications(); // 알림 가져오기
-		      });
-		
-		      // 알림 사이드바 닫기
-		      $('.close-sidebar-btn').click(function () {
-		          $('#notificationSidebar').removeClass('open');
-		      });
-		
-		      // 외부 클릭 시 닫기
-		      $(document).click(function (event) {
-		          if (!$(event.target).closest('#notificationSidebar, .open-notification-btn').length) {
-		              $('#notificationSidebar').removeClass('open');
-		          }
-		      });
-		
-		      // 알림 가져오기
-		      function fetchNotifications() {
-		          // 문자열 결합 방식으로 URL 생성
-		          var url = '/notify/poll/' + userNo;
-		
-		          $.ajax({
-		              url: url, // 동적으로 생성된 URL
-		              method: 'GET',
-		              success: function (notifications) {
-		                  const $content = $('.notification-content');
-		                  $content.empty();
-		
-		                  if (notifications.length > 0) {
-		                      notifications.forEach(function (notification) {
-		                          const $item = $(
-		                              '<div class="notification-item">' +
-		                              notification.notifyContent +
-		                              '</div>'
-		                          );
-		                          $content.append($item);
-		                      });
-		                  } else {
-		                      $content.html('<p>읽지 않은 알림이 없습니다.</p>');
-		                  }
-		              },
-		              error: function () {
-		                  console.error('알림을 가져오는 중 오류 발생');
-		              }
-		          });
-		      }
-		  });
-		</script>
+	        // 알림 사이드바 열기
+	        $('.open-notification-btn').click(function () {
+	            $('#notificationSidebar').addClass('open');
+	            fetchNotifications(); // 알림 가져오기
+	        });
+	
+	        // 알림 사이드바 닫기
+	        $('.close-sidebar-btn').click(function () {
+	            $('#notificationSidebar').removeClass('open');
+	        });
+	
+	        // 외부 클릭 시 닫기
+	        $(document).click(function (event) {
+	            if (!$(event.target).closest('#notificationSidebar, .open-notification-btn').length) {
+	                $('#notificationSidebar').removeClass('open');
+	            }
+	        });
+	
+	        // 알림 가져오기 (문자열 결합 방식)
+	        function fetchNotifications() {
+	            var url = '/notify/poll/' + userNo;
+	
+	            $.ajax({
+	                url: url,
+	                method: 'GET',
+	                success: function (notifications) {
+	                    var contentHtml = '';
+	
+	                    if (notifications.length > 0) {
+	                        notifications.forEach(function (notification) {
+	                            contentHtml +=
+	                                '<div class="notification-item">' +
+	                                '<span>' + notification.notifyContent + '</span>' +
+	                                '</div>';
+	                        });
+	                    } else {
+	                        contentHtml = '<p>읽지 않은 알림이 없습니다.</p>';
+	                    }
+	
+	                    $('.notification-content').html(contentHtml);
+	                },
+	                error: function () {
+	                    console.error('알림을 가져오는 중 오류 발생');
+	                }
+	            });
+	        }
+	
+	     // 모든 알림 읽음 처리
+	        function markAllAsRead() {
+	            $.ajax({
+	                url: '/notify/mark-all-read/' + userNo,
+	                method: 'PUT',
+	                success: function (response) {
+	                    if (response === 'success') {
+	                        console.log('모든 알림 읽음 처리 완료');
+	                        fetchNotifications(); // UI 갱신
+	                    } else {
+	                        console.error('모든 알림 읽음 처리 실패');
+	                    }
+	                },
+	                error: function () {
+	                    console.error('모든 알림 읽음 처리 중 오류 발생');
+	                }
+	            });
+	        }
 
-	
+	        // 버튼 클릭 이벤트에 연결
+	        $('.mark-all-read-btn').click(markAllAsRead);
+
+	       
+	    });
+	</script>
+
+
+		
+			
 	
 	
 </body>

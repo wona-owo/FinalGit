@@ -94,6 +94,14 @@ public class NotifyController {
         // 알림이 없으면 빈 리스트 반환
         return List.of();
     }
+
+    // 모든 알림 읽음 처리
+    @PutMapping("/mark-all-read/{userNo}")
+    public String markAllAsRead(@PathVariable int userNo) {
+        int result = notifyService.markAllAsRead(userNo);
+        return result > 0 ? "success" : "failure";
+    }
+
 }
     
 	

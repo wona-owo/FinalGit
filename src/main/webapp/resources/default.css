@@ -917,15 +917,18 @@ main {
  }
 
  .notification-header {
-   font-size: 1.5em;
-   margin-bottom: 10px;
- }
-
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
  .notification-content {
    margin-bottom: 20px;
  }
 
- .close-sidebar-btn {
+.close-sidebar-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -934,10 +937,9 @@ main {
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
-    color: #333;
+    color: #333; /* 회색 */
     transition: color 0.3s ease;
- }
-
+}
  .close-sidebar-btn:hover {
     color: #007bff;
  }
@@ -962,6 +964,7 @@ main {
 .notification-item:hover {
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 
 .notification-item .item-text {
@@ -979,4 +982,23 @@ main {
     margin-left: auto;
 }
  
+/* 모두 읽음 처리 버튼 */
+.mark-all-read-btn {
+    font-size: 12px; /* 크기 줄임 */
+    background-color: #a9afb6; /* 회색 */
+    color: white;
+    border: none;
+    padding: 4px 8px; /* 크기 조정 */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    right: 25px; /* X 버튼과 간격 */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.mark-all-read-btn:hover {
+    background-color: #5a6268; /* 어두운 회색 */
+}
  
