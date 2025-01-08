@@ -52,4 +52,8 @@ public class StoryDao {
 		return sqlSession.delete("story.deleteStory", storyNo);
 	}
 
+	public void deleteExpiredStory() {
+		sqlSession.delete("story.deleteExpiredStory");
+	}
+
 }

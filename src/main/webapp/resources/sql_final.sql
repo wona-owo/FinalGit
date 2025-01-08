@@ -554,3 +554,13 @@ CREATE TABLE notify (
 );
 
 COMMIT;
+
+-- 밴목록 트리거
+create or replace trigger trg_banlist_insert    -- 트리거 이름
+after insert on banlist                         -- banlist에 insert 시
+for each row                                    -- insert 된 각 행마다
+begin
+    update tbl_user
+    set ban_yn = 'Y'
+    where user_no = :new.user_no;               -- :new - insert 되거나 update 이후 값
+end;

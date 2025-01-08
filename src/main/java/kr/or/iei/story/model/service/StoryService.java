@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import kr.or.iei.member.model.vo.Member;
@@ -14,6 +16,7 @@ import kr.or.iei.story.model.vo.StoryFile;
 import kr.or.iei.story.model.vo.StoryFollowList;
 
 @Service("storyService")
+@EnableScheduling // 스케줄링을 위한 어노테이션
 public class StoryService {
 
 	@Autowired
@@ -52,4 +55,11 @@ public class StoryService {
 	public int deleteStory(String storyNo) {
 		return dao.deleteStory(storyNo);
 	}
+	
+	// 스토리 자동삭제 (1시간마다)
+	@Scheduled(cron = "0 0 * * * ?")
+	public void deleteExpiredStory1() {
+		dao.deleteExpiredStory();
+	}
+	
 }
