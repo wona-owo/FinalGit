@@ -11,7 +11,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <style>
-.follow-btn {
+.user-follow-btn {
     color: white;
     background-color: green; /* 예: 초록색 배경 */
     padding: 5px 10px;
@@ -19,16 +19,16 @@
     text-decoration: none;
 }
 
-.unfollow-btn {
-    color: white;
-    background-color: red; /* 예: 빨간색 배경 */
+.user-unfollow-btn {
+    color: black;
+    background-color: #ced4da; /* 예: 빨간색 배경 */
     padding: 5px 10px;
     border-radius: 5px;
     text-decoration: none;
 }
 
 /* 추가로 hover 시 효과도 줄 수 있음 */
-.follow-btn:hover, .unfollow-btn:hover {
+.user-follow-btn:hover, .user-unfollow-btn:hover {
     opacity: 0.8;
 }
 </style>
@@ -58,7 +58,7 @@
 							  <%-- 서로 팔로우 상태 (맞팔) --%>
 							<c:when test="${myFollowCount > 0 && theyFollowCount > 0}">
 								<!-- 서로 팔로우 상태 -> '언팔로우' 버튼 표기 -->
-								<a href="javascript:void(0)" class="follow-toggle unfollow-btn"
+								<a href="javascript:void(0)" class="follow-event user-unfollow-btn"
 									data-userid="${member.userId}" data-following="true"> 언팔로우
 								</a>
 								<a href="/chat/startChat.kh?userId=${member.userId}" class="message-btn" data-userid="${member.userId}">메시지</a>
@@ -67,7 +67,7 @@
 							<%-- 내가 상대만 팔로우 중 --%>
 							<c:when test="${myFollowCount > 0 && theyFollowCount == 0}">
 								<!-- 문구는 '언팔로우'로 표시(일방 팔로우) -->
-								<a href="javascript:void(0)" class="follow-toggle unfollow-btn"
+								<a href="javascript:void(0)" class="follow-event user-unfollow-btn"
 									data-userid="${member.userId}" data-following="true"> 언팔로우
 								</a>
 							</c:when>
@@ -75,14 +75,14 @@
 							 <%-- 상대가 나만 팔로우 중 --%>
 							<c:when test="${myFollowCount == 0 && theyFollowCount > 0}">
 								<!-- 이 경우엔 '맞팔로우' 같은 문구를 쓸 수도 있음 -->
-								<a href="javascript:void(0)" class="follow-toggle follow-btn"
+								<a href="javascript:void(0)" class="follow-event user-follow-btn"
 									data-userid="${member.userId}" data-following="false"> 맞팔로우
 								</a>
 							</c:when>
 
 							 <%-- 둘 다 팔로우 안 함 --%>
 							<c:otherwise>
-								<a href="javascript:void(0)" class="follow-toggle follow-btn"
+								<a href="javascript:void(0)" class="follow-event user-follow-btn"
 									data-userid="${member.userId}" data-following="false"> 팔로우
 								</a>
 							</c:otherwise>
@@ -132,15 +132,15 @@
 		        }
 		    });
 		});
-
+		
 	    // 팔로우/언팔로우 버튼 클릭 이벤트
-	    $(".follow-toggle").on("click", function() {
+	    $(".follow-event").on("click", function() {
 	        var $btn = $(this);
 	        var userId = $btn.data("userid");
 	        var isFollowing = $btn.data("following");
 
 	        $.ajax({
-	            url: '/follow/toggleFollow', // 실제 컨트롤러 매핑 URL
+	            url: '/follow/follow.kh', // 실제 컨트롤러 매핑 URL
 	            type: 'POST',
 	            dataType: 'json',
 	            data: {
@@ -151,9 +151,9 @@
 	                if (response.success) {
 	                    // 버튼 상태 업데이트
 	                    if (response.isFollowing) {
-	                        $btn.text('언팔로우').data('following', true).removeClass('follow-btn').addClass('unfollow-btn');
+	                        $btn.text('언팔로우').data('following', true).removeClass('user-follow-btn').addClass('user-unfollow-btn');
 	                    } else {
-	                        $btn.text('팔로우').data('following', false).removeClass('unfollow-btn').addClass('follow-btn');
+	                        $btn.text('팔로우').data('following', false).removeClass('user-unfollow-btn').addClass('user-follow-btn');
 	                    }
 	                    // 카운트 업데이트
 	                    if (response.followerCount !== undefined) {

@@ -34,7 +34,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import kr.or.iei.common.util.DateUtil;
-import kr.or.iei.follor.model.service.FollowService;
+import kr.or.iei.follow.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Mypet;

@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import kr.or.iei.follor.model.service.FollowService;
+import kr.or.iei.follow.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
@@ -909,7 +909,6 @@ public class MemberController {
 		if (loginMember == null) {
 			return "redirect:/"; // 로그인 안 된 경우
 		}
-		
 		
 		int myNo = loginMember.getUserNo();
 

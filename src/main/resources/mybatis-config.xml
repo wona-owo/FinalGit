@@ -14,7 +14,7 @@
 			<typeAlias type="kr.or.iei.post.model.vo.Like" alias="like"/>
 			<typeAlias type="kr.or.iei.member.model.vo.HashTag" alias="hashTag"/>
 			<typeAlias type="kr.or.iei.member.model.vo.Search" alias="search"/>
-			<typeAlias type="kr.or.iei.follor.model.vo.Follow" alias="follow"/>
+			<typeAlias type="kr.or.iei.follow.model.vo.Follow" alias="follow"/>
 			<typeAlias type="kr.or.iei.member.model.vo.Mypet" alias="mypet"/>
 			<typeAlias type="kr.or.iei.member.model.vo.Mypet" alias="mypet"/>
 			<typeAlias type="kr.or.iei.story.model.vo.Story" alias="story"/>

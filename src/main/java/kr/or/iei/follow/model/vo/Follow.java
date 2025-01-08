@@ -1,4 +1,4 @@
-package kr.or.iei.follor.model.vo;
+package kr.or.iei.follow.model.vo;
 
 public class Follow {
 	private int followingNo; // 팔로우 당하는 사람의 user_no

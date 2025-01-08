@@ -1,4 +1,4 @@
-package kr.or.iei.follor.model.dao;
+package kr.or.iei.follow.model.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;

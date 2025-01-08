@@ -199,7 +199,7 @@
             var isFollowing = $btn.data("following"); // true/false
 
             $.ajax({
-                url: '/follor/follow',        // 실제 컨트롤러 매핑 URL
+                url: '/follow/follow.kh',        // 실제 컨트롤러 매핑 URL
                 type: 'POST',
                 dataType: 'json',
                 data: {

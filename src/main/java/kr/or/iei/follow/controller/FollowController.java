@@ -1,4 +1,4 @@
-package kr.or.iei.follor.controller;
+package kr.or.iei.follow.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import kr.or.iei.follor.model.service.FollowService;
+import kr.or.iei.follow.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.notify.controller.NotifyController;
 
 @Controller
-@RequestMapping("/follor/")
-public class FollorController {
+@RequestMapping("/follow/")
+public class FollowController {
 	
 	@Autowired
 	@Qualifier("followService")
@@ -37,17 +37,20 @@ public class FollorController {
 	private NotifyController notifyController;
 	
 	
-	@PostMapping("/follow")
+	@PostMapping("follow.kh")
 	@ResponseBody
 	public HashMap<String, Object> followUser(@RequestParam("userId") String userId,
 			@RequestParam("action") String action, HttpSession session, Model model) {
 
+		 System.out.println("Received action: " + action + ", userId: " + userId);
 		HashMap<String, Object> resultMap = new HashMap<>();
 
 		Member loginMember = (Member) session.getAttribute("loginMember");
 
 		int myNo = loginMember.getUserNo(); // 나
 		int targetNo = memberService.selectUser(userId); // 상대방
+		
+		System.out.println("myNo: " + myNo + ", targetNo: " + targetNo);
 
 		if (targetNo <= 0) { // 팔로우를 했는데 대상이 없을 경우
 			resultMap.put("success", false);
@@ -61,6 +64,7 @@ public class FollorController {
 			if ("follow".equals(action)) {
 				// (1) 이미 팔로우 중인지 확인
 				int isFollowing = followService.selectCheckFollor(myNo, targetNo);
+				 System.out.println("Is following before follow action: " + isFollowing);
 				if (isFollowing > 0) {
 					// 이미 팔로우 중
 					resultMap.put("success", false);
@@ -91,6 +95,7 @@ public class FollorController {
 			} else if ("unfollow".equals(action)) {
 				// (1) 현재 내가 팔로우 중인지 확인
 				int isFollowing = followService.selectCheckFollor(myNo, targetNo);
+				System.out.println("Is following before unfollow action: " + isFollowing);
 				if (isFollowing == 0) {
 					// 이미 팔로우 안 하고 있음
 					resultMap.put("success", false);
@@ -121,11 +126,11 @@ public class FollorController {
 		// 4) 맞팔 여부 체크
 		boolean isMutualFollow = followService.isFollowingEachOther(myNo, targetNo);
 		resultMap.put("isMutualFollow", isMutualFollow);
-
+	    System.out.println("Response: " + resultMap);
 		return resultMap;
 	}
 	
-	@GetMapping("/recommend")
+	@GetMapping("recommend")
 	public String recommendFriendsPage(HttpSession session, Model model) {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
 

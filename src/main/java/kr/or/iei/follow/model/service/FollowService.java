@@ -1,4 +1,4 @@
-package kr.or.iei.follor.model.service;
+package kr.or.iei.follow.model.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import kr.or.iei.follor.model.dao.FollowDao;
+import kr.or.iei.follow.model.dao.FollowDao;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Mypet;
 
