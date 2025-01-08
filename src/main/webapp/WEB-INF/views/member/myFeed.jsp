@@ -296,10 +296,6 @@
 				 </div>	
 				 <div>	
 				 	<button class="profile-button" id="allBook" onclick="location.href='/member/mainFeed.kh'"> 북마크 확인 </button>
-				 	
-				 	<c:if test="${loginMember.acctLevel > 0}">
-						<button class="profile-button" id="banList" onclick="location.href='/member/mainFeed.kh'"> 신고 내역 </button>
-				 	</c:if>
 				 </div>			 
 			 </div>
 		</div> 	

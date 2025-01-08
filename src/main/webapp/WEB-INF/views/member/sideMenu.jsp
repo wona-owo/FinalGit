@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,6 +37,13 @@
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
 					<a href="/chat/chatRoomList.kh" class="menu-link">메시지</a>
 				</div>
+				
+				<c:if test="${loginMember.acctLevel > 0}">
+					<div class="one-menu">
+                    	<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
+                    <a href="/story/modalTest.kh" class="menu-link">신고 내역</a>
+                </div>
+				</c:if>
 			</div>		
 			
 			<div class="profile">
