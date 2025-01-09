@@ -229,82 +229,78 @@
 		        });
 		    }
 			
-		    //댓글 불러오기
-		   function callComment(postNo) {
-			    $.ajax({
-			        url: "/post/comment.kh",
-			        type: "get",
-			        dataType: "json",
-			        data: { postNo: postNo },
-			        success: function (res) {
-			            const userNo = $("input[name='userNo']").val(); // 로그인 사용자 ID
-			            $(".comment-list").empty(); // 댓글 목록 초기화
-			
-			            res.forEach(function (comment) {
-			                let commentHtml = '<div class="comment" id="comment-' + comment.commentNo + '">';
-			                commentHtml += '<p><strong>' + comment.userNickname + '</strong>: ' + comment.commentContent + '</p>';
-			
-			                // 댓글 좋아요 버튼 추가
-			                commentHtml += '<div class="like-btn comment-like" data-id="' + comment.commentNo + '" data-liked="' + comment.isLiked + '">';
-			                if (comment.isLiked) {
-			                    commentHtml += '<i class="fa-solid fa-heart"></i>';
-			                } else {
-			                    commentHtml += '<i class="fa-regular fa-heart"></i>';
-			                }
-			                commentHtml += '<span class="like-count">' + comment.likeCount + '</span>';
-			                commentHtml += '</div>';
-			
-			                // 수정/삭제 버튼 추가 (작성자만)
-			                if (comment.userNo == userNo) {
-			                    commentHtml += '<button class="edit-comment" data-id="' + comment.commentNo + '">수정</button>';
-			                    commentHtml += '<button class="delete-comment" data-id="' + comment.commentNo + '">삭제</button>';
-			                }
-			
-			                // 답글 영역 추가
-			                commentHtml += '<a href="#" class="reply-link" data-id="' + comment.commentNo + '">답글 달기</a>';
-			                commentHtml += '<div class="reply" id="reply-' + comment.commentNo + '"></div>';
-			                commentHtml += '</div>';
-			
-			                if (comment.parentNo == 0) {
-			                    $(".comment-list").append(commentHtml); // 부모 댓글 추가
-			                } else {
-			                    // 부모 댓글의 reply 영역이 없는 경우 생성
-			                    if (!$('#reply-' + comment.parentNo).length) {
-			                        $('#comment-' + comment.parentNo).append('<div class="reply" id="reply-' + comment.parentNo + '"></div>');
-			                    }
-			
-			                    // 답글 HTML 생성
-			                    let replyHtml = '<div class="comment-reply" id="reply-' + comment.commentNo + '">';
-			                    replyHtml += '<p> ↳ <strong>' + comment.userNickname + '</strong>: ' + comment.commentContent + '</p>';
-			
-			                    // 답글 좋아요 버튼 추가
-			                    replyHtml += '<div class="like-btn comment-like" data-id="' + comment.commentNo + '" data-liked="' + comment.isLiked + '">';
-			                    if (comment.isLiked) {
-			                        replyHtml += '<i class="fa-solid fa-heart"></i>';
-			                    } else {
-			                        replyHtml += '<i class="fa-regular fa-heart"></i>';
-			                    }
-			                    replyHtml += '<span class="like-count">' + comment.likeCount + '</span>';
-			                    replyHtml += '</div>';
-			
-			                    // 수정/삭제 버튼 추가 (작성자만)
-			                    if (comment.userNo == userNo) {
-			                        replyHtml += '<button class="edit-comment" data-id="' + comment.commentNo + '">수정</button>';
-			                        replyHtml += '<button class="delete-comment" data-id="' + comment.commentNo + '">삭제</button>';
-			                    }
-			                    replyHtml += '</div>';
-			
-			                    $('#reply-' + comment.parentNo).append(replyHtml); // 답글 추가
-			                }
-			            });
-			
-			            updateCommentLikeStatus(); // 좋아요 상태 업데이트
-			        },
-			        error: function (xhr, status, error) {
-			            console.error("AJAX 통신 오류:", error);
-			        },
-			    });
-			}
+		  //댓글 불러오기
+		function callComment(postNo) {
+		    $.ajax({
+		        url: "/post/comment.kh",
+		        type: "get",
+		        dataType: "json",
+		        data: { postNo: postNo },
+		        success: function (res) {
+		            const userNo = $("input[name='userNo']").val(); // 로그인 사용자 ID
+		            $(".comment-list").empty(); // 댓글 목록 초기화
+		
+		            // 댓글을 parentNo를 기준으로 정렬
+		            const sortedComments = res.sort((a, b) => a.parentNo - b.parentNo);
+		
+		            sortedComments.forEach(function (comment) {
+		                let commentHtml = '<div class="comment" id="comment-' + comment.commentNo + '">';
+		                commentHtml += '<p><strong>' + comment.userNickname + '</strong>: ' + comment.commentContent + '</p>';
+		
+		                // 댓글 좋아요 버튼 추가
+		                commentHtml += '<div class="like-btn comment-like" data-id="' + comment.commentNo + '" data-liked="' + comment.isLiked + '">';
+		                if (comment.isLiked) {
+		                    commentHtml += '<i class="fa-solid fa-heart"></i>';
+		                } else {
+		                    commentHtml += '<i class="fa-regular fa-heart"></i>';
+		                }
+		                commentHtml += '<span class="like-count">' + comment.likeCount + '</span>';
+		                commentHtml += '</div>';
+		
+		                // 수정/삭제 버튼 추가 (작성자만)
+		                if (comment.userNo == userNo) {
+		                    commentHtml += '<button class="edit-comment" data-id="' + comment.commentNo + '">수정</button>';
+		                    commentHtml += '<button class="delete-comment" data-id="' + comment.commentNo + '">삭제</button>';
+		                }
+		
+		                commentHtml += '<a href="#" class="reply-link" data-id="' + comment.commentNo + '">답글 달기</a>';
+		                commentHtml += '<div class="reply-list" id="reply-' + comment.commentNo + '"></div>'; // 답글 리스트 컨테이너 추가
+		                commentHtml += '</div>';
+		
+		                // 부모 댓글인지 확인
+		                if (comment.parentNo == 0) {
+		                    $(".comment-list").append(commentHtml); // 부모 댓글 추가
+		                } else {
+		                    // 부모 댓글 아래에 답글 추가
+		                    const parentElement = $('#reply-' + comment.parentNo);
+		                    if (parentElement.length > 0) {
+		                        parentElement.append(
+		                            '<div class="comment-reply" style="margin-left: 20px;">' + // 들여쓰기 추가
+		                            '<p>↳ <strong>' + comment.userNickname + '</strong>: ' + comment.commentContent + '</p>' + // 꺾쇠 추가
+		                            '<div class="like-btn comment-like" data-id="' + comment.commentNo + '" data-liked="' + comment.isLiked + '">' +
+		                            (comment.isLiked ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>') +
+		                            '<span class="like-count">' + comment.likeCount + '</span>' +
+		                            '</div>' +
+		                            (comment.userNo == userNo
+		                                ? '<button class="edit-comment" data-id="' + comment.commentNo + '">수정</button>' +
+		                                  '<button class="delete-comment" data-id="' + comment.commentNo + '">삭제</button>'
+		                                : '') +
+		                            '</div>'
+		                        );
+		                    } else {
+		                        console.error("부모 댓글이 존재하지 않습니다. parentNo:", comment.parentNo);
+		                    }
+		                }
+		            });
+		
+		            updateCommentLikeStatus(); // 좋아요 상태 초기화
+		        },
+		        error: function (xhr, status, error) {
+		            console.error("AJAX 통신 오류:", error);
+		        },
+		    });
+		}
+		
 
 
 		 

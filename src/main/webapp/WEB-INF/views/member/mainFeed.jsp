@@ -577,9 +577,6 @@
                             '<div class="main-feed-footer-comment">' +
                                 commentLink +
                             '</div>' +
-                            '<div class="main-feed-footer-comment-input">' +
-                                '<input type="text" class="comment-input" placeholder="댓글 달기...">' +
-                            '</div>' +
                         '</div>' +
                     '</div>' +
                 '</div>';
