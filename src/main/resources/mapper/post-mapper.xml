@@ -104,6 +104,7 @@
 		from tbl_comment c
 		join tbl_user u on (c.user_no = u.user_no)  
 		where c.post_no = #{_parameter}
+		order by comment_date desc
 	</select>
 	
 	<!-- 게시글 댓글 삽입 -->

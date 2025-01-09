@@ -176,6 +176,9 @@
 		            console.error("게시글 ID를 찾을 수 없습니다.");
 		            return;
 		        }
+		        
+		        $(".modal").data("postNo", postNo); // 모달에 postNo 저장
+		        
 		        callHashtag(postNo); // 해시태그 불러오기
 		        callComment(postNo); //댓글 불러오기
 		        
@@ -227,7 +230,7 @@
 		    }
 			
 		    //댓글 불러오기
-		    function callComment(postNo) {
+		   function callComment(postNo) {
 			    $.ajax({
 			        url: "/post/comment.kh",
 			        type: "get",
@@ -265,6 +268,12 @@
 			                if (comment.parentNo == 0) {
 			                    $(".comment-list").append(commentHtml); // 부모 댓글 추가
 			                } else {
+			                    // 부모 댓글의 reply 영역이 없는 경우 생성
+			                    if (!$('#reply-' + comment.parentNo).length) {
+			                        $('#comment-' + comment.parentNo).append('<div class="reply" id="reply-' + comment.parentNo + '"></div>');
+			                    }
+			
+			                    // 답글 HTML 생성
 			                    let replyHtml = '<div class="comment-reply" id="reply-' + comment.commentNo + '">';
 			                    replyHtml += '<p> ↳ <strong>' + comment.userNickname + '</strong>: ' + comment.commentContent + '</p>';
 			
@@ -288,17 +297,15 @@
 			                    $('#reply-' + comment.parentNo).append(replyHtml); // 답글 추가
 			                }
 			            });
-			            
-			            updateCommentLikeStatus();
+			
+			            updateCommentLikeStatus(); // 좋아요 상태 업데이트
 			        },
 			        error: function (xhr, status, error) {
 			            console.error("AJAX 통신 오류:", error);
 			        },
 			    });
-			
-			      
+			}
 
-		    }
 
 		 
 
@@ -306,17 +313,21 @@
 		    let currentParentNo = 0;
 
 		    $("#cmtForm").on("submit", function (e) {
-		        e.preventDefault(); // 기본 동작 막기
+		        e.preventDefault();
 
 		        const commentInput = $(".comment-input").val().trim();
 		        const userNo = $("input[name='userNo']").val();
-		        const postNo = $(".post-grid").data("id"); // 게시글 ID 가져오기
-		        const submitButton = $(".submit-comment"); // 제출 버튼 선택
+		        const postNo = $(".modal").data("postNo"); // 모달에서 가져오기
+		        const submitButton = $(".submit-comment");
+		        
+		        console.log("댓글 작성 요청 - postNo:", postNo);
 
-		        if (!commentInput) return; // 입력 값이 없으면 종료
+		        if (!commentInput || !postNo) {
+		            alert("댓글 내용을 입력하거나 게시글을 다시 선택하세요.");
+		            return;
+		        }
 
-		        // 버튼 비활성화
-		        submitButton.prop("disabled", true);
+		        submitButton.prop("disabled", true); // 중복 요청 방지
 
 		        $.ajax({
 		            url: "/post/cmtWrite.kh",
@@ -326,16 +337,13 @@
 		                commentContent: commentInput,
 		                userNo: userNo,
 		                postNo: postNo,
-		                parentNo: currentParentNo
+		                parentNo: currentParentNo // 답글의 경우 사용
 		            }),
 		            success: function (response) {
 		                if (response.success) {
 		                    callComment(postNo); // 댓글 목록 갱신
 		                    $(".comment-input").val(""); // 입력 필드 초기화
-
-		                    // 답글 대상 초기화
-		                    currentParentNo = 0;
-		                    $("#parentNo").val(0);
+		                    currentParentNo = 0; // 답글 초기화
 		                    $(".reply-target").hide();
 		                    $("#reply-target-text").text("");
 		                } else {
@@ -346,11 +354,11 @@
 		                alert("댓글 작성 중 오류가 발생했습니다.");
 		            },
 		            complete: function () {
-		                // 버튼 활성화
-		                submitButton.prop("disabled", false);
+		                submitButton.prop("disabled", false); // 버튼 활성화
 		            }
 		        });
 		    });
+
 
 		 // 답글 달기
 		    $(document).on("click", ".reply-link", function (e) {
