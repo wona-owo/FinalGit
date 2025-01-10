@@ -99,7 +99,8 @@
 
 	<script>    		
 		$(document).ready(function () {
-		    // 콘텐츠 모달
+		  
+			// 콘텐츠 모달(썸네일 클릭시 오픈)
 		    $(".feed-thumbnail").on("click", function () {
 		        const postGrid = $(this).closest(".post-grid"); // 클릭된 썸네일의 부모 요소
 		        let postNo = postGrid.data("id"); // 게시글 ID
@@ -120,8 +121,50 @@
 	
 		        // 이미지 슬라이드 호출
 		        imgSlide(postNo);
+		        
 		    });
-	
+			
+			
+		  //메인 페이지 모달(댓글 더보기, 버튼 클릭 시 오픈)
+	    	
+		   	 $(document).on("click", ".all-comment", function (event) {
+						    event.preventDefault(); // 기본 동작 방지
+						
+						    // 버튼에서 데이터 가져오기
+						    const postNo = $(this).data("target-no");
+						    const mainPostCon = $(this).data("content");
+						    $(".modal").data("postNo", postNo); // postNo를 .modal 요소에 저장
+
+						
+						    // 데이터 확인 로그
+						    console.log("게시글 번호:", postNo);
+						    console.log("게시글 내용:", mainPostCon);
+						
+						    // 모달 작동
+						    $(".modal").css("display", "block");
+						    $(".modal .modal-image").html(`
+						        <button class="story-nav-btn story-prev-btn previous">
+						            <span class="material-icons nav-icons">navigate_before</span>
+						        </button>
+						        <img id="current-image" src="" alt="thumbnail">
+						        <button class="story-nav-btn story-next-btn next">
+						            <span class="material-icons nav-icons">navigate_next</span>
+						        </button>
+						    `);
+						    $(".modal .post-content-text").text(mainPostCon);
+						
+						    // 이미지 슬라이드 호출
+						    imgSlide(postNo);
+						    callHashtag(postNo); // 해시태그 불러오기
+					        callComment(postNo); //댓글 불러오기
+					        
+					        // 다른 함수에도 postNo 전달
+					        handlePostLike(postNo);
+					        handleCommentLike(); 
+					        loadPostLikeStatus(postNo);
+						});
+			
+			
 		    // 이미지 슬라이드 함수
 		    function imgSlide(postNo) {
 		        $.ajax({

@@ -887,7 +887,7 @@ main {
 
 /* 좋아요 해제 상태 (빈 하트) */
 .like-btn[data-liked="false"] i {
-    color: #ccc; /* 회색 */
+    color: #e74c3c; 
     transform: scale(1);
 }
 

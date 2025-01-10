@@ -283,6 +283,11 @@
 	 	</div>
 	</main>
 	
+	<%-- 모달 창--%>
+    <div id="modal-container">
+        <%@ include file="/WEB-INF/views/member/postModal.jsp"%>
+    </div>
+	
 	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
 	
 	<script>
@@ -334,6 +339,8 @@
     	// 페이지 로드 시 초기 게시물 로딩
         loadInitialPosts();
         
+	
+    	
         // 스크롤 이벤트 감지: 끝부분 근접 시 추가 로딩
         $(window).scroll(function() {
         	
@@ -459,7 +466,7 @@
                 		post.firstCommentUserNickname + ' ' +
                 		post.firstCommentContent +
                 	'</span>' + 
-                    '<a class="all-comment" href="#">' +
+                    '<a class="all-comment" href="#"  data-content="' + post.postContent + '" data-target-no="'+ post.postNo+'">' +
                     '    <span>댓글 ' + post.commentCount + '개 모두 보기</span>' +
                     '</a>';
             } else if(post.commentCount == 1){
@@ -531,7 +538,7 @@
                                 '</a>' +
                             '</div>' +
                             '<div class="main-feed-comment">' +
-                                '<a href="#">' +
+                                '<a class="all-comment" href="#" data-content="' + post.postContent + '" data-target-no="'+ post.postNo+'">' +
                                     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"' +
                                          'class="bi bi-chat" viewBox="0 0 16 16">' +
                                         '<path d="M2.678 11.894a1 1 0 0 1' +
@@ -766,9 +773,9 @@
         // 초기화 호출
         initializeLikeButtons();
     });
-
-
-
+	
+	
+   
 
 	  
 

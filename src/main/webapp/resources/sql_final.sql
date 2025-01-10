@@ -114,7 +114,7 @@ create table post_file(
 create table hashtag(
     hash_no number primary key,
     post_no number not null references post(post_no) on delete cascade,
-    hash_name varchar2(100) not null unique
+    hash_name varchar2(100) not null
 );
 
 -- 댓글 테이블
@@ -565,3 +565,5 @@ begin
     set ban_yn = 'Y'
     where user_no = :new.user_no;               -- :new - insert 되거나 update 이후 값
 end;
+
+
