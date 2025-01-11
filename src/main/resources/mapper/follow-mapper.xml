@@ -93,4 +93,43 @@
           FROM mypet
          WHERE user_no = #{userNo}
     </select>
+    
+    
+    <!-- 팔로워 목록 조회 (페이징 처리) -->
+    <select id="selectFollowers" parameterType="map" resultType="member">
+        SELECT * FROM (
+            SELECT U.*, ROWNUM rnum 
+            FROM (
+                SELECT F.follower_no AS userNo, 
+                       U.user_id AS userId, 
+                       U.user_nickname AS userNickname, 
+                       U.user_image AS userImage
+                FROM follow F
+                JOIN tbl_user U ON F.follower_no = U.user_no
+                WHERE F.following_no = #{userNo}
+                ORDER BY U.user_no DESC
+            ) U
+            WHERE ROWNUM &lt;= #{end}
+        )
+        WHERE rnum > #{start}
+    </select>
+
+    <!-- 팔로잉 목록 조회 (페이징 처리) -->
+    <select id="selectFollowings" parameterType="map" resultType="member">
+        SELECT * FROM (
+            SELECT U.*, ROWNUM rnum 
+            FROM (
+                SELECT F.following_no AS userNo, 
+                       U.user_id AS userId, 
+                       U.user_nickname AS userNickname, 
+                       U.user_image AS userImage
+                FROM follow F
+                JOIN tbl_user U ON F.following_no = U.user_no
+                WHERE F.follower_no = #{userNo}
+                ORDER BY U.user_no DESC
+            ) U
+            WHERE ROWNUM &lt;= #{end}
+        )
+        WHERE rnum > #{start}
+    </select>
 </mapper>

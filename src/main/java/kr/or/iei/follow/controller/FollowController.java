@@ -2,6 +2,7 @@ package kr.or.iei.follow.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -144,5 +145,29 @@ public class FollowController {
 	    model.addAttribute("friendList", recommendList != null ? recommendList : new ArrayList<>());
 
 	    return "member/rightSideMenu";
+	}
+	
+	
+	@GetMapping("getFollowers")
+	@ResponseBody
+	public HashMap<String, Object> getFollowers(@RequestParam("userNo") int userNo, @RequestParam("page") int page,
+			@RequestParam("limit") int limit) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		List<Member> followers = followService.getFollowers(userNo, page, limit);
+		resultMap.put("success", true);
+		resultMap.put("followers", followers);
+		return resultMap;
+	}
+
+	//팔로잉 목록 무한 스크롤
+	@GetMapping("getFollowings")
+	@ResponseBody
+	public HashMap<String, Object> getFollowings(@RequestParam("userNo") int userNo, @RequestParam("page") int page,
+			@RequestParam("limit") int limit) {
+		HashMap<String, Object> resultMap = new HashMap<>();
+		List<Member> followings = followService.getFollowings(userNo, page, limit);
+		resultMap.put("success", true);
+		resultMap.put("followings", followings);
+		return resultMap;
 	}
 }
