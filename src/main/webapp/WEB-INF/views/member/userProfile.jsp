@@ -474,7 +474,7 @@
 		        data: { userId: targetUserId },
 		        success: function(response) {
 		            if (response.success) {
-		                window.location.href = '/chat/chatRoom.kh?roomId=' + response.roomId;
+		            	 window.location.href = '/chat/chatCombined.kh?roomId=' + response.roomId;
 		            } else {
 		            	console.log('채팅방 생성에 실패했습니다: ' + (response.message || ''));
 		            }

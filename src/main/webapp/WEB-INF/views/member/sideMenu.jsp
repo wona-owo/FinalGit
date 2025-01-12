@@ -36,7 +36,7 @@
 				
 				<div class="one-menu">
 					<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-					<a href="/chat/chatRoomList.kh" class="menu-link">메시지</a>
+					<a href="/chat/chatCombined.kh" class="menu-link">메시지</a>
 				</div>
 				
 				<c:if test="${loginMember.acctLevel > 0}">
