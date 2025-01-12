@@ -163,6 +163,43 @@
 					        handleCommentLike(); 
 					        loadPostLikeStatus(postNo);
 						});
+		  
+		  
+		  		//관리자 신고 게시물 확인 모달창
+		  		$(document).on("click", ".report-link", function (event) {
+						    event.preventDefault(); // 기본 동작 방지
+						
+						    // 버튼에서 데이터 가져오기
+						    const postNo = $(this).data("post-no");
+						    const mainPostCon = $(this).data("content");
+						    $(".modal").data("postNo", postNo); // postNo를 .modal 요소에 저장
+
+		
+						
+						    // 모달 작동
+						    $(".modal").css("display", "block");
+						    $(".modal .modal-image").html(`
+						        <button class="story-nav-btn story-prev-btn previous">
+						            <span class="material-icons nav-icons">navigate_before</span>
+						        </button>
+						        <img id="current-image" src="" alt="thumbnail">
+						        <button class="story-nav-btn story-next-btn next">
+						            <span class="material-icons nav-icons">navigate_next</span>
+						        </button>
+						    `);
+						    $(".modal .post-content-text").text(mainPostCon);
+						
+						    // 이미지 슬라이드 호출
+						    imgSlide(postNo);
+						    callHashtag(postNo); // 해시태그 불러오기
+					        callComment(postNo); //댓글 불러오기
+					        
+					        // 다른 함수에도 postNo 전달
+					        handlePostLike(postNo);
+					        handleCommentLike(); 
+					        loadPostLikeStatus(postNo);
+						});
+		  
 			
 			
 		    // 이미지 슬라이드 함수

@@ -7,8 +7,10 @@ public class Report {
 	private String reportReason;
 	private String reportDate;
 	
+	//tbl_user 조인추가
 	private String userName;
 	private String userId;
+	private String postContent;
 
 	public Report() {
 		super();
@@ -16,7 +18,7 @@ public class Report {
 	}
 
 	public Report(int userNo, int targetNo, String targetType, String reportReason, String reportDate, String userName,
-			String userId) {
+			String userId, String postContent) {
 		super();
 		this.userNo = userNo;
 		this.targetNo = targetNo;
@@ -25,6 +27,7 @@ public class Report {
 		this.reportDate = reportDate;
 		this.userName = userName;
 		this.userId = userId;
+		this.postContent = postContent;
 	}
 
 	public int getUserNo() {
@@ -83,5 +86,14 @@ public class Report {
 		this.userId = userId;
 	}
 
+	public String getPostContent() {
+		return postContent;
+	}
+
+	public void setPostContent(String postContent) {
+		this.postContent = postContent;
+	}
+
+	
 
 }

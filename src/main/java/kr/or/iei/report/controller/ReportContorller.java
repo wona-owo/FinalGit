@@ -35,14 +35,9 @@ public class ReportContorller {
 		}
 	}
 	
-	//신고확인 페이지
-		@GetMapping("allReport.kh")
-		public String reportFrm() {
-			return "admin/report";
-		}
 		
 	//신고 리스트 조회
-	@GetMapping("reportList.kh")
+	@GetMapping("allReport.kh")
 	public String reportList(Model model) {
 		
 		ArrayList<Report> report = service.reportList();

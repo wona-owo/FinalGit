@@ -11,12 +11,16 @@
 	<!-- 신고조회 -->
 	<select id="reportList" resultType="report">
 		select report_no as reportNo, 
-				 user_no as userNo, 
+				 r.user_no as userNo, 
 				 target_no as targetNo, 
 				 target_type as targetType, 
-				 report_reason as reportReason
-		 from report
+				 report_reason as reportReason,
+				 u.user_id as userId,
+				 user_name as userName,
+				 post_content as postContent
+		 from report r
+		 join tbl_user u on (u.user_no = r.user_no)
+		 join post p on (r.target_no = p.post_no)
 	</select>
-	
 	
 </mapper>

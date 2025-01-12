@@ -1,5 +1,7 @@
 package kr.or.iei.report.model.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,10 @@ public class ReportService {
 
 	public int insertReport(Report report) {
 		return dao.insertReport(report);
+	}
+
+	public ArrayList<Report> reportList() {
+		return (ArrayList<Report>) dao.reportList();
 	}
 	
 }
