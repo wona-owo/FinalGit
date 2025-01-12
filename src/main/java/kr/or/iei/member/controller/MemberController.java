@@ -206,9 +206,12 @@ public class MemberController {
 	        memberService.updateSearchHistory(userNo,searchType,hashName); // 해시태그 기록 업데이트 메소드 호출
 	       
 	        HashTag hashTag = memberService.selectTagName(hashName);
-			ArrayList<HashTag> hashPosts = memberService.selectKeywordTag(hashName); 
-			model.addAttribute("hashPosts", hashPosts);
-			model.addAttribute("hashTag", hashTag);
+			
+			int start = 0;
+	        int end = 15;
+	        ArrayList<HashTag> initPosts = (ArrayList<HashTag>) memberService.selectHashTagPosts(hashName, start, end);
+			model.addAttribute("post", initPosts);
+			model.addAttribute("hashName", hashName);
 	        // 해시태그 페이지로 이동
 	        return "member/hashTagPostList"; // 해시태그 페이지로 이동
 	        
@@ -572,10 +575,17 @@ public class MemberController {
 		
 		if("H".equals(searchType)) { //타입이 해시태그(H)일때
 			HashTag hashTag = memberService.selectTagName(hashName);
-			ArrayList<HashTag> hashPosts = memberService.selectKeywordTag(hashName); 
-			model.addAttribute("hashPosts", hashPosts);
-			model.addAttribute("hashTag", hashTag);
-			return "member/hashTagPostList";
+			// 처음 15개만 가져오기 (start=0, end=15)
+	        int start = 0;
+	        int end = 15;
+	        ArrayList<HashTag> initPosts = (ArrayList<HashTag>) memberService.selectHashTagPosts(hashName, start, end);
+
+	        // JSP로 데이터 전달
+	        model.addAttribute("hashTag", hashTag);
+	        model.addAttribute("hashName", hashName);
+	        model.addAttribute("post", initPosts);
+
+	        return "member/hashTagPostList";
 			
 		}else if("U".equals(searchType)){ //타입이 유저(U)일때
 			Member member = memberService.selectKeywordUser(userName);

@@ -3,6 +3,7 @@ package kr.or.iei.member.model.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -110,10 +111,6 @@ public class MemberService {
 		delete.put("keyword", keyword);
 		return memberDao.deleteResultKeyword(delete);
 
-	}
-	
-	public ArrayList<HashTag> selectKeywordTag(String hashName) {
-		return (ArrayList<HashTag>)memberDao.selectKeywordTag(hashName);
 	}
 	
 	public Member selectKeywordUser(String userName) {
@@ -234,6 +231,14 @@ public class MemberService {
 	public Member searchUserData(int userNo) {
 		// TODO Auto-generated method stub
 		return memberDao.searchUserData(userNo);
+	}
+
+	public ArrayList<HashTag> selectHashTagPosts(String hashName, int start, int end) {
+		Map<String, Object> param = new HashMap<>();
+	    param.put("hashName", hashName);
+	    param.put("start", start);
+	    param.put("end", end);
+	    return (ArrayList<HashTag>) memberDao.selectKeywordTag(param);
 	}
 
 	

@@ -227,10 +227,26 @@
 	</delete>
 	
 	<!-- 특정 해시태그 postNo값 가져옴  -->
-	<select id="keywordTag" parameterType="string" resultType="hashTag">
-	    SELECT post_no AS postNo
-	    FROM HASHTAG
-	    WHERE hash_name = #{hashName}
+	<select id="keywordTag" parameterType="map" resultType="hashTag">
+	   <![CDATA[
+   			select
+	               f.post_no       AS postNo,
+	               p.user_no       AS userNo,
+	               p.post_content  AS postContent,
+	               p.post_date     AS postDate,
+	               f.post_file_name AS postFileName,
+	               h.hash_name     AS hashName
+	          FROM post_file f
+	          JOIN post p
+	            ON f.post_no = p.post_no
+	          LEFT JOIN hashtag h
+	            ON p.post_no = h.post_no
+	         WHERE h.hash_name = #{hashName}
+	           AND SUBSTR(f.post_file_name, INSTR(f.post_file_name, '_', -1, 1) + 1, 1) = '1'
+	           AND REGEXP_LIKE(f.post_file_name, '\.(jpg|jpeg|gif|png|wmv)$', 'i')
+	         ORDER BY p.post_no DESC
+	    
+		]]>
 	</select>
 	<!-- 태그 이름 -->
 	<select id="selectTagName" parameterType="string" resultType="hashTag">		

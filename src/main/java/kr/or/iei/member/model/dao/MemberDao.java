@@ -3,6 +3,7 @@ package kr.or.iei.member.model.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,9 +86,9 @@ public class MemberDao {
 		return sqlSession.delete("member.deleteResultKeyword", delete);
 	}
 	
-	public List<HashTag> selectKeywordTag(String hashName) {
+	public List<HashTag> selectKeywordTag(Map<String, Object> param) {
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.keywordTag", hashName);
+		return sqlSession.selectList("member.keywordTag", param);
 	}
 	
 	public Member selectKeywordUser(String userName) {
