@@ -1,5 +1,8 @@
 package kr.or.iei.report.model.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +19,10 @@ public class ReportDao {
 
 	public int insertReport(Report report) {
 		return sqlSession.insert("report.insertReport", report);
+	}
+
+	public List<Report> reportList() {
+		return sqlSession.selectList("report.reportList");
 	}
 	
 }

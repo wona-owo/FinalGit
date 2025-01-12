@@ -10,8 +10,9 @@
 <link rel ="stylesheet"  href="/resources/default.css"  >
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <style>
-/* 가운데 정렬이 안되서 width값 1200으로 고정시킴 */
+
 .main-feed-container {
   width: 55vw;
 }
@@ -264,6 +265,8 @@
   fill: gray; /* 비활성화 상태 색상 */
   transform: scale(1); /* 원래 크기 */
 }
+
+
 
 </style>
 </head>

@@ -1,8 +1,12 @@
 package kr.or.iei.report.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,4 +34,24 @@ public class ReportContorller {
 			return "error";
 		}
 	}
+	
+	//신고확인 페이지
+		@GetMapping("allReport.kh")
+		public String reportFrm() {
+			return "admin/report";
+		}
+		
+	//신고 리스트 조회
+	@GetMapping("reportList.kh")
+	public String reportList(Model model) {
+		
+		ArrayList<Report> report = service.reportList();
+		
+		model.addAttribute("report", report);
+		
+		return "admin/report";
+	}
+		
+		
+		
 }

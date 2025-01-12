@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
@@ -41,7 +42,7 @@
 				<c:if test="${loginMember.acctLevel > 0}">
 					<div class="one-menu">
                     	<img alt="메뉴아이콘" src="/resources/css_image/icon.png" class="icon-img">
-                    <a href="/story/modalTest.kh" class="menu-link">신고 내역</a>
+                    <a href="/report/allReport.kh" class="menu-link">신고 내역</a>
                 </div>
 				</c:if>
 			</div>		

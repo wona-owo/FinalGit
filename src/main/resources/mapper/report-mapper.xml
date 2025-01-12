@@ -7,4 +7,16 @@
 		INSERT INTO report (report_no, user_no, target_no, target_type, report_reason)
 		VALUES (seq_report.nextval, #{userNo}, #{targetNo}, #{targetType}, #{reportReason})
 	</insert>
+	
+	<!-- 신고조회 -->
+	<select id="reportList" resultType="report">
+		select report_no as reportNo, 
+				 user_no as userNo, 
+				 target_no as targetNo, 
+				 target_type as targetType, 
+				 report_reason as reportReason
+		 from report
+	</select>
+	
+	
 </mapper>
