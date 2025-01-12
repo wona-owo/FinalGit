@@ -56,14 +56,14 @@ public class MemberDao {
 		return sqlSession.selectList("member.tagSearch", searchStr);
 	}
 	
-	public List<HashTag> searchHashTagsKeyword(String search) { //키워드와 관련된 해시태그 목록 가져오는거
+	public List<HashTag> searchHashTagsKeyword(HashMap<String, Object> paramMap) { //키워드와 관련된 해시태그 목록 가져오는거
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.searchHashTagsKeyword", search);
+		return sqlSession.selectList("member.searchHashTagsKeyword", paramMap);
 	}
 	
-	public List<Member> searchUsersKeyword(String search) { //키워드와 관련된 유저 목록 가져오는거
+	public List<Member> searchUsersKeyword(HashMap<String, Object> paramMap) { //키워드와 관련된 유저 목록 가져오는거
 		// TODO Auto-generated method stub 
-		return sqlSession.selectList("member.searchUsersKeyword", search);
+		return sqlSession.selectList("member.searchUsersKeyword", paramMap);
 	}
 	public int updateKeywordDate(HashMap<String, Object> update) {
 		// TODO Auto-generated method stub

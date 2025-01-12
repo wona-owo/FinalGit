@@ -81,7 +81,7 @@
 					        <input type="hidden" name="userNo" value="${sessionScope.loginMember.userNo}">
 					        <input type="hidden" id="parentNo" value="0">
 					        <div class="comment-form">
-					            <textarea class="comment-input" placeholder="댓글 달기..."></textarea>
+					            <input type="text" class="comment-input" placeholder="댓글 달기...">
 					            <button class="submit-comment">
 					                <i class="fa-solid fa-comment"></i>
 					            </button>
@@ -137,8 +137,8 @@
 
 						
 						    // 데이터 확인 로그
-						    console.log("게시글 번호:", postNo);
-						    console.log("게시글 내용:", mainPostCon);
+						    //console.log("게시글 번호:", postNo);
+						    //console.log("게시글 내용:", mainPostCon);
 						
 						    // 모달 작동
 						    $(".modal").css("display", "block");
@@ -396,7 +396,7 @@
 		        const postNo = $(".modal").data("postNo"); // 모달에서 가져오기
 		        const submitButton = $(".submit-comment");
 		        
-		        console.log("댓글 작성 요청 - postNo:", postNo);
+		        //console.log("댓글 작성 요청 - postNo:", postNo);
 
 		        if (!commentInput || !postNo) {
 		            alert("댓글 내용을 입력하거나 게시글을 다시 선택하세요.");

@@ -265,8 +265,48 @@
   fill: gray; /* 비활성화 상태 색상 */
   transform: scale(1); /* 원래 크기 */
 }
+/* ====== 슬라이드 관련 스타일 (여러 미디어일 때만 적용) ====== */
+.slider-container {
+    width: 500px;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+ }
+.slider-slide {
+  display: none; 
+  text-align: center;
+}
+.slider-slide.active {
+  display: block;
+}
+.slider-slide img,
+.slider-slide video {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;  /* 이미지나 동영상이 영역을 꽉 채우도록, 넘치는 부분은 잘림 */
+    display: block;
+    margin: 0 auto;     /* 필요 시 중앙 정렬 */
+}
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background-color: transparent;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+}
 
-
+.slider-btn-prev {
+  left: 10px;
+  background-color: transparent;
+}
+.slider-btn-next {
+  right: 10px;
+  background-color: transparent;
+}
 
 </style>
 </head>
@@ -429,37 +469,120 @@
             }
         });
     }
+ // 슬라이드 이전/다음 버튼 클릭 이벤트 처리
+    function bindSliderEvents() {
+      $(document).off('click', '.slider-btn-next').on('click', '.slider-btn-next', function(){
+        const $currentSlide = $(this).closest('.slider-slide');
+        const $sliderContainer = $currentSlide.closest('.slider-container');
+        let currentIndex = parseInt($currentSlide.attr('data-index'), 10);
+        const total = parseInt($sliderContainer.attr('data-total'), 10);
 
+        // 현재 슬라이드 숨기기
+        $currentSlide.removeClass('active');
+        // 다음 슬라이드로 이동
+        let nextIndex = currentIndex + 1;
+        if(nextIndex < total){
+          const $nextSlide = $sliderContainer.find('[data-index="' + nextIndex + '"]');
+          $nextSlide.addClass('active');
+          $sliderContainer.attr('data-current', nextIndex);
+        }
+      });
+
+      $(document).off('click', '.slider-btn-prev').on('click', '.slider-btn-prev', function(){
+        const $currentSlide = $(this).closest('.slider-slide');
+        const $sliderContainer = $currentSlide.closest('.slider-container');
+        let currentIndex = parseInt($currentSlide.attr('data-index'), 10);
+
+        // 현재 슬라이드 숨기기
+        $currentSlide.removeClass('active');
+        // 이전 슬라이드로 이동
+        let prevIndex = currentIndex - 1;
+        if(prevIndex >= 0){
+          const $prevSlide = $sliderContainer.find('[data-index="' + prevIndex + '"]');
+          $prevSlide.addClass('active');
+          $sliderContainer.attr('data-current', prevIndex);
+        }
+      });
+    }
     // 받아온 posts 배열을 HTML로 변환 후 화면에 추가
     function renderPosts(posts) {
         let container = $('#feed-container');
         //console.log("renderPosts() 호출, posts:", posts);
 
-        posts.forEach(function(post, index) {
-            let mediaHtml = '';
-            if(post.postFileNames && post.postFileNames.length > 0) {
-                // 이미지 여러 장이라면, 슬라이더나 캐러셀로 보여주는 방식도 가능
-                post.postFileNames.forEach(function(fileUrl) {
-                    // 파일 확장자 체크
-                    let lowerUrl = fileUrl.toLowerCase();
-                    let ext = lowerUrl.substring(lowerUrl.lastIndexOf('.')+1);
-                    if(ext === 'mp4' || ext === 'wmv' || ext === 'mov') {
-                        mediaHtml += 
-                          '<video controls width="500" style="max-height:500px;">'
-                         + '  <source src="' + fileUrl + '" type="video/' + ext + '" />'
-                         + '동영상을 재생할 수 없습니다.'
-                         + '</video>';
-                    } else {
-                        mediaHtml += 
-                          '<img src="' + fileUrl + '" '
-                         + '     alt="Post Image" style="max-width:500px; max-height:500px;">';
-                    }
-                });
-            } else {
-                // 이미지가 없는 경우(텍스트만 있는 경우)
-                // 혹은 기본 이미지를 보여줄 수도 있음
-                mediaHtml = '<p>이미지 없음</p>';
-            }
+        posts.forEach(function(post) {
+      let mediaHtml = '';
+      const fileCount = (post.postFileNames && post.postFileNames.length) ? post.postFileNames.length : 0;
+
+      // 1개이면 슬라이드 없이 표시
+      if (fileCount <= 1) {
+        if (fileCount === 1) {
+          let fileUrl = post.postFileNames[0];
+          let lowerUrl = fileUrl.toLowerCase();
+          let ext = lowerUrl.substring(lowerUrl.lastIndexOf('.')+1);
+
+          if(ext === 'mp4' || ext === 'wmv' || ext === 'mov') {
+            mediaHtml = 
+              '<video controls width="500" style="max-height:500px;">'
+              + '  <source src="' + fileUrl + '" type="video/' + ext + '" />'
+              + '동영상을 재생할 수 없습니다.'
+              + '</video>';
+          } else {
+            mediaHtml = 
+              '<img src="' + fileUrl + '" '
+              + '     alt="Post Image" style="max-width:500px; max-height:500px;">';
+          }
+        } else {
+          // 이미지가 없는 경우
+          mediaHtml = '<p>이미지 없음</p>';
+        }
+      } else {
+        // 여러 개이면 슬라이드를 구성
+        mediaHtml += '<div class="slider-container" data-total="' + fileCount + '" data-current="0">';
+        post.postFileNames.forEach(function(fileUrl, index) {
+          let lowerUrl = fileUrl.toLowerCase();
+          let ext = lowerUrl.substring(lowerUrl.lastIndexOf('.')+1);
+          let slideClass = (index === 0) ? 'slider-slide active' : 'slider-slide'; // 첫 번째 슬라이드만 보여주기
+
+          mediaHtml += '<div class="'+ slideClass +'" data-index="'+ index +'">';
+          if(ext === 'mp4' || ext === 'wmv' || ext === 'mov') {
+            mediaHtml += 
+              '<video controls>'
+              + '  <source src="' + fileUrl + '" type="video/' + ext + '" />'
+              + '동영상을 재생할 수 없습니다.'
+              + '</video>';
+          } else {
+            mediaHtml += 
+              '<img src="' + fileUrl + '" alt="Post Image">';
+          }
+
+          // 버튼 설정(첫 번째면 '다음'만, 마지막이면 '이전'만, 나머지는 '이전/다음' 모두)
+          if(index === 0 && fileCount > 1) {
+            // 첫 번째 슬라이드 -> 다음 버튼만
+            mediaHtml += '<button class="slider-btn slider-btn-next">';
+            mediaHtml += '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">';
+            mediaHtml += '<path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>'
+            mediaHtml += '</svg></button>';
+          } else if (index === fileCount - 1) {
+            // 마지막 슬라이드 -> 이전 버튼만
+            mediaHtml += '<button class="slider-btn slider-btn-prev">';
+            mediaHtml += '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">';
+            mediaHtml += '<path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>'
+            mediaHtml += '</svg></button>';
+          } else {
+            // 중간 슬라이드 -> 이전, 다음 모두
+            mediaHtml += '<button class="slider-btn slider-btn-prev">';
+            mediaHtml += '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">';
+            mediaHtml += '<path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>'
+            mediaHtml += '</svg></button>';
+            mediaHtml += '<button class="slider-btn slider-btn-next">';
+            mediaHtml += '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">';
+            mediaHtml += '<path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>'
+            mediaHtml += '</svg></button>';
+          }
+          mediaHtml += '</div>';
+        });
+        mediaHtml += '</div>';
+      }
             
             // 혹시 댓글 n개 모두 보기가 필요한 경우
             let commentLink = '';
@@ -585,6 +708,7 @@
         });
         
         initializeLikeButtons();
+        bindSliderEvents();
         
         
         // 신고 modalHTML

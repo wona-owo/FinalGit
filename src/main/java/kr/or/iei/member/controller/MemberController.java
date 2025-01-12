@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -439,25 +440,17 @@ public class MemberController {
 	@GetMapping(value = "filterResults.kh", produces = "text/html; charset=UTF-8")
 	@ResponseBody
 	public String filterResults(@RequestParam("filterType") String filterType,
-			@RequestParam("search") String search, Model model) {
+								@RequestParam("search") String search,
+								@RequestParam(value="page", defaultValue="1") int page) {
+		final int pageSize = 12;
 		StringBuilder html = new StringBuilder();
 
 		switch (filterType) {
-		case "post":
-			// 게시물 데이터 가져오기
-			//ArrayList<Post> posts = postService.searchPostsKeyword(search);
-			//for (Post post : posts) {
-				
-			//}
-			break;
-
 		case "hashtag":
 			// 해시태그 데이터 가져오기
-			ArrayList<HashTag> hashtags = memberService.searchHashTagsKeyword(search);
+			List<HashTag> hashtags = memberService.searchHashTagsKeyword(search, page, pageSize);
 			if((hashtags.isEmpty())) {
-				html.append("<div class='user-result'>")
-					.append("<span id='search-result'>검색 결과가 없습니다.</span>")
-	        		.append("</div>");
+				return "";
 			}else {
 				for (HashTag tag : hashtags) {
 					html.append("<li class='user-result'>")
@@ -488,11 +481,9 @@ public class MemberController {
 			break;
 		case "user":
 			// 유저 데이터 가져오기
-			ArrayList<Member> users = memberService.searchUsersKeyword(search);
+			List<Member> users = memberService.searchUsersKeyword(search, page, pageSize);
 			if(users.isEmpty()) {
-				html.append("<div class='user-result'>")
-					.append("<span id='search-result'>검색 결과가 없습니다.</span>")
-	        		.append("</div>");
+				return "";
 			}else {
 				for (Member user : users) {
 					html.append("<li class='user-result'>")

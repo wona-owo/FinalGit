@@ -2,6 +2,7 @@ package kr.or.iei.member.model.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,13 +55,27 @@ public class MemberService {
 		// TODO Auto-generated method stub
 		return (ArrayList<HashTag>)memberDao.searchTag(searchStr);
 	}
-	public ArrayList<HashTag> searchHashTagsKeyword(String search) { //키워드와 관련된 해시태그 목록 가져오는거
+	public List<HashTag> searchHashTagsKeyword(String search, int page, int pageSize) { //키워드와 관련된 해시태그 목록 가져오는거
 		// TODO Auto-generated method stub
-		return (ArrayList<HashTag>)memberDao.searchHashTagsKeyword(search);
+		int start = (page - 1) * pageSize;
+		int end = page * pageSize;
+
+		HashMap<String, Object> paramMap = new HashMap<>();
+		paramMap.put("search", search);
+		paramMap.put("start", start);
+		paramMap.put("end", end);
+		return memberDao.searchHashTagsKeyword(paramMap);
 	}
 	
-	public ArrayList<Member> searchUsersKeyword(String search) { //키워드와 관련된 유저 목록 가져오는거
-		return (ArrayList<Member>)memberDao.searchUsersKeyword(search);
+	public List<Member> searchUsersKeyword(String search, int page, int pageSize) { //키워드와 관련된 유저 목록 가져오는거
+		int start = (page - 1) * pageSize;
+        int end   = page * pageSize;
+
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("search", search);
+        paramMap.put("start", start);
+        paramMap.put("end", end);
+		return memberDao.searchUsersKeyword(paramMap);
 	}
 	
 	public int checkKeyword(int userNo, String search) { //중복되는 값 체크

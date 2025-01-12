@@ -234,27 +234,13 @@
 		padding: 0;
 		margin: 0;
 		display: flex; /* Flexbox 활성화 */
-		justify-content: center; /* 수평 중앙 정렬 */
-		align-items: center; /* 수직 중앙 정렬 */
 	}
 
 	.filterResultsBtn {
 		display: flex; /* Flexbox 활성화 */
-		justify-content: space-between; /* 버튼 사이에 공간을 균등하게 배분 */
 		width: 100%; /* 부모 요소의 너비를 차지하도록 설정 */
 		padding: 0; /* 패딩 제거 */
 		margin: 0; /* 마진 제거 */
-	}
-
-	.filterResultsBtn li {
-		flex: 1; /* 각 버튼이 동일한 너비를 가지도록 설정 */
-		text-align: center; /* 텍스트 중앙 정렬 */
-		padding: 0; /* 패딩 제거 */
-		margin: 0; /* 마진 제거 */
-		list-style: none; /* 기본 리스트 스타일 제거 */
-	}
-	.filterResultsBtn li:hover{
-		background-color: gray; 
 	}
 	.filterBtns {
 		display: flex; /* Flexbox 활성화 */
@@ -264,12 +250,10 @@
 		width: 100%;
 		cursor: pointer;
 	}
-	.filterResultsBtn li:first-child {
-		border-right: 1px solid black; /* 첫 번째 li의 오른쪽에 테두리 추가 */
-	}
-
-	.filterResultsBtn li:last-child {
-		border-left: 1px solid black; /* 마지막 li의 왼쪽에 테두리 추가 */
+	#filterType{
+		border: 1px solid black;
+		width: 100px;
+		height: 24px;
 	}
 </style>
 </head>
@@ -286,21 +270,11 @@
 	        <br>
 	        <div class="dropdown-bottom-line"></div>
 	        <div class="filterResultsBtnContainer">
-		    	<ul class="filterResultsBtn">
-		    		<li>
-		    			<a class="filterBtns" onclick="filterResults('post')">게시글</a>
-		    		</li>
-		    		
-		    		<li>
-		    			<a class="filterBtns" onclick="filterResults('hashtag')">해시태그</a>
-		    		</li>
-		    		
-		    		<li>
-		    			<a class="filterBtns" onclick="filterResults('user')">사용자</a>
-		    		</li>
-		    	</ul>
+		    	<select name="filterType" id="filterType" onchange="filterResults(this.value)">
+				    <option value="user">사용자</option>
+				    <option value="hashtag">해시태그</option>
+				</select>
 		    </div>
-		    <div class="dropdown-bottom-line"></div>
 	        <div class="searchResults" id="searchResults">
 	            <ul class="ResultBox" id="ResultBox">
 	            
@@ -308,7 +282,7 @@
 	        </div>
 	    </form>    
 	</main>
-	
+	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
 	<script>
 		// 페이지 로드 시 유저 검색 결과를 기본으로 가져옴
 	    $(document).ready(function() {
@@ -334,23 +308,84 @@
 	        });
 	    });
 		
+		let currentPage = 1;         // 현재 페이지
+		let isLoading = false;       // 중복 로딩 방지
+		let selectedFilter = null;   // 필터(게시글/해시태그/사용자)
+		let isNoMoreData = false;  // 더 이상 데이터가 없는지 여부
+
+		// 스크롤 이벤트: 문서 하단 근처에 오면 추가 로드
+		$(window).on('scroll', function() {
+	        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+	            loadMoreResults();
+	        }
+	    });
+
+		function loadMoreResults() {
+			if (!selectedFilter || isLoading || isNoMoreData) return;
+	        isLoading = true;
+
+	        const keyword = $('#search').val().trim();
+
+	        $.ajax({
+	            url: '/member/filterResults.kh',
+	            method: 'GET',
+	            data: {
+	                filterType: selectedFilter,
+	                search: keyword,
+	                page: currentPage + 1
+	            },
+	            success: function(response) {
+	                // 응답이 비어 있으면 더 이상 가져올 값이 없는 경우
+	                if (response.trim().length === 0) {
+	                    // 원하는 문구 노출
+	                    $('#ResultBox').append(
+	                        '<li class="no-more-data">더 이상 가져올 검색 결과가 없습니다.</li>'
+	                    );
+	                    isNoMoreData = true; 
+	                } else {
+	                    $('#ResultBox').append(response);
+	                    currentPage++;
+	                }
+	            },
+	            error: function() {
+	                console.log('추가 데이터를 가져오는 중 오류가 발생했습니다.');
+	            },
+	            complete: function() {
+	                isLoading = false;
+	            }
+	        });
+	    }
+
+		/* 기존 filterResults 함수: 필터 선택 시 첫 페이지 불러오기 */
 		function filterResults(type) {
+			selectedFilter = type;       // 현재 필터 저장
+			currentPage = 1;            // 페이지 초기화
+			isLoading = false;          // 로딩 플래그 초기화
+			isNoMoreData = false;  // 새로운 검색이므로 다시 false
+			
             $.ajax({
                 type: 'GET',
                 url: '/member/filterResults.kh', // 컨트롤러 URL
                 data: {
-                    filterType: type,
-                    search: '${search}' // 검색 키워드 전달
+                    filterType: selectedFilter,
+                    search: '${search}', // 검색 키워드 전달
+                    page: currentPage    // 첫 페이지
                 },
                 success: function(response) {
-                    $('#ResultBox').html(response); // 결과 영역에 응답 삽입
+                	if (response.trim().length === 0) {
+						// 필터 변경/첫 검색부터 결과가 없을 때
+						$('#ResultBox').html('<li class="no-more-data">검색 결과가 없습니다.</li>');
+						isNoMoreData = true;
+					} else {
+						$('#ResultBox').html(response);
+					}
                 },
                 error: function() {
                     $('#ResultBox').html('<p>결과를 가져오는 중 오류가 발생했습니다.</p>');
                 }
             });
         }
-		
+
 		let lastClicked = null; // 마지막으로 클릭된 li 요소를 저장할 변수
 
 		$(document).ready(function() {
