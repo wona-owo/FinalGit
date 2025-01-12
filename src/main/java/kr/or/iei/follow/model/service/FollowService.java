@@ -2,6 +2,7 @@ package kr.or.iei.follow.model.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -95,5 +96,31 @@ public class FollowService {
         check.put("followed", targetUserNo);
         int count = followDao.selectCheckFollor(check);
         return count > 0;
+    }
+    
+    //팔로워 목록 조회 (페이징)
+    public List<Member> getFollowers(int userNo, int page, int limit) {
+        int start = (page - 1) * limit;
+        int end = page * limit;
+        
+        HashMap<String, Object> loadpage = new HashMap<>();
+        loadpage.put("userNo", userNo);
+        loadpage.put("start", start);
+        loadpage.put("end", end);
+        
+        return followDao.selectFollowers(loadpage);
+    }
+
+    //팔로잉 목록 조회 (페이징)
+    public List<Member> getFollowings(int userNo, int page, int limit) {
+        int start = (page - 1) * limit;
+        int end = page * limit;
+        
+        HashMap<String, Object> loadpage = new HashMap<>();
+        loadpage.put("userNo", userNo);
+        loadpage.put("start", start);
+        loadpage.put("end", end);
+        
+        return followDao.selectFollowings(loadpage);
     }
 }

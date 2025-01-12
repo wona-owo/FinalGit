@@ -55,4 +55,15 @@ public class FollowDao {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("follow.getPetsByUserNo", userNo);
 	}
+
+	public List<Member> selectFollowers(HashMap<String, Object> loadpage) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("follow.selectFollowers", loadpage);
+	}
+
+	public List<Member> selectFollowings(HashMap<String, Object> loadpage) {
+		// TODO Auto-generated method stub
+		
+		return sqlSession.selectList("follow.selectFollowings", loadpage);
+	}
 }

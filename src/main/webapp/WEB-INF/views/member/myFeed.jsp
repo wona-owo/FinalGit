@@ -267,6 +267,127 @@
     grid-auto-rows: 120px;
     gap: 8px;     
 }
+/* 팔로워 및 팔로잉 모달 내부 콘텐츠 스타일 */
+.followCount, .followingCount{
+    cursor: pointer;
+}
+.user-list-item{
+    text-decoration: none;
+    width: 100%;
+    height: 60px; /* 높이 60px */
+    display: flex;
+    align-items: center;
+    padding: 0 10px; /* 좌우 패딩 조정 */
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box; /* 패딩과 보더를 포함하여 크기 계산 */
+}
+
+.user-alink{
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit; /* 링크의 기본 색상을 상속받도록 설정 */
+}
+
+.user-list{
+    list-style: none; /* 리스트 스타일 제거 */
+    padding: 0; /* 패딩 제거 */
+    margin: 0; /* 마진 제거 */
+}
+
+.followUser-container{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 세로 가운데 정렬 */
+    height: 100%;
+}
+
+.userNickname {
+    font-weight: bold;
+    font-size: 16px; /* 글씨 크기 조정 */
+}
+
+.userId {
+    color: #555;
+    font-size: 14px; /* 글씨 크기 조정 */
+}
+
+/* 이미지 스타일 */
+.followUser-container img {
+    width: 44px; /* 이미지 너비 조정 */
+    height: 44px; /* 이미지 높이 조정 */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    border: 1px solid gray;
+}
+
+.followers-modal, .followings-modal {
+    display: none; /* 초기에는 숨김 */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4); /* 반투명 배경 */
+}
+
+.modal-content-follow {
+    background-color: #fefefe;
+    margin: 10% auto; /* 화면 상단에서 약간 내려온 위치 중앙 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 440px; /* 너비 440px */
+    height: 440px; /* 높이 440px */
+    border-radius: 8px;
+}
+
+.follow-modal-header{
+	display: flex;
+	width: 100%;
+}
+.header-font{
+	width: 90%;
+}
+.user-follow-close {
+ 	flex: 0 0 auto; /* 고정된 너비 */
+    color: #aaa;
+    width: 10%;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.followings-ultag,
+.followers-ultag{
+	width: 100%;
+	height: 380px;
+	overflow-y: auto; /* 내용이 많을 경우 스크롤 */
+}
+.user-follow-close:hover,
+.user-follow-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+#followersLoading, #followingsLoading {
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    color: #777;
+}
 </style>
 </head>
 <body>
@@ -286,8 +407,8 @@
 				 <span class="myNick" id="myNick">${loginMember.userNickname}</span>
 				 
 				 <div id="follow-text">
-    				<span>팔로워 ${followerCount}</span>
-					<span>팔로잉 ${followingCount}</span>
+    				<span class="followCount">팔로워 ${followerCount}</span>
+					<span class="followingCount">팔로잉 ${followingCount}</span>
 				 </div>
 																									 
 				 <div> <%--구현안된 페이지는 홈으로 랜딩 --%>
@@ -394,6 +515,41 @@
 			</div>
 		</div>
 	  	
+	  	<div id="followersModal" class="followers-modal follow-modal">
+            <div class="modal-content-follow">
+            	<div class="follow-modal-header">
+            		<div class="header-font">
+		                <h2>팔로워 목록</h2>
+            		</div>
+	                <span class="user-follow-close">&times;</span>
+            	</div>
+            	<div class="followers-ultag" >
+	                <ul class="user-list" id="followersList">
+	                </ul>
+            	</div>
+                <div id="followersLoading" style="display: none; text-align: center;">
+                     <i class="fas fa-spinner fa-spin"></i> 로딩 중...
+                </div>
+            </div>
+        </div>
+
+        <div id="followingsModal" class="followings-modal follow-modal">
+            <div class="modal-content-follow">
+                <div class="follow-modal-header">
+                	<div class="header-font">
+		                <h2>팔로잉 목록</h2>
+                	</div>
+	                <span class="user-follow-close">&times;</span>
+            	</div>
+            	<div class="followings-ultag">
+	                <ul class="user-list" id="followingsList">
+	                </ul>
+            	</div>
+                <div id="followingsLoading" style="display: none; text-align: center;">
+                     <i class="fas fa-spinner fa-spin"></i> 로딩 중...
+                </div>
+            </div>
+        </div> 
 	  	  		    
 	</main>
 	
@@ -1460,6 +1616,175 @@
 	 	}
 	 		
 	}
+	$(document).ready(function() {
+		var userNo = ${member.userNo};
+		var followersPage = 1;
+	    var followersLimit = 10;
+	    var followersEnd = false;
+	    var followersIsLoading = false;
+	
+	    var followingsPage = 1;
+	    var followingsLimit = 10;
+	    var followingsEnd = false;
+	    var followingsIsLoading = false;
+	
+	    // 팔로워 모달 열기
+	    $('#follow-text .followCount').on('click', function() {
+	        $('#followersModal').fadeIn();
+	        followersPage = 1;
+	        followersEnd = false;
+	        $('#followersList').empty();
+	        loadFollowers(followersPage);
+	    });
+	
+	    // 팔로잉 모달 열기
+	    $('#follow-text .followingCount').on('click', function() {
+	        $('#followingsModal').fadeIn();
+	        followingsPage = 1;
+	        followingsEnd = false;
+	        $('#followingsList').empty();
+	        loadFollowings(followingsPage);
+	    });
+	
+	    // 모달 닫기
+	    $('.user-follow-close').on('click', function() {
+	        $(this).closest('.follow-modal').fadeOut();
+	    });
+	
+	    // 클릭 외부 영역 닫기
+	    $(window).on('click', function(event) {
+	        if ($(event.target).hasClass('followers-modal') || $(event.target).hasClass('followings-modal')) {
+	            $('.follow-modal').fadeOut();
+	        }
+	    });
+	 	// 디바운스 함수
+	    function debounce(func, delay) {
+	        var inDebounce;
+	        return function() {
+	            var context = this;
+	            var args = arguments;
+	            clearTimeout(inDebounce);
+	            inDebounce = setTimeout(function() {
+	                func.apply(context, args);
+	            }, delay);
+	        };
+	    }
+	 	// 팔로워 무한 스크롤
+	    function loadFollowers(page) {
+	        if (followersEnd || followersIsLoading) return;
+	        followersIsLoading = true;
+	        $('#followersLoading').show();
+	        $.ajax({
+	            url: '/follow/getFollowers',
+	            type: 'GET',
+	            data: {
+	                userNo: userNo,
+	                page: page,
+	                limit: followersLimit
+	            },
+	            success: function(response) {
+	                if (response.success) {
+	                    var followers = response.followers;
+	                    if (followers.length < followersLimit) {
+	                        followersEnd = true;
+	                    }
+	                    followers.forEach(function(follower) {
+	                        var item = '<li class="user-list-item">';
+	                            item += '<a class="user-alink" href="/member/profile.kh?userNo=' + follower.userNo + '" data-type="Post">';
+	                            item += '<div class="followUser-container">';
+	                            item += '<img src="' + (follower.userImage ? follower.userImage : '/resources/profile_file/default_profile.png') + '" alt="프로필 이미지">';
+	                            item += '<div class="user-info">';
+	                            item += '<span class="userNickname">' + follower.userNickname + '</span>';
+	                            item += '<span class="userId">' + follower.userId + '</span>';
+	                            item += '</div>';
+	                            item += '</div>';
+	                            item += '</a>';
+	                            item += '</li>';
+	                        $('#followersList').append(item);
+	                    });
+	                    followersPage++;
+	                } else {
+	                	console.log('팔로워 목록을 불러오는데 실패했습니다.');
+	                }
+	            },
+	            error: function() {
+	            	console.log('서버 오류가 발생했습니다.');
+	            },
+	            complete: function() {
+	                $('#followersLoading').hide();
+	                followersIsLoading = false;
+	            }
+	        });
+	    }
+	
+	 	// 팔로잉 무한 스크롤
+	    function loadFollowings(page) {
+	        if (followingsEnd || followingsIsLoading) return;
+	        followingsIsLoading = true;
+	        $('#followingsLoading').show();
+	        $.ajax({
+	            url: '/follow/getFollowings',
+	            type: 'GET',
+	            data: {
+	                userNo: userNo,
+	                page: page,
+	                limit: followingsLimit
+	            },
+	            success: function(response) {
+	                if (response.success) {
+	                    var followings = response.followings;
+	                    if (followings.length < followingsLimit) {
+	                        followingsEnd = true;
+	                    }
+	                    followings.forEach(function(following) {
+	                        var item = '<li class="user-list-item">';
+	                            item += '<a class="user-alink" href="/member/profile.kh?userNo=' + following.userNo + '" data-type="Post">';
+	                            item += '<div class="followUser-container">';
+	                            item += '<img src="' + (following.userImage ? following.userImage : '/resources/profile_file/default_profile.png') + '" alt="프로필 이미지">';
+	                            item += '<div class="user-info">';
+	                            item += '<span class="userNickname">' + following.userNickname + '</span>';
+	                            item += '<span class="userId">' + following.userId + '</span>';
+	                            item += '</div>';
+	                            item += '</div>';
+	                            item += '</a>';
+	                            item += '</li>';
+	                        $('#followingsList').append(item);
+	                    });
+	                    followingsPage++;
+	                } else {
+	                	console.log('팔로잉 목록을 불러오는데 실패했습니다.');
+	                }
+	            },
+	            error: function() {
+	                console.log('서버 오류가 발생했습니다.');
+	            },
+	            complete: function() {
+	                $('#followingsLoading').hide();
+	                followingsIsLoading = false;
+	            }
+	        });
+	    }
+	
+	    // 팔로워 모달의 .modal-content에 스크롤 이벤트 바인딩
+	    $('.followers-ultag').on('scroll', debounce(function() {
+	        var scrollHeight = $(this)[0].scrollHeight;
+	        var scrollTop = $(this).scrollTop();
+	        var containerHeight = $(this).height();
+	        if (scrollTop + containerHeight >= scrollHeight - 50) {
+	        	loadFollowers(followersPage);
+	        }
+	    }, 200));
+	
+	    // 팔로잉 모달의 .modal-content에 스크롤 이벤트 바인딩
+	    $('.followings-ultag').on('scroll', debounce(function() {
+	        var scrollHeight = $(this)[0].scrollHeight;
+	        var scrollTop = $(this).scrollTop();
+	        var containerHeight = $(this).height();
+	        if (scrollTop + containerHeight >= scrollHeight - 50) {
+	            loadFollowings(followingsPage);
+	        }
+	    },200));
+	});
 	</script>
 </body>
 </html>
