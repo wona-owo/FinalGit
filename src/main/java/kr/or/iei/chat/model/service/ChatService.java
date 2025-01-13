@@ -139,5 +139,7 @@ public class ChatService {
 		return chatDao.getLastChatMessage(roomId);
 	}
 
-	
+	public String getUserImageByUserNo(int userNo) {
+        return chatDao.getUserImageByUserNo(userNo);
+    }
 }

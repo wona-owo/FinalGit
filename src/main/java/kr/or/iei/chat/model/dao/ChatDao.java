@@ -99,4 +99,8 @@ public class ChatDao {
 		public ChatMessage getLastChatMessage(int roomId) {
 			return sqlSession.selectOne("chat.getLastChatMessage", roomId);
 		}
-}
+
+		public String getUserImageByUserNo(int userNo) {
+			return sqlSession.selectOne("chat.getUserImageByUserNo", userNo);
+		}
+	}

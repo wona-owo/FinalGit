@@ -116,7 +116,9 @@ public class SocketHandler extends TextWebSocketHandler {
 			
 			//메시지 보낸 사람
 			String senderName = chatService.getUserNameByUserNo(senderNo); 
+			String senderImage = chatService.getUserImageByUserNo(senderNo);
             chatMessage.setSenderName(senderName);
+            chatMessage.setSenderImage(senderImage);
 
 			// 응답 JSON 객체 생성
 			JsonObject response = new JsonObject();

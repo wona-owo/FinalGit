@@ -9,12 +9,13 @@ public class ChatMessage {
     private String messageContent;
     private String sendDate;
     private String senderName;
+    private String senderImage;
 	public ChatMessage() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public ChatMessage(int messageId, int roomId, int senderNo, String messageContent, String sendDate,
-			String senderName) {
+			String senderName, String senderImage) {
 		super();
 		this.messageId = messageId;
 		this.roomId = roomId;
@@ -22,6 +23,7 @@ public class ChatMessage {
 		this.messageContent = messageContent;
 		this.sendDate = sendDate;
 		this.senderName = senderName;
+		this.senderImage = senderImage;
 	}
 	public int getMessageId() {
 		return messageId;
@@ -59,11 +61,17 @@ public class ChatMessage {
 	public void setSenderName(String senderName) {
 		this.senderName = senderName;
 	}
+	public String getSenderImage() {
+		return senderImage;
+	}
+	public void setSenderImage(String senderImage) {
+		this.senderImage = senderImage;
+	}
 	@Override
 	public String toString() {
 		return "ChatMessage [messageId=" + messageId + ", roomId=" + roomId + ", senderNo=" + senderNo
-				+ ", messageContent=" + messageContent + ", sendDate=" + sendDate + ", senderName=" + senderName + "]";
+				+ ", messageContent=" + messageContent + ", sendDate=" + sendDate + ", senderName=" + senderName
+				+ ", senderImage=" + senderImage + "]";
 	}
-    
     
 }

@@ -18,13 +18,16 @@ public class ChatRoom {
     private String user1NickName;
     private String user2Name;
     private String user2NickName;
+    private String user1Image;
+    private String user2Image;
+    
 	public ChatRoom() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public ChatRoom(int roomId, int user1No, int user2No, String user1Left, String user2Left, Date createDate,
 			Date user1OutTime, Date user2OutTime, String user1ReadYN, String user2ReadYN, String user1Name,
-			String user1NickName, String user2Name, String user2NickName) {
+			String user1NickName, String user2Name, String user2NickName, String user1Image, String user2Image) {
 		super();
 		this.roomId = roomId;
 		this.user1No = user1No;
@@ -40,6 +43,8 @@ public class ChatRoom {
 		this.user1NickName = user1NickName;
 		this.user2Name = user2Name;
 		this.user2NickName = user2NickName;
+		this.user1Image = user1Image;
+		this.user2Image = user2Image;
 	}
 	public int getRoomId() {
 		return roomId;
@@ -125,16 +130,28 @@ public class ChatRoom {
 	public void setUser2NickName(String user2NickName) {
 		this.user2NickName = user2NickName;
 	}
+	public String getUser1Image() {
+		return user1Image;
+	}
+	public void setUser1Image(String user1Image) {
+		this.user1Image = user1Image;
+	}
+	public String getUser2Image() {
+		return user2Image;
+	}
+	public void setUser2Image(String user2Image) {
+		this.user2Image = user2Image;
+	}
 	@Override
 	public String toString() {
 		return "ChatRoom [roomId=" + roomId + ", user1No=" + user1No + ", user2No=" + user2No + ", user1Left="
 				+ user1Left + ", user2Left=" + user2Left + ", createDate=" + createDate + ", user1OutTime="
 				+ user1OutTime + ", user2OutTime=" + user2OutTime + ", user1ReadYN=" + user1ReadYN + ", user2ReadYN="
 				+ user2ReadYN + ", user1Name=" + user1Name + ", user1NickName=" + user1NickName + ", user2Name="
-				+ user2Name + ", user2NickName=" + user2NickName + "]";
+				+ user2Name + ", user2NickName=" + user2NickName + ", user1Image=" + user1Image + ", user2Image="
+				+ user2Image + "]";
 	}
 	
-    
-    
+	
     
 }

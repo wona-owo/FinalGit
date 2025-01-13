@@ -26,9 +26,11 @@
 	            cr.user1_no AS user1No,
 	            u1.user_name AS user1Name,
 	            u1.user_nickName AS user1NickName,
+	            u1.user_image AS user1Image,
 	            cr.user2_no AS user2No,
 	            u2.user_name AS user2Name,
 	            u2.user_nickName AS user2NickName,
+	            u2.user_image AS user2Image,
 	            cr.user1_left AS user1Left,
 	            cr.user2_left AS user2Left,
 	            cr.create_date AS createDate,
@@ -133,9 +135,10 @@
 	    SELECT cm.message_id AS messageId,
 	           cm.room_id AS roomId,
 	           cm.sender_no AS senderNo,
-	           u.user_name AS senderName, 
+	           u.user_nickname AS senderName, 
 	           cm.message_content AS messageContent,
-	           cm.send_date AS sendDate
+	           cm.send_date AS sendDate,
+	           u.user_image AS senderImage
 	    FROM chat_message cm
 	    JOIN tbl_user u ON cm.sender_no = u.user_no
 	    WHERE cm.room_id = #{roomId}
@@ -193,6 +196,7 @@
                     cm.room_id AS roomId,
                     cm.sender_no AS senderNo,
                     u.user_name AS senderName, 
+                    u.user_image AS senderImage, 
                     cm.message_content AS messageContent,
                     cm.send_date AS sendDate
                 FROM chat_message cm
@@ -201,5 +205,12 @@
                 ORDER BY cm.send_date DESC
             )
             WHERE ROWNUM = 1
+    </select>
+    
+    <!-- 사용자 번호로 사용자 이미지 조회 -->
+    <select id="getUserImageByUserNo" parameterType="int" resultType="string">
+        SELECT user_image
+        FROM tbl_user
+        WHERE user_no = #{userNo}
     </select>
 </mapper>
