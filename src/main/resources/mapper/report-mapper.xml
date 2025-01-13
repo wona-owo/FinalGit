@@ -1,26 +1,192 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="report">
-
+	
+	<!-- 신고 존재 여부 확인 -->
+	<select id="searchReport" parameterType="report" resultType="report">
+		SELECT report_no as reportNo,
+			   user_no as userNo,
+			   target_no AS targetNo,
+			   target_type AS targetType,
+			   report_reason AS reportReason,
+			   report_date AS reportDate,
+			   report_yn AS reportYN,
+			   report_cnt AS reportCnt
+		  FROM report 
+		 WHERE target_no = #{targetNo}
+		   AND target_type = #{targetType}
+	</select>
+	
+	<!-- 신고 대상유저 -->
+	<select id="searchTargetUser" parameterType="report" resultType="int">
+		SELECT user_no AS userNo
+		<choose>
+			<when test='"P".equals(targetType)'>
+		  FROM post
+		 WHERE post_no = #{targetNo}
+			</when>
+			<when test='"C".equals(targetType)'>
+		  FROM tbl_comment
+		 WHERE comment_no = #{targetNo}
+			</when>
+		</choose>
+	</select>
+	
 	<!-- 신고 생성 -->
 	<insert id="insertReport" parameterType="report">
 		INSERT INTO report (report_no, user_no, target_no, target_type, report_reason)
 		VALUES (seq_report.nextval, #{userNo}, #{targetNo}, #{targetType}, #{reportReason})
 	</insert>
 	
-	<!-- 신고조회 -->
-	<select id="reportList" resultType="report">
-		select report_no as reportNo, 
-				 r.user_no as userNo, 
-				 target_no as targetNo, 
-				 target_type as targetType, 
-				 report_reason as reportReason,
-				 u.user_id as userId,
-				 user_name as userName,
-				 post_content as postContent
-		 from report r
-		 join tbl_user u on (u.user_no = r.user_no)
-		 join post p on (r.target_no = p.post_no)
+	<!-- 신고 Cnt 업데이트 -->
+	<update id="updCntReport" parameterType="report">
+		UPDATE report
+		   SET report_cnt = #{reportCnt} + 1
+		 WHERE target_no = #{targetNo}
+		   AND target_type = #{targetType}
+	</update>
+	
+	<!-- 신고 리스트 -->
+	<select id="selectReportList" parameterType="hashmap" resultType="report">
+		SELECT *
+    	  FROM (
+			   SELECT ROWNUM AS rnum, t.*
+        		 FROM (
+					  SELECT r.report_no AS reportNo,
+							 r.user_no AS userNo,
+							 r.target_no AS targetNo,
+							 r.target_type AS targetType,
+							 r.report_reason AS reportReason,
+							 TO_CHAR(r.report_date, 'YYYY-MM-DD') AS reportDate, 
+							 r.report_yn AS reportYn,
+							 r.report_cnt AS reportCnt,
+							 u.user_id AS userId,
+							 p.post_content as postContent
+						FROM report r
+						JOIN tbl_user u ON r.user_no = u.user_no
+						JOIN post p ON r.target_no = p.post_no
+					ORDER BY r.report_cnt DESC
+					  ) t
+			   )
+ 		 WHERE rnum BETWEEN #{start} AND #{end}
+ 	</select>
+ 	
+ 	<!-- 정지 리스트 -->
+	<select id="selectBanList" parameterType="hashmap" resultType="banList">
+		SELECT *
+    	  FROM (
+			   SELECT ROWNUM AS rnum, t.*
+        		 FROM (
+					  SELECT b.ban_no AS banNo,
+							 b.user_no AS userNo,
+							 b.ban_reason AS banReason,
+							 TO_CHAR(b.ban_start_date, 'YYYY-MM-DD') AS banStartDate,
+							 TO_CHAR(b.ban_end_date, 'YYYY-MM-DD') AS banEndDate,
+							 u.user_id AS userId
+						FROM banlist b
+						JOIN tbl_user u ON b.user_no = u.user_no
+					ORDER BY b.ban_no DESC
+					  ) t
+			   )
+ 		 WHERE rnum BETWEEN #{start} AND #{end}
+ 	</select>
+ 	
+ 	<!-- 유저 리스트 -->
+	<select id="selectUserList" parameterType="hashmap" resultType="memberInfo">
+	    SELECT *
+		  FROM (
+			   SELECT ROWNUM AS rnum, t.*
+				 FROM (
+					  SELECT u.user_no AS userNo,
+							 u.user_id AS userId,
+							 u.user_type AS userType,
+							 TO_CHAR(u.enroll_date, 'YYYY-MM-DD') AS enrollDate,
+							 u.ban_yn AS banYN,
+							 u.acct_level AS acctLevel,
+							 NVL(b.ban_cnt, 0) AS banCnt
+						FROM tbl_user u
+				   LEFT JOIN (
+				 			 SELECT user_no, COUNT(*) AS ban_cnt
+				 			 FROM banlist
+				 			 GROUP BY user_no
+				 			 ) b 
+						  ON u.user_no = b.user_no
+					ORDER BY u.acct_level DESC, u.user_no ASC
+					  ) t
+			   )
+		 WHERE rnum BETWEEN #{start} AND #{end}
+	</select>
+
+ 	<!-- 게시글 수 -->
+ 	<select id="selectAdminCount" parameterType="string" resultType="_int">
+		SELECT count(*)
+		  FROM ${_parameter}
 	</select>
 	
+	<!-- 신고 내역 가져오기 -->
+	<select id="selectReport" parameterType="report" resultType="report">
+		SELECT report_no AS reportNo,
+			   user_no AS userNo,
+			   target_no AS targetNo,
+			   target_type AS targetType,
+			   report_reason AS reportReason,
+			   report_date AS reportDate,
+			   report_yn AS reportYn,
+			   report_cnt AS reportCnt
+		  FROM report
+		 WHERE report_no = #{reportNo}
+	</select>
+	
+	<!-- 신고처리 업데이트 -->
+	<update id="updYnReport" parameterType="report">
+		UPDATE report
+		   SET report_yn = 'Y'
+		 WHERE report_no = #{reportNo}
+	</update>
+	
+	<!-- 밴리스트 추가 -->
+	<insert id="insertBanList" parameterType="banList">
+		INSERT INTO banlist (ban_no, user_no, ban_reason, ban_start_date, ban_end_date)
+		VALUES (seq_banlist.nextval, #{userNo}, #{banReason}, sysdate
+		<choose>
+			<!-- 영구정지 시, 밴 종료기간 없음 -->
+			<when test='"forever".equals(banEndDate)'>
+				, '')
+			</when>
+			<otherwise>
+				, sysdate + ${banEndDate})
+			</otherwise>
+		</choose>
+	</insert>
+	
+	<!-- 만료된 밴 풀기 -->
+	<update id="unfreezeBan">
+		UPDATE tbl_user u
+		   SET u.ban_yn = 'N'
+		 WHERE u.user_no IN (
+		 					SELECT b.user_no
+							  FROM banlist b
+							 WHERE sysdate > b.ban_end_date
+							)
+	</update>
+	
+	<!-- 유저 등급 조회 -->
+	<select id="selectAcctLevel" parameterType="member" resultType="int">
+		SELECT acct_level
+	      FROM tbl_user
+	     WHERE user_no = #{userNo}
+	</select>
+	
+	<!-- 유저 등급 변경 -->
+	<update id="updAcctLevel" parameterType="member">
+	    UPDATE tbl_user
+		   SET acct_level = #{acctLevel}
+		 WHERE user_no = #{userNo}
+	</update>
+	
+	<!-- 허위신고 시, 삭제 -->
+	<delete id="deleteReport" parameterType="report">
+		DELETE FROM report
+			  WHERE report_no = #{reportNo}
+	</delete>
 </mapper>

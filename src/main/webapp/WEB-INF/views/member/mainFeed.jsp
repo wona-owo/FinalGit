@@ -747,7 +747,7 @@
         // 게시물에서 '''버튼 클릭 시
         $('.report-Btn').on('click', function() {
             const loginUserNo = "${loginMember.userNo}";
-            const targetNo = $(this).data('target-no');
+            const targetNo = $(this).data('post-no');
             const targetType = $(this).data('target-type');
             
             const reportModalHtml = createReportModal(targetType);
@@ -769,7 +769,7 @@
                     return;
                 }
                  
-                 const formData = new FormData();
+                const formData = new FormData();
                 formData.append("userNo", loginUserNo);
                 formData.append("targetNo", targetNo);
                 formData.append("targetType", targetType);

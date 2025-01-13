@@ -1,14 +1,16 @@
 package kr.or.iei.report.model.vo;
 
 public class Report {
+	private int reportNo;
 	private int userNo;
 	private int targetNo;
 	private String targetType;
 	private String reportReason;
 	private String reportDate;
-	
-	//tbl_user 조인추가
-	private String userName;
+	private String reportYn;
+	private int reportCnt;
+
+	// 게시물에 대한 정보
 	private String userId;
 	private String postContent;
 
@@ -17,17 +19,27 @@ public class Report {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Report(int userNo, int targetNo, String targetType, String reportReason, String reportDate, String userName,
-			String userId, String postContent) {
+	public Report(int reportNo, int userNo, int targetNo, String targetType, String reportReason, String reportDate,
+			String reportYn, int reportCnt, String userId, String postContent) {
 		super();
+		this.reportNo = reportNo;
 		this.userNo = userNo;
 		this.targetNo = targetNo;
 		this.targetType = targetType;
 		this.reportReason = reportReason;
 		this.reportDate = reportDate;
-		this.userName = userName;
+		this.reportYn = reportYn;
+		this.reportCnt = reportCnt;
 		this.userId = userId;
 		this.postContent = postContent;
+	}
+
+	public int getReportNo() {
+		return reportNo;
+	}
+
+	public void setReportNo(int reportNo) {
+		this.reportNo = reportNo;
 	}
 
 	public int getUserNo() {
@@ -70,12 +82,20 @@ public class Report {
 		this.reportDate = reportDate;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getReportYn() {
+		return reportYn;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setReportYn(String reportYn) {
+		this.reportYn = reportYn;
+	}
+
+	public int getReportCnt() {
+		return reportCnt;
+	}
+
+	public void setReportCnt(int reportCnt) {
+		this.reportCnt = reportCnt;
 	}
 
 	public String getUserId() {
@@ -93,7 +113,5 @@ public class Report {
 	public void setPostContent(String postContent) {
 		this.postContent = postContent;
 	}
-
-	
 
 }
