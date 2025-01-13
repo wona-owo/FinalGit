@@ -909,18 +909,28 @@
 			        isProcessing = false;
 			        return;
 			    }
-			
+				
+			   
+
+			    
 			    // 좋아요 상태 변경 요청
 			    $.ajax({
 			        url: url,
 			        type: "GET",
 			        data: { 
 			            targetNo: postNo, 
-			            userNo: loginUserNo, // 로그인한 사용자 전달
+			            userNo: parseInt(loginUserNo, 10), // 로그인한 사용자 전달
 			            targetType: "P" 
 			        },
 			        success: function (response) {
 			            if (response === "success") {
+			            	
+			            	const loginUserNo = "${loginMember.userNo}"; // 현재 로그인한 사용자
+			 			    console.log("loginUserNo:", loginUserNo);
+			 			    console.log("postNo:", postNo);
+			 			    console.log("AJAX 데이터:", { targetNo: postNo, userNo: loginUserNo, targetType: "P" });
+
+			 			    
 			                const newLiked = !isLiked;
 			                $btn.data("liked", newLiked);
 			                $btn.attr("data-liked", newLiked.toString());
