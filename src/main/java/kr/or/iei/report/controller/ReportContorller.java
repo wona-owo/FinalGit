@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 
 import kr.or.iei.member.model.vo.Member;
+import kr.or.iei.post.model.service.PostService;
 import kr.or.iei.report.model.service.ReportService;
 import kr.or.iei.report.model.vo.AdminPageData;
 import kr.or.iei.report.model.vo.BanList;
@@ -24,6 +25,10 @@ public class ReportContorller {
 	@Autowired
 	@Qualifier("reportService")
 	private ReportService service;
+	
+	@Autowired
+	@Qualifier("postService")
+	private PostService postService;
 	
 	// Admin page 이동
 	@GetMapping("adminPage")
@@ -98,10 +103,17 @@ public class ReportContorller {
 				}
 			} else {
 				// 신고 처리 기간 정할 시
-				result = service .insertBanList(banList);
+				result = service.insertBanList(banList);
 				
 				if(result > 0) {
-					return "success";
+					// 밴 처리 시, 게시물 삭제
+					result = postService.deletePost(selectReport.getTargetNo());
+					
+					if(result> 0) {
+						return "success";
+					} else {
+						return "error";
+					}
 				} else {
 					return "error";
 				}
