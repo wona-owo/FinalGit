@@ -103,23 +103,30 @@
 		        const postGrid = $(this).closest(".post-grid"); // 클릭된 썸네일의 부모 요소
 		        let postNo = postGrid.data("id"); // 게시글 ID
 		        const postContent = postGrid.find(".hidden-post-content").text(); // 숨겨진 콘텐츠 가져오기
-	
+		        const userImage = document.querySelector('.profileImage').getAttribute('src');
+		        const userNickname = $('#myNick').text();
+		        
 		        // 초기 모달 설정
 		        $(".modal").css("display", "block");
 		        $(".modal .modal-image").html(`
-        		   <button class="story-nav-btn story-prev-btn previous">
-                  	 <span class="material-icons nav-icons">navigate_before</span>
-                   </button>
+		            <button class="story-nav-btn story-prev-btn previous">
+		                <span class="material-icons nav-icons">navigate_before</span>
+		            </button>
 		            <img id="current-image" src="" alt="thumbnail">
 		            <button class="story-nav-btn story-next-btn next">
-                    	<span class="material-icons nav-icons">navigate_next</span>
-                   </button>
+		                <span class="material-icons nav-icons">navigate_next</span>
+		            </button>
 		        `);
+		
+		        // 사용자 이미지 및 닉네임 설정
+		        $(".modal .profileImage").attr("src", userImage);
+		        $(".modal .modal-user p").text(userNickname);
+		
+		        // 게시글 내용 설정
 		        $(".modal .post-content-text").text(postContent);
-	
+		
 		        // 이미지 슬라이드 호출
 		        imgSlide(postNo);
-		        
 		    });
 			
 			
