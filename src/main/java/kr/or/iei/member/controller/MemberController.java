@@ -953,5 +953,23 @@ public class MemberController {
 
 		return "member/userProfile";
 	}
+
+	
+	// 작성자 정보 반환 API
+	@GetMapping("getUserInfo.kh")
+	@ResponseBody
+	public Member getUserInfo(@RequestParam("userNo") int userNo) {
+	    // userNo로 사용자를 검색
+	    Member member = memberService.searchUserData(userNo);
+	    
+	    // 사용자 정보가 없을 경우 예외 처리
+	    if (member == null) {
+	        throw new IllegalArgumentException("해당 유저 정보를 찾을 수 없습니다.");
+	    }
+	    
+	    return member;
+	}
+
+	
 }
 

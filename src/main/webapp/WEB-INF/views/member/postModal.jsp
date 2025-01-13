@@ -127,7 +127,6 @@
 		    $(document).on("click", ".all-comment", function (event) {
 		        event.preventDefault(); // 기본 동작 방지
 
-<<<<<<< HEAD
 		        // 버튼에서 데이터 가져오기
 		        const postNo = $(this).data("target-no");
 		        const userNo = $(this).data("user-no"); // 작성자의 userNo
@@ -169,48 +168,65 @@
 		        handleCommentLike();
 		        loadPostLikeStatus(postNo);
 		    });
-=======
-						
-						    // 데이터 확인 로그
-						    //console.log("게시글 번호:", postNo);
-						    //console.log("게시글 내용:", mainPostCon);
-						
-						    // 모달 작동
-						    $(".modal").css("display", "block");
-						    $(".modal .modal-image").html(`
-						        <button class="story-nav-btn story-prev-btn previous">
-						            <span class="material-icons nav-icons">navigate_before</span>
-						        </button>
-						        <img id="current-image" src="" alt="thumbnail">
-						        <button class="story-nav-btn story-next-btn next">
-						            <span class="material-icons nav-icons">navigate_next</span>
-						        </button>
-						    `);
-						    $(".modal .post-content-text").text(mainPostCon);
-						
-						    // 이미지 슬라이드 호출
-						    imgSlide(postNo);
-						    callHashtag(postNo); // 해시태그 불러오기
-					        callComment(postNo); //댓글 불러오기
-					        
-					        // 다른 함수에도 postNo 전달
-					        handlePostLike(postNo);
-					        handleCommentLike(); 
-					        loadPostLikeStatus(postNo);
-						});
-		  
-		  
-		  		//관리자 신고 게시물 확인 모달창
-		  		$(document).on("click", ".report-link", function (event) {
-						    event.preventDefault(); // 기본 동작 방지
-						
-						    // 버튼에서 데이터 가져오기
-						    const postNo = $(this).data("post-no");
-						    const mainPostCon = $(this).data("content");
-						    $(".modal").data("postNo", postNo); // postNo를 .modal 요소에 저장
->>>>>>> 813900ed480b41d37c63219c231ce1a22aca2b2e
+		 
+		 
+		 // 관리자 신고 게시물 확인 모달창
+		    $(document).on("click", ".report-link", function (event) {
+				    event.preventDefault(); // 기본 동작 방지
+				
+				    const postNo = $(this).data("post-no");
+				    const mainPostCon = $(this).data("content");
+				    const userNo = $(this).data("userno"); // 작성자의 userNo
+				
+				    $(".modal").data("postNo", postNo);
+				    $(".modal").data("userNo", userNo);
+				
+				    console.log("게시글 번호:", postNo);
+				    console.log("작성자 번호:", userNo);
+				
+				    // 모달 초기화
+				    $(".modal").css("display", "block");
+				    $(".modal .modal-image").html(`
+				        <button class="story-nav-btn story-prev-btn previous">
+				            <span class="material-icons nav-icons">navigate_before</span>
+				        </button>
+				        <img id="current-image" src="" alt="thumbnail">
+				        <button class="story-nav-btn story-next-btn next">
+				            <span class="material-icons nav-icons">navigate_next</span>
+				        </button>
+				    `);
+				    $(".modal .post-content-text").text(mainPostCon);
+				
+				    // 작성자 정보 동적 로드
+				    $.ajax({
+					    url: "/member/getUserInfo.kh",
+					    method: "GET",
+					    data: { userNo: userNo },
+					    success: function (response) {
+					        console.log("작성자 정보:", response);
+					        $(".modal .profileImage").attr("src", response.userImage || "/resources/profile_file/default_profile.png");
+					        $(".modal .modal-user p").text(response.userNickname || "익명 사용자");
+					    },
+					    error: function (xhr, status, error) {
+					        console.error("작성자 정보를 불러오는 중 오류 발생:", error, xhr.responseText);
+					    }
+					});
 
-		  
+				
+				    // 이미지 슬라이드 호출
+				    imgSlide(postNo);
+				
+				    // 해시태그 및 댓글 불러오기
+				    callHashtag(postNo);
+				    callComment(postNo);
+				
+				    // 좋아요 상태 처리
+				    handlePostLike(postNo);
+				    handleCommentLike();
+				    loadPostLikeStatus(postNo);
+				});
+
+
 		  		// 모달 닫기
 		  		$(".modal-close").on("click", function () {
 		  		    $(".modal").css("display", "none");

@@ -299,6 +299,7 @@ table tbody tr:hover {
 		    	if(report.targetType === 'P'){
 		    		html += '<td><a href="#" class="report-link" ' +
 		    				'data-content="' + report.postContent + '" ' +
+		    				'data-userno="' + report.userNo +'" ' +
 		    				'data-post-no="' + report.targetNo + '">보기</a></td>';
 		    	} else if(report.targetType === 'C'){
 		    		html += '<td>댓글</td>';
