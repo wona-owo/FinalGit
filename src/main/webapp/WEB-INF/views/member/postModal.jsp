@@ -33,12 +33,10 @@
 					<div class="post-section">
 						<div class="top">
 							<div class="modal-user">
-								<div class="profile-frame" id="modal-profile">
-									<img class="profileImage"
-				                            src="${not empty loginMember.userImage ? loginMember.userImage : '/resources/profile_file/default_profile.png'}"
-				                            alt="프로필 이미지" />
-								</div>
-								<p>${loginMember.userNickname}</p>
+							    <div class="profile-frame" id="modal-profile">
+							        <img class="profileImage" src="/resources/profile_file/default_profile.png" alt="프로필 이미지" />
+							    </div>
+							    <p>익명 사용자</p>
 							</div>
 							<div class="modal-buttons">
 								<i class="fa-solid fa-pen" id="post-update"></i> <i
@@ -125,82 +123,58 @@
 		    });
 			
 			
-		  //메인 페이지 모달(댓글 더보기, 버튼 클릭 시 오픈)
-	    	
-		   	 $(document).on("click", ".all-comment", function (event) {
-						    event.preventDefault(); // 기본 동작 방지
-						
-						    // 버튼에서 데이터 가져오기
-						    const postNo = $(this).data("target-no");
-						    const mainPostCon = $(this).data("content");
-						    $(".modal").data("postNo", postNo); // postNo를 .modal 요소에 저장
+		 // 메인 페이지 모달(댓글 더보기, 버튼 클릭 시 오픈)
+		    $(document).on("click", ".all-comment", function (event) {
+		        event.preventDefault(); // 기본 동작 방지
 
-						
-						    // 데이터 확인 로그
-						    console.log("게시글 번호:", postNo);
-						    console.log("게시글 내용:", mainPostCon);
-						
-						    // 모달 작동
-						    $(".modal").css("display", "block");
-						    $(".modal .modal-image").html(`
-						        <button class="story-nav-btn story-prev-btn previous">
-						            <span class="material-icons nav-icons">navigate_before</span>
-						        </button>
-						        <img id="current-image" src="" alt="thumbnail">
-						        <button class="story-nav-btn story-next-btn next">
-						            <span class="material-icons nav-icons">navigate_next</span>
-						        </button>
-						    `);
-						    $(".modal .post-content-text").text(mainPostCon);
-						
-						    // 이미지 슬라이드 호출
-						    imgSlide(postNo);
-						    callHashtag(postNo); // 해시태그 불러오기
-					        callComment(postNo); //댓글 불러오기
-					        
-					        // 다른 함수에도 postNo 전달
-					        handlePostLike(postNo);
-					        handleCommentLike(); 
-					        loadPostLikeStatus(postNo);
-						});
-		  
-		  
-		  		//관리자 신고 게시물 확인 모달창
-		  		$(document).on("click", ".report-link", function (event) {
-						    event.preventDefault(); // 기본 동작 방지
-						
-						    // 버튼에서 데이터 가져오기
-						    const postNo = $(this).data("post-no");
-						    const mainPostCon = $(this).data("content");
-						    $(".modal").data("postNo", postNo); // postNo를 .modal 요소에 저장
+		        // 버튼에서 데이터 가져오기
+		        const postNo = $(this).data("target-no");
+		        const userNo = $(this).data("user-no"); // 작성자의 userNo
+		        const mainPostCon = $(this).data("content");
+		        const userImage = $(this).data("user-image") || "/resources/profile_file/default_profile.png"; // 기본 프로필 이미지
+		        const userNickname = $(this).data("user-nickname") || "익명 사용자"; // 기본 닉네임
 
-		
-						
-						    // 모달 작동
-						    $(".modal").css("display", "block");
-						    $(".modal .modal-image").html(`
-						        <button class="story-nav-btn story-prev-btn previous">
-						            <span class="material-icons nav-icons">navigate_before</span>
-						        </button>
-						        <img id="current-image" src="" alt="thumbnail">
-						        <button class="story-nav-btn story-next-btn next">
-						            <span class="material-icons nav-icons">navigate_next</span>
-						        </button>
-						    `);
-						    $(".modal .post-content-text").text(mainPostCon);
-						
-						    // 이미지 슬라이드 호출
-						    imgSlide(postNo);
-						    callHashtag(postNo); // 해시태그 불러오기
-					        callComment(postNo); //댓글 불러오기
-					        
-					        // 다른 함수에도 postNo 전달
-					        handlePostLike(postNo);
-					        handleCommentLike(); 
-					        loadPostLikeStatus(postNo);
-						});
+		        // 모달에 데이터 저장
+		        $(".modal").data("postNo", postNo);
+		        $(".modal").data("userNo", userNo);
+
+		        // 모달 초기화 및 열기
+		        $(".modal").css("display", "block");
+		        $(".modal .modal-image").html(`
+		            <button class="story-nav-btn story-prev-btn previous">
+		                <span class="material-icons nav-icons">navigate_before</span>
+		            </button>
+		            <img id="current-image" src="" alt="thumbnail">
+		            <button class="story-nav-btn story-next-btn next">
+		                <span class="material-icons nav-icons">navigate_next</span>
+		            </button>
+		        `);
+		        $(".modal .post-content-text").text(mainPostCon);
+
+
+		        // 작성자 정보 업데이트
+		        $(".modal .profileImage").attr("src", userImage);
+		        $(".modal .modal-user p").text(userNickname);
+
+		        // 이미지 슬라이드 호출
+		        imgSlide(postNo);
+
+		        // 해시태그 및 댓글 불러오기
+		        callHashtag(postNo);
+		        callComment(postNo);
+
+		        // 좋아요 상태 처리
+		        handlePostLike(postNo);
+		        handleCommentLike();
+		        loadPostLikeStatus(postNo);
+		    });
+
 		  
-			
+		  		// 모달 닫기
+		  		$(".modal-close").on("click", function () {
+		  		    $(".modal").css("display", "none");
+		  		});
+
 			
 		    // 이미지 슬라이드 함수
 		    function imgSlide(postNo) {
@@ -742,8 +716,6 @@
 			        });
 			    });
 			}
-
-
 	 
 		    // 포스트 조회 닫기
 		    $(".modal-close").on("click", function () {

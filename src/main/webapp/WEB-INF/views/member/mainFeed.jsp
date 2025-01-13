@@ -469,7 +469,11 @@
                 		post.firstCommentUserNickname + ' ' +
                 		post.firstCommentContent +
                 	'</span>' + 
-                    '<a class="all-comment" href="#"  data-content="' + post.postContent + '" data-target-no="'+ post.postNo+'">' +
+                    '<a class="all-comment" href="#"   data-content="' + post.postContent + '" ' +
+                    '   data-user-no="' + post.userNo + '" ' + // 작성자 번호 추가
+                    '   data-user-image="' + post.userImage + '" ' + // 작성자 이미지 추가
+                    '   data-user-nickname="' + post.userNickname + '" ' + // 작성자 닉네임 추가
+                    '   data-target-no="' + post.postNo + '">'+
                     '    <span>댓글 ' + post.commentCount + '개 모두 보기</span>' +
                     '</a>';
             } else if(post.commentCount == 1){
@@ -541,7 +545,11 @@
                                 '</a>' +
                             '</div>' +
                             '<div class="main-feed-comment">' +
-                                '<a class="all-comment" href="#" data-content="' + post.postContent + '" data-target-no="'+ post.postNo+'">' +
+                                '<a class="all-comment" href="#"  data-content="' + post.postContent + '" ' +
+                                '   data-user-no="' + post.userNo + '" ' + // 작성자 번호 추가
+                                '   data-user-image="' + post.userImage + '" ' + // 작성자 이미지 추가
+                                '   data-user-nickname="' + post.userNickname + '" ' + // 작성자 닉네임 추가
+                                '   data-target-no="' + post.postNo + '">' +
                                     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"' +
                                          'class="bi bi-chat" viewBox="0 0 16 16">' +
                                         '<path d="M2.678 11.894a1 1 0 0 1' +
