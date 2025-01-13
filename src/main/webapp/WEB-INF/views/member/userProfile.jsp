@@ -464,26 +464,11 @@
             }
         },200));
 		
-	    // 메시지 버튼 클릭 이벤트
-	    $(".message-btn").on("click", function(event) {
-		    event.preventDefault(); // 기본 링크 동작 방지
-		    var targetUserId = $(this).data("userid");
-		    $.ajax({
-		        url: '/chat/startChat.kh',
-		        type: 'GET',
-		        data: { userId: targetUserId },
-		        success: function(response) {
-		            if (response.success) {
-		            	 window.location.href = '/chat/chatCombined.kh?roomId=' + response.roomId;
-		            } else {
-		            	console.log('채팅방 생성에 실패했습니다: ' + (response.message || ''));
-		            }
-		        },
-		        error: function() {
-		        	console.log('서버 오류가 발생했습니다.');
-		        }
-		    });
-		});
+        $(".message-btn").on("click", function(event) {
+            event.preventDefault(); // 기본 링크 동작 방지
+            var targetUserId = $(this).data("userid");
+            window.location.href = '/chat/chatCombined.kh?targetUserId=' + targetUserId;
+        });
 		
 	    // 팔로우/언팔로우 버튼 클릭 이벤트
 	    $(".follow-event").on("click", function() {

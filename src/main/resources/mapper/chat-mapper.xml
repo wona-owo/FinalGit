@@ -51,7 +51,8 @@
 	           cm.sender_no AS senderNo,
 	           u.user_name AS senderName, 
 	           cm.message_content AS messageContent,
-	           cm.send_date AS sendDate
+	           cm.send_date AS sendDate,
+	           u.user_image AS senderImage
 	    FROM chat_message cm
 	    JOIN tbl_user u ON cm.sender_no = u.user_no
 	    WHERE cm.room_id = #{roomId}

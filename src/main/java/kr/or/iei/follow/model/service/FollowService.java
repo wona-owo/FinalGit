@@ -2,7 +2,9 @@ package kr.or.iei.follow.model.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,17 +63,25 @@ public class FollowService {
     }
 
     public ArrayList<Member> recommendFriends(int userNo) {
-        ArrayList<String> myPetTypes = (ArrayList<String>) followDao.getMyPetTypes(userNo);
+ArrayList<String> myPetTypes = (ArrayList<String>) followDao.getMyPetTypes(userNo);
         
         if (myPetTypes == null || myPetTypes.isEmpty()) {
             return new ArrayList<>(); // 빈 리스트 반환
         }
         
+        // 중복 제거
+        Set<String> uniquePetTypes = new HashSet<>(myPetTypes);
+        
         HashMap<String, Object> params = new HashMap<>();
-        params.put("petTypeList", myPetTypes);
+        params.put("petTypeList", new ArrayList<>(uniquePetTypes));
         params.put("myUserNo", userNo);
         
         ArrayList<Member> recommendList = (ArrayList<Member>) followDao.getRecommendUsers(params);
+        
+        // 최대 5명으로 제한 (추가 안전장치)
+        if (recommendList.size() > 5) {
+            recommendList = new ArrayList<>(recommendList.subList(0, 5));
+        }
         
         for (Member member : recommendList) {
             boolean following = checkIfFollowing(userNo, member.getUserNo());

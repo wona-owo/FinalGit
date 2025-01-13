@@ -410,6 +410,30 @@
                     leaveChatRoom(selectedRoomId);
                 }
             });
+            
+         	// URL 파라미터에서 targetUserId 가져오기
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUserId = urlParams.get('targetUserId');
+
+            if(targetUserId) {
+                // targetUserId가 존재하면 채팅방 생성 또는 기존 채팅방 가져오기
+                $.ajax({
+                    url: '/chat/startChat.kh',
+                    type: 'GET',
+                    data: { userId: targetUserId },
+                    success: function(response) {
+                        if(response.success && response.roomId) {
+                            // 채팅방 ID를 기반으로 채팅방 선택
+                            selectChatRoom(response.roomId, response.receiverNo);
+                        } else {
+                            console.log('채팅방 생성 또는 가져오기 실패: ' + (response.message || ''));
+                        }
+                    },
+                    error: function() {
+                        console.log('서버 오류가 발생했습니다.');
+                    }
+                });
+            }
         });
 
         /* 특정 채팅방 선택 시 */
