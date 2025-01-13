@@ -13,14 +13,48 @@
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+<style>
+/* 전체 컨테이너 스타일 */
+.hashTags-container {
+    margin: 0 auto;      /* 가운데 정렬 */
+    padding: 20px 0;
+}
+
+/* 상단 해시태그명 영역 */
+.hashName {
+	width: 920px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.hashName #hashText {
+    display: inline-block; /* block으로 쓰셔도 되고, inline-block으로 바꿔도 됨 */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+</style>
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/member/sideMenu.jsp" %>
 	<main>
-		<h2>${hashTag.hashName }</h2>	
-		<c:forEach var="post" items="${hashPosts}">
-			 <p>Post Number: ${post.postNo}</p>
-		</c:forEach>
+		<div class="hashTags-container">
+			<div class="hashName">
+				<span id="hashText">해시태그 : #${hashName}</span>
+			</div>
+			<div class="post-container">
+		   		<c:forEach var="post" items="${post}">
+		   			<div class="post-grid" data-id="${post.postNo}">
+		   				<img class="feed-thumbnail" src="/resources/post_file/${post.postFileName}" alt="thumbnail">
+		   				<p class="hidden-post-content" style="display: none;">${post.postContent}</p>			
+		   			</div>
+		   		</c:forEach>
+		    </div>
+		</div>
 	</main>
+	<%@ include file="/WEB-INF/views/member/postModal.jsp" %>
+	
+	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
+	
 </body>
 </html>

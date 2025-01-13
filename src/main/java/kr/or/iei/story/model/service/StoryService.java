@@ -58,7 +58,7 @@ public class StoryService {
 	
 	// 스토리 자동삭제 (1시간마다)
 	@Scheduled(cron = "0 0 * * * ?")
-	public void deleteExpiredStory1() {
+	public void deleteExpiredStory() {
 		dao.deleteExpiredStory();
 	}
 	

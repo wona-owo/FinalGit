@@ -133,26 +133,46 @@
         ]]>
 	</select>
 	<!-- 해시태그 검색 결과 -->
-	<select id="searchHashTagsKeyword" parameterType="string" resultType="hashTag">
-		SELECT hash_name AS hashName,
-       		   COUNT(post_no) AS postCount
-		  FROM HASHTAG
-		WHERE UPPER(hash_name) LIKE '%' || UPPER(#{search}) || '%'
-		GROUP BY hash_name
-		ORDER BY COUNT(post_no)DESC
+	<select id="searchHashTagsKeyword" parameterType="map" resultType="hashTag">
+		<![CDATA[
+            SELECT *
+              FROM (
+                    SELECT ROWNUM rn, t.*
+                      FROM (
+                            SELECT hash_name  AS hashName,
+                                   COUNT(post_no) AS postCount
+                              FROM HASHTAG
+                             WHERE UPPER(hash_name) LIKE '%' || UPPER(#{search}) || '%'
+                             GROUP BY hash_name
+                             ORDER BY COUNT(post_no) DESC
+                           ) t
+                     WHERE ROWNUM <= #{end}
+                   )
+             WHERE rn > #{start}
+        ]]>
 	</select>
 	<!-- 유저 검색 결과 -->
-	<select id="searchUsersKeyword" parameterType="string" resultType="member">
-		SELECT user_no AS userNo,
-	           user_id AS userId,
-	           user_nickname AS userNickname,
-	           user_name AS userName,
-	           user_image AS userImage
-    	  FROM tbl_user
-    	WHERE UPPER(user_id) LIKE '%' || UPPER(#{search}) || '%'
-	       OR UPPER(user_name) LIKE '%' || UPPER(#{search}) || '%'
-	       OR UPPER(user_nickname) LIKE '%' || UPPER(#{search}) || '%'
-	    ORDER BY user_name ASC
+	<select id="searchUsersKeyword" parameterType="map" resultType="member">
+	<![CDATA[
+            SELECT *
+              FROM (
+                    SELECT ROWNUM rn, u.*
+                      FROM (
+                            SELECT user_no       AS userNo,
+                                   user_id       AS userId,
+                                   user_nickname AS userNickname,
+                                   user_name 	 AS userName,
+                                   user_image    AS userImage
+                              FROM TBL_USER
+                             WHERE UPPER(user_id)       LIKE '%' || UPPER(#{search}) || '%'
+                            	OR UPPER(user_name) LIKE '%' || UPPER(#{search}) || '%'
+                                OR UPPER(user_nickname) LIKE '%' || UPPER(#{search}) || '%'
+                             ORDER BY user_name DESC
+                           ) u
+                     WHERE ROWNUM <= #{end}
+                   )
+             WHERE rn > #{start}
+        ]]>
 	</select>
 	<!-- 검색 기록 최신화 -->
 	<update id="updateKeywordDate" parameterType="map">
@@ -207,10 +227,26 @@
 	</delete>
 	
 	<!-- 특정 해시태그 postNo값 가져옴  -->
-	<select id="keywordTag" parameterType="string" resultType="hashTag">
-	    SELECT post_no AS postNo
-	    FROM HASHTAG
-	    WHERE hash_name = #{hashName}
+	<select id="keywordTag" parameterType="map" resultType="hashTag">
+	   <![CDATA[
+   			select
+	               f.post_no       AS postNo,
+	               p.user_no       AS userNo,
+	               p.post_content  AS postContent,
+	               p.post_date     AS postDate,
+	               f.post_file_name AS postFileName,
+	               h.hash_name     AS hashName
+	          FROM post_file f
+	          JOIN post p
+	            ON f.post_no = p.post_no
+	          LEFT JOIN hashtag h
+	            ON p.post_no = h.post_no
+	         WHERE h.hash_name = #{hashName}
+	           AND SUBSTR(f.post_file_name, INSTR(f.post_file_name, '_', -1, 1) + 1, 1) = '1'
+	           AND REGEXP_LIKE(f.post_file_name, '\.(jpg|jpeg|gif|png|wmv)$', 'i')
+	         ORDER BY p.post_no DESC
+	    
+		]]>
 	</select>
 	<!-- 태그 이름 -->
 	<select id="selectTagName" parameterType="string" resultType="hashTag">		
@@ -231,7 +267,7 @@
                 u.user_image AS userImage
             FROM 
                 search s
-            JOIN
+            LEFT JOIN
                 tbl_user u on s.search_user_id = u.user_nickname
             WHERE 
                 s.user_no = #{userNo}

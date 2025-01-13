@@ -3,6 +3,7 @@ package kr.or.iei.member.model.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,14 +57,14 @@ public class MemberDao {
 		return sqlSession.selectList("member.tagSearch", searchStr);
 	}
 	
-	public List<HashTag> searchHashTagsKeyword(String search) { //키워드와 관련된 해시태그 목록 가져오는거
+	public List<HashTag> searchHashTagsKeyword(HashMap<String, Object> paramMap) { //키워드와 관련된 해시태그 목록 가져오는거
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.searchHashTagsKeyword", search);
+		return sqlSession.selectList("member.searchHashTagsKeyword", paramMap);
 	}
 	
-	public List<Member> searchUsersKeyword(String search) { //키워드와 관련된 유저 목록 가져오는거
+	public List<Member> searchUsersKeyword(HashMap<String, Object> paramMap) { //키워드와 관련된 유저 목록 가져오는거
 		// TODO Auto-generated method stub 
-		return sqlSession.selectList("member.searchUsersKeyword", search);
+		return sqlSession.selectList("member.searchUsersKeyword", paramMap);
 	}
 	public int updateKeywordDate(HashMap<String, Object> update) {
 		// TODO Auto-generated method stub
@@ -85,9 +86,9 @@ public class MemberDao {
 		return sqlSession.delete("member.deleteResultKeyword", delete);
 	}
 	
-	public List<HashTag> selectKeywordTag(String hashName) {
+	public List<HashTag> selectKeywordTag(Map<String, Object> param) {
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("member.keywordTag", hashName);
+		return sqlSession.selectList("member.keywordTag", param);
 	}
 	
 	public Member selectKeywordUser(String userName) {

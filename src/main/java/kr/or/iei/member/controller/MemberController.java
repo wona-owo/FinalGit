@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -205,9 +206,12 @@ public class MemberController {
 	        memberService.updateSearchHistory(userNo,searchType,hashName); // 해시태그 기록 업데이트 메소드 호출
 	       
 	        HashTag hashTag = memberService.selectTagName(hashName);
-			ArrayList<HashTag> hashPosts = memberService.selectKeywordTag(hashName); 
-			model.addAttribute("hashPosts", hashPosts);
-			model.addAttribute("hashTag", hashTag);
+			
+			int start = 0;
+	        int end = 15;
+	        ArrayList<HashTag> initPosts = (ArrayList<HashTag>) memberService.selectHashTagPosts(hashName, start, end);
+			model.addAttribute("post", initPosts);
+			model.addAttribute("hashName", hashName);
 	        // 해시태그 페이지로 이동
 	        return "member/hashTagPostList"; // 해시태그 페이지로 이동
 	        
@@ -439,25 +443,17 @@ public class MemberController {
 	@GetMapping(value = "filterResults.kh", produces = "text/html; charset=UTF-8")
 	@ResponseBody
 	public String filterResults(@RequestParam("filterType") String filterType,
-			@RequestParam("search") String search, Model model) {
+								@RequestParam("search") String search,
+								@RequestParam(value="page", defaultValue="1") int page) {
+		final int pageSize = 12;
 		StringBuilder html = new StringBuilder();
 
 		switch (filterType) {
-		case "post":
-			// 게시물 데이터 가져오기
-			//ArrayList<Post> posts = postService.searchPostsKeyword(search);
-			//for (Post post : posts) {
-				
-			//}
-			break;
-
 		case "hashtag":
 			// 해시태그 데이터 가져오기
-			ArrayList<HashTag> hashtags = memberService.searchHashTagsKeyword(search);
+			List<HashTag> hashtags = memberService.searchHashTagsKeyword(search, page, pageSize);
 			if((hashtags.isEmpty())) {
-				html.append("<div class='user-result'>")
-					.append("<span id='search-result'>검색 결과가 없습니다.</span>")
-	        		.append("</div>");
+				return "";
 			}else {
 				for (HashTag tag : hashtags) {
 					html.append("<li class='user-result'>")
@@ -488,11 +484,9 @@ public class MemberController {
 			break;
 		case "user":
 			// 유저 데이터 가져오기
-			ArrayList<Member> users = memberService.searchUsersKeyword(search);
+			List<Member> users = memberService.searchUsersKeyword(search, page, pageSize);
 			if(users.isEmpty()) {
-				html.append("<div class='user-result'>")
-					.append("<span id='search-result'>검색 결과가 없습니다.</span>")
-	        		.append("</div>");
+				return "";
 			}else {
 				for (Member user : users) {
 					html.append("<li class='user-result'>")
@@ -581,10 +575,17 @@ public class MemberController {
 		
 		if("H".equals(searchType)) { //타입이 해시태그(H)일때
 			HashTag hashTag = memberService.selectTagName(hashName);
-			ArrayList<HashTag> hashPosts = memberService.selectKeywordTag(hashName); 
-			model.addAttribute("hashPosts", hashPosts);
-			model.addAttribute("hashTag", hashTag);
-			return "member/hashTagPostList";
+			// 처음 15개만 가져오기 (start=0, end=15)
+	        int start = 0;
+	        int end = 15;
+	        ArrayList<HashTag> initPosts = (ArrayList<HashTag>) memberService.selectHashTagPosts(hashName, start, end);
+
+	        // JSP로 데이터 전달
+	        model.addAttribute("hashTag", hashTag);
+	        model.addAttribute("hashName", hashName);
+	        model.addAttribute("post", initPosts);
+
+	        return "member/hashTagPostList";
 			
 		}else if("U".equals(searchType)){ //타입이 유저(U)일때
 			Member member = memberService.selectKeywordUser(userName);

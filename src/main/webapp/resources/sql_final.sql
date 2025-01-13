@@ -84,7 +84,8 @@ create table report(
     target_type char(1) check(target_type in ('P', 'C')),
     report_reason varchar2(100),
     report_date date default sysdate not null,
-    report_yn  char(1) default 'N' not null
+    report_yn  char(1) default 'N' not null,
+    report_cnt number default 1 not null
 );
 
 -- 팔로우 테이블
@@ -557,13 +558,20 @@ CREATE TABLE notify (
 COMMIT;
 
 -- 밴목록 트리거
-create or replace trigger trg_banlist_insert    -- 트리거 이름
-after insert on banlist                         -- banlist에 insert 시
-for each row                                    -- insert 된 각 행마다
+create or replace trigger trg_banlist_insert
+after insert on banlist
+for each row
 begin
+    -- tbl_user 테이블의 ban_yn 값을 'Y'로 업데이트
     update tbl_user
     set ban_yn = 'Y'
-    where user_no = :new.user_no;               -- :new - insert 되거나 update 이후 값
+    where user_no = :new.user_no;
+
+    -- report 테이블에서 report_yn = 'Y'인 데이터 삭제
+    delete from report
+    where report_yn ='Y'
+    and user_no = :new.user_no
+    and rownum = 1;
 end;
 
 

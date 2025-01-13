@@ -36,6 +36,7 @@ import com.google.gson.GsonBuilder;
 import kr.or.iei.common.util.DateUtil;
 import kr.or.iei.follow.model.service.FollowService;
 import kr.or.iei.member.model.service.MemberService;
+import kr.or.iei.member.model.vo.HashTag;
 import kr.or.iei.member.model.vo.Member;
 import kr.or.iei.member.model.vo.Mypet;
 import kr.or.iei.notify.controller.NotifyController;
@@ -616,5 +617,6 @@ public class PostController {
         Gson gson = new Gson();
         return gson.toJson(morePosts);
     }
+    
 }	
 
