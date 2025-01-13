@@ -1,41 +1,43 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Main Feed</title>
 
-<link rel ="stylesheet"  href="/resources/default.css"  >
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/resources/default.css">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+	rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <style>
-
 .main-feed-container {
-  width: 55vw;
+	width: 55vw;
 }
 /* 전체 카드 감싸는 컨테이너 */
 .main-post-container {
-  width: 500px;                /* 카드 전체 폭 예시 */
-  margin: 32px auto 0;
-  border: 1px solid #ccc;      /* 테두리 */
-  border-radius: 6px;          /* 모서리 살짝 둥글게 */
-  box-sizing: border-box;
-  background-color: #fff;
-  overflow: hidden;            /* 내부 요소가 삐져나가지 않도록 */
-  font-family: sans-serif;     /* 폰트 예시 */
+	width: 500px; /* 카드 전체 폭 예시 */
+	margin: 32px auto 0;
+	border: 1px solid #ccc; /* 테두리 */
+	border-radius: 6px; /* 모서리 살짝 둥글게 */
+	box-sizing: border-box;
+	background-color: #fff;
+	overflow: hidden; /* 내부 요소가 삐져나가지 않도록 */
+	font-family: sans-serif; /* 폰트 예시 */
 }
 
 /* 헤더 영역: 프로필사진, 닉네임, 작성일, 우측 옵션버튼(...) */
 .main-feed-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;               /* 헤더 안쪽 여백 */
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px; /* 헤더 안쪽 여백 */
 }
-.header-left-user{
+
+.header-left-user {
 	display: flex;
 	align-items: center;
 	cursor: pointer;
@@ -43,129 +45,130 @@
 
 /* 왼쪽: 프로필 사진 + 닉네임 + 작성일 */
 .main-feed-header-left {
-  display: flex;          /* 가로 배치 */
-  align-items: center;    /* 세로 가운데 정렬 */
+	display: flex; /* 가로 배치 */
+	align-items: center; /* 세로 가운데 정렬 */
 }
 
 /* 프로필 사진 틀(원형) */
 .main-feed-header-left-img {
-  width: 40px;                /* 프로필 이미지 크기 */
-  height: 40px;
-  margin-right: 8px;
-  border-radius: 50%;         /* 원형 */
-  overflow: hidden;           /* 이미지가 원형에 맞게 잘리도록 */
-  background-color: #eee;     /* 실제 이미지 없을 때 배경 표시용 */
-  border: 1px solid gray;
+	width: 40px; /* 프로필 이미지 크기 */
+	height: 40px;
+	margin-right: 8px;
+	border-radius: 50%; /* 원형 */
+	overflow: hidden; /* 이미지가 원형에 맞게 잘리도록 */
+	background-color: #eee; /* 실제 이미지 없을 때 배경 표시용 */
+	border: 1px solid gray;
 }
 
 /* 프로필 이미지 실제 적용 */
 .main-feed-header-left-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;          /* 이미지가 영역에 꽉 차도록 */
+	width: 100%;
+	height: 100%;
+	object-fit: cover; /* 이미지가 영역에 꽉 차도록 */
 }
-.hearder-left-user{
+
+.hearder-left-user {
 	display: flex;
 	align-items: center;
-	
 }
 /* 닉네임 */
 .main-feed-header-left-nickname {
-  font-weight: bold;
-  font-size: 18px;
-  margin-right: 4px;
+	font-weight: bold;
+	font-size: 18px;
+	margin-right: 4px;
 }
 
 /* 작성일 */
 .main-feed-header-left-postDate {
-  font-size: 1rem;
-  color: #666;
+	font-size: 1rem;
+	color: #666;
 }
 
 /* 오른쪽: 점세개(...) */
 .main-feed-header-right {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 /* 게시물 이미지 영역 */
 .main-feed-content {
-  width: 100%;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+	width: 100%;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 }
 
 .main-feed-content-img img {
-  width: 100%;
-  display: block;
-  object-fit: cover;          /* 필요한 경우, 이미지 비율 유지하면서 꽉 채울 때 */
+	width: 100%;
+	display: block;
+	object-fit: cover; /* 필요한 경우, 이미지 비율 유지하면서 꽉 채울 때 */
 }
 
 /* 푸터 전체 */
 .main-feed-footer {
-  padding: 8px;               /* 좋아요, 댓글, 북마크, 텍스트 부분 */
-  position: relative;         /* float 요소 배치를 좀 더 직관적으로 조정 가능 */
+	padding: 8px; /* 좋아요, 댓글, 북마크, 텍스트 부분 */
+	position: relative; /* float 요소 배치를 좀 더 직관적으로 조정 가능 */
 }
 
 /* 좋아요/댓글 아이콘 영역(왼쪽) + 북마크 영역(오른쪽) */
 .main-feed-footer-left {
-  display: flex;              /* 가로로 나란히 */
-  align-items: center;        /* 세로 정렬 */
-  gap: 8px;                   /* 아이콘 간격 */
-  float: left;
+	display: flex; /* 가로로 나란히 */
+	align-items: center; /* 세로 정렬 */
+	gap: 8px; /* 아이콘 간격 */
+	float: left;
 }
 
 .main-feed-footer-right {
-  display: flex;
-  align-items: center;
-  float: right;               /* 오른쪽 배치 */
+	display: flex;
+	align-items: center;
+	float: right; /* 오른쪽 배치 */
 }
-.all-comment{
+
+.all-comment {
 	display: flex;
 	margin-bottom: 8px;
 }
 /* 아이콘 자체 스타일 (여백 등) */
-.main-feed-like,
-.main-feed-comment,
-.main-feed-bookmark {
-  margin-right: 8px;
+.main-feed-like, .main-feed-comment, .main-feed-bookmark {
+	margin-right: 8px;
 }
 
 /* float 해제용 (BFC) */
 .main-feed-footer::after {
-  content: "";
-  display: block;
-  clear: both;
+	content: "";
+	display: block;
+	clear: both;
 }
 
 /* 좋아요 개수를 새 줄에 배치 */
 .main-feed-footer-likeCount {
-  display: block;   /* 블록화 */
-  clear: both;      /* 위 float된 요소들 아래로 */
-  margin-top: 8px;  /* 간격 */
-  font-weight: 500; /* 예시로 약간 볼드하게 */
+	display: block; /* 블록화 */
+	clear: both; /* 위 float된 요소들 아래로 */
+	margin-top: 8px; /* 간격 */
+	font-weight: 500; /* 예시로 약간 볼드하게 */
 }
 
 /* 닉네임 + 내용 부분 */
 .main-feed-content-text {
-  margin-top: 6px;            /* '좋아요 개수' 아래로 약간 여백 */
-  font-size: 0.95rem;
-  line-height: 1.4;
+	margin-top: 6px; /* '좋아요 개수' 아래로 약간 여백 */
+	font-size: 0.95rem;
+	line-height: 1.4;
 }
 
 .main-feed-content-text span:first-child {
-  font-weight: bold;          /* 닉네임 볼드 처리 */
-  margin-right: 6px;
-  margin-bottom: 6px;
+	font-weight: bold; /* 닉네임 볼드 처리 */
+	margin-right: 6px;
+	margin-bottom: 6px;
 }
-.user-comment{
+
+.user-comment {
 	margin-bottom: 6px;
 	font-size: 0.95rem;
 	line-height: 1.4;
 }
+
 .main-feed-like svg {
-  display: flex;          /* 링크 자체가 flex 컨테이너가 되도록 */
-  align-items: center;    /* 내부 SVG를 수직 중앙 정렬 */
-  justify-content: center; /* 필요하면 수평도 가운데 정렬 */
+	display: flex; /* 링크 자체가 flex 컨테이너가 되도록 */
+	align-items: center; /* 내부 SVG를 수직 중앙 정렬 */
+	justify-content: center; /* 필요하면 수평도 가운데 정렬 */
 }
 /* 로딩 스피너 스타일 */
 #loading {
@@ -173,166 +176,196 @@
 	padding: 20px;
 	display: none; /* 기본적으로 숨김 */
 }
+
 #loading i {
 	font-size: 24px;
 	color: #555;
 }
-.comment-input{
+
+.comment-input {
 	width: 100%;
 }
 
 /* ===========신고 모달============ */
 .report-modal-content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 400px;
+	background: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 }
+
 .report-header h2 {
-    font-size: 18px;
-    text-align: center;
-    margin: 0;
+	font-size: 18px;
+	text-align: center;
+	margin: 0;
 }
+
 .report-reason label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 15px;
-    cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 15px;
+	cursor: pointer;
 }
+
 .report-reason {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2열로 정렬 */
-    gap: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr; /* 2열로 정렬 */
+	gap: 10px;
 }
-.reportRadio{
-    width: 10px;
-    height: 10px;
-    margin-right: 5px;
+
+.reportRadio {
+	width: 10px;
+	height: 10px;
+	margin-right: 5px;
 }
+
 .report-footer {
-    display: flex;
-    justify-content: space-around;
-    gap: 10px;
+	display: flex;
+	justify-content: space-around;
+	gap: 10px;
 }
 
 .report-footer .btn {
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 14px;
+	border: none;
 }
+
 .btn-delete {
-    background-color: #f7d3d3;
-    color: #a33;
+	background-color: #f7d3d3;
+	color: #a33;
 }
+
 .btn-delete:hover {
-    background-color: #f5bcbc;
+	background-color: #f5bcbc;
 }
+
 .cancel-btn {
-    background-color: #ccc;
+	background-color: #ccc;
 }
+
 .cancel-btn:hover {
-    background-color: #bbb;
+	background-color: #bbb;
+}
+
+/*관리자 삭제 버튼*/
+.delete-Btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: red;
+	font-size: 16px;
+	margin-left: 10px;
+}
+
+.delete-Btn svg {
+	transition: transform 0.2s ease;
+}
+
+.delete-Btn:hover svg {
+	transform: scale(1.1);
 }
 
 /* 좋아요 버튼 기본 스타일 */
 .post-like svg {
-  fill: gray; /* 기본 색상 */
-  transition: fill 0.3s ease; /* 색상 변화 효과 */
+	fill: gray; /* 기본 색상 */
+	transition: fill 0.3s ease; /* 색상 변화 효과 */
 }
-
-
 
 /* 좋아요 활성화 상태 */
 .post-like[data-liked="true"] svg {
-  fill: red; /* 좋아요 활성화 상태 색상 */
-  transform: scale(1.2); /* 약간 커지는 효과 */
-  transition: transform 0.2s ease, fill 0.2s ease; /* 크기와 색상 변화 효과 */
+	fill: red; /* 좋아요 활성화 상태 색상 */
+	transform: scale(1.2); /* 약간 커지는 효과 */
+	transition: transform 0.2s ease, fill 0.2s ease; /* 크기와 색상 변화 효과 */
 }
 
 /* 좋아요 비활성화 상태 */
 .post-like[data-liked="false"] svg {
-  fill: gray; /* 비활성화 상태 색상 */
-  transform: scale(1); /* 원래 크기 */
+	fill: gray; /* 비활성화 상태 색상 */
+	transform: scale(1); /* 원래 크기 */
 }
 /* ====== 슬라이드 관련 스타일 (여러 미디어일 때만 적용) ====== */
 .slider-container {
-    width: 500px;
-    height: 500px;
-    position: relative;
-    overflow: hidden;
- }
+	width: 500px;
+	height: 500px;
+	position: relative;
+	overflow: hidden;
+}
+
 .slider-slide {
-  display: none; 
-  text-align: center;
+	display: none;
+	text-align: center;
 }
+
 .slider-slide.active {
-  display: block;
+	display: block;
 }
-.slider-slide img,
-.slider-slide video {
-    width: 500px;
-    height: 500px;
-    object-fit: cover;  /* 이미지나 동영상이 영역을 꽉 채우도록, 넘치는 부분은 잘림 */
-    display: block;
-    margin: 0 auto;     /* 필요 시 중앙 정렬 */
+
+.slider-slide img, .slider-slide video {
+	width: 500px;
+	height: 500px;
+	object-fit: cover; /* 이미지나 동영상이 영역을 꽉 채우도록, 넘치는 부분은 잘림 */
+	display: block;
+	margin: 0 auto; /* 필요 시 중앙 정렬 */
 }
+
 .slider-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background-color: transparent;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 14px;
-  border-radius: 4px;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	border: none;
+	background-color: transparent;
+	padding: 6px 12px;
+	cursor: pointer;
+	font-size: 14px;
+	border-radius: 4px;
 }
 
 .slider-btn-prev {
-  left: 10px;
-  background-color: transparent;
-}
-.slider-btn-next {
-  right: 10px;
-  background-color: transparent;
+	left: 10px;
+	background-color: transparent;
 }
 
+.slider-btn-next {
+	right: 10px;
+	background-color: transparent;
+}
 </style>
 </head>
 <body>
 	<%--사이드 메뉴--%>
-	<%@ include file="/WEB-INF/views/member/sideMenu.jsp" %>
-	
+	<%@ include file="/WEB-INF/views/member/sideMenu.jsp"%>
+
 	<main id="main-feed">
 		<div>
-			<%@ include file="/WEB-INF/views/member/story.jsp" %>
+			<%@ include file="/WEB-INF/views/member/story.jsp"%>
 		</div>
-	 	<div>
-	 		 <div id="feed-container" class="main-feed-container"></div>
-	 		 <div id="loading">
-	 		  	<i class="fa fa-spinner fa-spin"></i> 로딩중...
-	 		</div>
-	 	</div>
+		<div>
+			<div id="feed-container" class="main-feed-container"></div>
+			<div id="loading">
+				<i class="fa fa-spinner fa-spin"></i> 로딩중...
+			</div>
+		</div>
 	</main>
-	
+
 	<%-- 모달 창--%>
-    <div id="modal-container">
-        <%@ include file="/WEB-INF/views/member/postModal.jsp"%>
-    </div>
-	
-	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp" %>
-	
+	<div id="modal-container">
+		<%@ include file="/WEB-INF/views/member/postModal.jsp"%>
+	</div>
+
+	<%@ include file="/WEB-INF/views/member/rightSideMenu.jsp"%>
+
 	<script>
 	let offset = 0;       // 현재까지 로드된 게시물 수
     let isLoading = false; // 중복 로딩 방지
@@ -610,6 +643,9 @@
             //좋아요 상태 관련 체크
             const isLiked = post.isLiked ? 'true' : 'false'; 
             
+            //관리자 레벨
+            const loginUserLevel = ${loginMember.acctLevel};
+            
             // 게시물 하나에 대한 HTML (문자열 연결)
             let postHtml =
                 '<div class="main-post-container">' +
@@ -628,18 +664,22 @@
                             '</div>' +
                         '</div>' +
                         '<div class="main-feed-header-right">' +
-                            '<a class="report-Btn" href="#" data-post-no="'+ post.postNo + '" data-target-type="P">' +
-                                '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"' +
-                                    'class="bi bi-three-dots" viewBox="0 0 16 16">' +
-                                    '<path d="M3 9.5a1.5 1.5 0 1 1 0-3' +
-                                            ' 1.5 1.5 0 0 1 0 3m5 0a1.5' +
-                                            ' 1.5 0 1 1 0-3 1.5 1.5 0 0 1' +
-                                            ' 0 3m5 0a1.5 1.5 0 1 1 0-3' +
-                                            ' 1.5 1.5 0 0 1 0 3"/>' +
+                        // 관리자일 경우 삭제 버튼, 일반 사용자일 경우 신고 버튼
+                        (loginUserLevel > 0
+                            ? '<a href="#" class="delete-Btn" data-post-no="' + post.postNo + '">' +
+                            	'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="red" viewBox="0 0 24 24">' +
+                                    '<path d="M3 6l3 12h12l3-12H3zm5-4h8l1 2H7l1-2zm2 14V8h2v8h-2zm4 0V8h2v8h-2z"/>' +
                                 '</svg>' +
-                            '</a>' +
-                        '</div>' +
-                    '</div>' + // main-feed-header
+                              '</a>'
+                            : '<a class="report-Btn" href="#" data-post-no="' + post.postNo + '" data-target-type="P">' +
+                                  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black" class="bi bi-three-dots" viewBox="0 0 16 16">' +
+                                      '<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>' +
+                                  '</svg>' +
+                              '</a>'
+                        ) +
+                    '</div>' +
+                '</div>' + // main-feed-header
+
 
                     '<div class="main-feed-content">' +
                         '<div class="main-feed-content-img">' +
@@ -761,6 +801,7 @@
             const reportModalHtml = createReportModal(targetType);
             $('body').prepend(reportModalHtml);
             
+            
             // (이벤트) 신고 버튼
             $('.report-modal-content').on('click', '#reportBtn', executeReport);
             
@@ -810,8 +851,42 @@
              function cancelReport(){
                  $("#storyModalBackdrop").remove();
              }
+                    
         });
     }
+    
+        // 삭제 버튼 클릭 이벤트
+        $(document).on('click', '.delete-Btn', function (event) {
+            event.preventDefault(); // 기본 링크 동작 방지
+
+            const postNo = $(this).data('post-no'); // 게시물 번호 가져오기
+
+            if (!confirm('정말 삭제하시겠습니까?')) {
+                return;
+            }
+
+            // AJAX 요청으로 게시물 삭제 처리
+            $.ajax({
+                url: '/post/delete.kh',
+                type: 'get',
+                data: { postNo: postNo },
+                success: function (response) {
+                    if (response === 'success') {
+                        alert('게시물이 삭제되었습니다.');
+                        // 삭제된 게시물 DOM 제거
+                        $(`[data-post-no="${postNo}"]`).closest('.main-post-container').remove();
+                    } else {
+                        alert('삭제 중 오류가 발생했습니다.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('삭제 요청 중 문제가 발생했습니다.');
+                    console.error(`[ERROR] 삭제 요청 실패 - postNo: ${postNo}`, error);
+                },
+            });
+        });
+
+
     
     $(document).ready(function () {
         // 좋아요 클릭 이벤트
