@@ -123,7 +123,7 @@ public class PostController {
 		int resWr = postService.write(post);
 		   
 		//3. 사진 폴더 삽입 + 이름 세팅, 이름 객체에 저장
-		   System.out.println("메서드 진입: 파일 처리 시작");
+		   //System.out.println("메서드 진입: 파일 처리 시작");
 		   
 		   if (files == null || files.length == 0) {
 			    System.out.println("업로드된 파일이 없습니다.");
@@ -252,7 +252,7 @@ public class PostController {
 		
 		 if (postNo == 0) {
 		        // postNo가 null일 경우 처리 로직
-		        System.out.println("postNo 값이 없습니다.");
+		        //System.out.println("postNo 값이 없습니다.");
 		    }
 		
 		//post 수정

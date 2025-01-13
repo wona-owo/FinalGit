@@ -38,7 +38,7 @@ public class KakaoController {
 			HttpSession session, RedirectAttributes redirectAttributes) {
 		String sessionState = (String) session.getAttribute("oauth_state");
 		if (sessionState == null || !sessionState.equals(state)) {
-        	System.out.println("state값 불일치");
+        	//System.out.println("state값 불일치");
             return "redirect:/";
         }
 		

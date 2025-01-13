@@ -227,7 +227,7 @@
                             $(".followingCountSpan").text(response.followingCount);
                         }
                     } else {
-                        alert("팔로우/언팔로우 처리 실패: " + (response.message || ''));
+                        //alert("팔로우/언팔로우 처리 실패: " + (response.message || ''));
                     }
                 },
                 error: function(){

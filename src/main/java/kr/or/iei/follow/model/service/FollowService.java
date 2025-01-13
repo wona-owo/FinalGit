@@ -63,7 +63,7 @@ public class FollowService {
     }
 
     public ArrayList<Member> recommendFriends(int userNo) {
-ArrayList<String> myPetTypes = (ArrayList<String>) followDao.getMyPetTypes(userNo);
+    	ArrayList<String> myPetTypes = (ArrayList<String>) followDao.getMyPetTypes(userNo);
         
         if (myPetTypes == null || myPetTypes.isEmpty()) {
             return new ArrayList<>(); // 빈 리스트 반환

@@ -110,8 +110,6 @@ public class ChatService {
 	
 	// 읽음 상태 업데이트
 	public int updateReadStatus(int roomId, int userNo, String readStatus) {
-		// 로그 추가
-        //System.out.println("updateReadStatus 호출됨: roomId=" + roomId + ", userNo=" + userNo + ", readStatus=" + readStatus);
 		
 	    HashMap<String, Object> params = new HashMap<>();
 	    params.put("roomId", roomId);

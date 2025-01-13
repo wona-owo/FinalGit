@@ -199,7 +199,12 @@
 		              
 		           	  LISTAGG(pf.post_file_name, ',') 
 		                WITHIN GROUP (ORDER BY pf.post_file_no) AS postFileName,
-		            
+					 CASE WHEN EXISTS (
+					    SELECT 1 FROM tbl_like l 
+					    WHERE l.target_no = p.post_no 
+					      AND l.user_no = #{userNo}
+					      AND l.target_type = 'P'
+					) THEN 1 ELSE 0 END AS isLiked,
 		            DBMS_RANDOM.VALUE AS rand_val
 		        FROM 
 		            post p
@@ -229,7 +234,7 @@
 		                SELECT following_no 
 		                  FROM follow 
 		                 WHERE follower_no = #{userNo}
-		            ) <!--AND p.post_date &gt;= SYSDATE - 2 --> 
+		            ) 
 		        GROUP BY
 		            p.post_no,
 		            p.user_no,
@@ -266,6 +271,12 @@
 	              WHERE c.post_no = p.post_no) AS commentCount,
 	            LISTAGG(pf.post_file_name, ',') 
 	                WITHIN GROUP (ORDER BY pf.post_file_no) AS postFileName,
+		            CASE WHEN EXISTS (
+					    SELECT 1 FROM tbl_like l 
+					    WHERE l.target_no = p.post_no 
+					      AND l.user_no = #{userNo}
+					      AND l.target_type = 'P'
+					) THEN 1 ELSE 0 END AS isLiked,
 	            DBMS_RANDOM.VALUE AS rand_val
 	        FROM 
 	            post p
@@ -303,7 +314,7 @@
 
     <!-- 무한 스크롤 시 추가 게시물 가져오기 -->
     <select id="getMorePosts" parameterType="map" resultType="post">
-	    SELECT DISTINCT * FROM (
+	     SELECT DISTINCT * FROM (
         SELECT inner_query.*, ROWNUM AS rn FROM (
             SELECT 
                 p.post_no AS postNo,
@@ -317,7 +328,13 @@
                 (SELECT COUNT(*) FROM tbl_like l WHERE l.target_no = p.post_no AND l.target_type = 'P') AS likeCount,
                 (SELECT COUNT(*) FROM tbl_comment c WHERE c.post_no = p.post_no) AS commentCount,
                 LISTAGG(pf.post_file_name, ',') 
-                    WITHIN GROUP (ORDER BY pf.post_file_no) AS postFileName
+                    WITHIN GROUP (ORDER BY pf.post_file_no) AS postFileName,
+                CASE WHEN EXISTS (
+			    SELECT 1 FROM tbl_like l 
+			    WHERE l.target_no = p.post_no 
+			      AND l.user_no = #{userNo}
+			      AND l.target_type = 'P'
+			) THEN 1 ELSE 0 END AS isLiked
             FROM 
                 post p
                 JOIN tbl_user u ON p.user_no = u.user_no

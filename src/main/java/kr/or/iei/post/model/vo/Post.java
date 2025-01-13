@@ -19,7 +19,9 @@ public class Post {
     private int commentCount;
     private String firstCommentContent;
     private String firstCommentUserNickname;
-	
+    private transient Integer isLikedInt;
+	private boolean isLiked;
+    
 	//hashtag 테이블 join
 	private int hashNo;
 	private ArrayList<String> hashName; //태그 배열
@@ -31,10 +33,11 @@ public class Post {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public Post(int postNo, int userNo, String postContent, String postDate, int postFileNo, String postFileName,
 			String userImage, String userNickname, int likeCount, int commentCount, String firstCommentContent,
-			String firstCommentUserNickname, int hashNo, ArrayList<String> hashName, List<String> postFileNames) {
+			String firstCommentUserNickname, Integer isLikedInt, boolean isLiked, int hashNo,
+			ArrayList<String> hashName, List<String> postFileNames) {
 		super();
 		this.postNo = postNo;
 		this.userNo = userNo;
@@ -48,6 +51,8 @@ public class Post {
 		this.commentCount = commentCount;
 		this.firstCommentContent = firstCommentContent;
 		this.firstCommentUserNickname = firstCommentUserNickname;
+		this.isLikedInt = isLikedInt;
+		this.isLiked = isLiked;
 		this.hashNo = hashNo;
 		this.hashName = hashName;
 		this.postFileNames = postFileNames;
@@ -149,6 +154,24 @@ public class Post {
 		this.firstCommentUserNickname = firstCommentUserNickname;
 	}
 
+	public Integer getIsLikedInt() {
+		return isLikedInt;
+	}
+
+	public void setIsLikedInt(Integer isLikedInt) {
+		this.isLikedInt = isLikedInt;
+        // isLikedInt 값에 따라 liked 필드를 설정
+        this.isLiked = (isLikedInt != null && isLikedInt == 1);
+	}
+
+	public boolean isLiked() {
+		return isLiked;
+	}
+
+	public void setLiked(boolean isLiked) {
+		this.isLiked = isLiked;
+	}
+
 	public int getHashNo() {
 		return hashNo;
 	}
@@ -187,14 +210,8 @@ public class Post {
 		return Objects.hash(postNo);
 	}
 
-	@Override
-	public String toString() {
-		return "Post [postNo=" + postNo + ", userNo=" + userNo + ", postContent=" + postContent + ", postDate="
-				+ postDate + ", postFileNo=" + postFileNo + ", postFileName=" + postFileName + ", userImage="
-				+ userImage + ", userNickname=" + userNickname + ", likeCount=" + likeCount + ", commentCount="
-				+ commentCount + ", firstCommentContent=" + firstCommentContent + ", firstCommentUserNickname="
-				+ firstCommentUserNickname + ", hashNo=" + hashNo + ", hashName=" + hashName + ", postFileNames="
-				+ postFileNames + "]";
-	}
+	
+
+	
 	
 }

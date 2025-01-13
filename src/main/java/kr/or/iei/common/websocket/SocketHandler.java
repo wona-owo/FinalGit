@@ -189,9 +189,6 @@ public class SocketHandler extends TextWebSocketHandler {
 			   readStatus = "N"; // 사용자가 메시지를 모두 읽지 못함
 		   }
 
-		   // 로그 추가
-		   //System.out.println("leaveTime: " + leaveTime + ", lastMessageTime: " + lastMessageTime + ", readStatus: " + readStatus);
-        
 		   // 읽음 상태 업데이트
 		   chatService.updateReadStatus(roomId, userNo, readStatus);
 

@@ -467,11 +467,11 @@
                         // 현재 방 읽음 상태
                         sendReadStatus(roomId, userNo);
                     } else {
-                        alert(response.message || '채팅방 정보를 불러오지 못했습니다.');
+                       // alert(response.message || '채팅방 정보를 불러오지 못했습니다.');
                     }
                 },
                 error: function() {
-                    alert('채팅 메시지를 불러오는 중 오류가 발생했습니다.');
+                   // alert('채팅 메시지를 불러오는 중 오류가 발생했습니다.');
                 }
             });
         }
@@ -513,11 +513,11 @@
                             $('#chatMessages').empty();
                         }
                     } else {
-                        alert(res.message || '채팅방 나가기에 실패했습니다.');
+                        //alert(res.message || '채팅방 나가기에 실패했습니다.');
                     }
                 },
                 error: function() {
-                    alert('채팅방 나가기에 실패했습니다.');
+                   // alert('채팅방 나가기에 실패했습니다.');
                 }
             });
         }

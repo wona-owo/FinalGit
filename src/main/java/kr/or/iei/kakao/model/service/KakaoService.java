@@ -132,7 +132,7 @@ public class KakaoService {
 		    } else {
 		    	// 실패 처리
 		    	String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-		    	System.out.println("Unlink failed: " + responseBody);
+		    	//System.out.println("Unlink failed: " + responseBody);
 		    	return false;
 		    }
 		} catch (IOException e) {

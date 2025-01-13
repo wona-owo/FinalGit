@@ -51,7 +51,6 @@ public class FollowController {
 		int myNo = loginMember.getUserNo(); // 나
 		int targetNo = memberService.selectUser(userId); // 상대방
 		
-		System.out.println("myNo: " + myNo + ", targetNo: " + targetNo);
 
 		if (targetNo <= 0) { // 팔로우를 했는데 대상이 없을 경우
 			resultMap.put("success", false);
@@ -65,7 +64,6 @@ public class FollowController {
 			if ("follow".equals(action)) {
 				// (1) 이미 팔로우 중인지 확인
 				int isFollowing = followService.selectCheckFollor(myNo, targetNo);
-				 System.out.println("Is following before follow action: " + isFollowing);
 				if (isFollowing > 0) {
 					// 이미 팔로우 중
 					resultMap.put("success", false);
@@ -96,7 +94,6 @@ public class FollowController {
 			} else if ("unfollow".equals(action)) {
 				// (1) 현재 내가 팔로우 중인지 확인
 				int isFollowing = followService.selectCheckFollor(myNo, targetNo);
-				System.out.println("Is following before unfollow action: " + isFollowing);
 				if (isFollowing == 0) {
 					// 이미 팔로우 안 하고 있음
 					resultMap.put("success", false);
@@ -127,7 +124,6 @@ public class FollowController {
 		// 4) 맞팔 여부 체크
 		boolean isMutualFollow = followService.isFollowingEachOther(myNo, targetNo);
 		resultMap.put("isMutualFollow", isMutualFollow);
-	    System.out.println("Response: " + resultMap);
 		return resultMap;
 	}
 	
