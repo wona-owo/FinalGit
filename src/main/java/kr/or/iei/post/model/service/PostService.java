@@ -89,7 +89,17 @@ public class PostService {
 	}
 
 	public int insertLike(Like like) {
-		return postDao.insertLike(like);
+		// 좋아요가 되어 있는지 먼저 확인
+	    int isLiked = postDao.isLiked(like);
+	    
+	    if (isLiked > 0) {
+	        // 이미 좋아요 상태라면 0을 리턴 or 예외 처리
+	        return 0;
+	    }
+	    
+	    // 좋아요가 아니라면 INSERT 진행
+	    int result = postDao.insertLike(like);
+	    return result;
 	}
 
 	public int deleteLike(Like like) {

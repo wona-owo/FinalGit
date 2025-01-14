@@ -459,7 +459,7 @@
                 isLoading = false;
             },
             error: function() {
-                alert('게시물을 불러오는 도중 오류가 발생했습니다.');
+                //alert('게시물을 불러오는 도중 오류가 발생했습니다.');
                 isLoading = false;
             }
         });
@@ -496,7 +496,7 @@
                 isLoading = false;
             },
             error: function() {
-                alert('게시물을 불러오는 도중 오류가 발생했습니다.');
+                //alert('게시물을 불러오는 도중 오류가 발생했습니다.');
                 $('#loading').hide();
                 isLoading = false;
             }
@@ -841,7 +841,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('신고에 실패했습니다.');
+                        //alert('신고에 실패했습니다.');
                         console.log(error);
                     }
                 });
@@ -876,11 +876,11 @@
                         // 삭제된 게시물 DOM 제거
                         $(`[data-post-no="${postNo}"]`).closest('.main-post-container').remove();
                     } else {
-                        alert('삭제 중 오류가 발생했습니다.');
+                        //alert('삭제 중 오류가 발생했습니다.');
                     }
                 },
                 error: function (xhr, status, error) {
-                    alert('삭제 요청 중 문제가 발생했습니다.');
+                    //alert('삭제 요청 중 문제가 발생했습니다.');
                     console.error(`[ERROR] 삭제 요청 실패 - postNo: ${postNo}`, error);
                 },
             });
@@ -926,9 +926,9 @@
 			            if (response === "success") {
 			            	
 			            	const loginUserNo = "${loginMember.userNo}"; // 현재 로그인한 사용자
-			 			    console.log("loginUserNo:", loginUserNo);
-			 			    console.log("postNo:", postNo);
-			 			    console.log("AJAX 데이터:", { targetNo: postNo, userNo: loginUserNo, targetType: "P" });
+			 			    //console.log("loginUserNo:", loginUserNo);
+			 			    //console.log("postNo:", postNo);
+			 			    //console.log("AJAX 데이터:", { targetNo: postNo, userNo: loginUserNo, targetType: "P" });
 
 			 			    
 			                const newLiked = !isLiked;
@@ -941,12 +941,12 @@
 			                // 좋아요 개수 업데이트
 			                updateLikeCount(postNo, $btn);
 			            } else {
-			                alert("좋아요 처리 실패");
+			                //alert("좋아요 처리 실패");
 			            }
 			            isProcessing = false;
 			        },
 			        error: function () {
-			            alert("좋아요 요청 처리 중 문제가 발생했습니다.");
+			            //alert("좋아요 요청 처리 중 문제가 발생했습니다.");
 			            isProcessing = false;
 			        },
 			    });

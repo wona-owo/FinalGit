@@ -188,8 +188,8 @@
 				    $(".modal").data("postNo", postNo);
 				    $(".modal").data("userNo", userNo);
 				
-				    console.log("게시글 번호:", postNo);
-				    console.log("작성자 번호:", userNo);
+				    //console.log("게시글 번호:", postNo);
+				    //console.log("작성자 번호:", userNo);
 				
 				    // 모달 초기화
 				    $(".modal").css("display", "block");
@@ -465,7 +465,7 @@
 		                }
 		            },
 		            error: function () {
-		                alert("댓글 작성 중 오류가 발생했습니다.");
+		                //alert("댓글 작성 중 오류가 발생했습니다.");
 		            },
 		            complete: function () {
 		                submitButton.prop("disabled", false); // 버튼 활성화
@@ -513,7 +513,7 @@
 			            },
 			            error: function (xhr, status, error) {
 			                console.error("AJAX 요청 오류:", error);
-			                alert("댓글 삭제 중 오류가 발생했습니다.");
+			                //alert("댓글 삭제 중 오류가 발생했습니다.");
 			            }
 			        });
 			    }
@@ -575,7 +575,7 @@
 		              }
 		          },
 		          error: function () {
-		              alert("댓글 수정 중 오류가 발생했습니다.");
+		              //alert("댓글 수정 중 오류가 발생했습니다.");
 		          }
 		      });
 		  });
@@ -636,7 +636,7 @@
 			                        $btn.data("liked", !isLiked); // 좋아요 상태 업데이트
 			                        $btn.find("i").toggleClass("fa-solid", !isLiked).toggleClass("fa-regular", isLiked);
 			                    } else {
-			                        alert("좋아요 업데이트에 실패했습니다.");
+			                        //alert("좋아요 업데이트에 실패했습니다.");
 			                    }
 			                },
 			                error: function () {
@@ -726,7 +726,7 @@
 					                $btn.find("i").toggleClass("fa-solid", !isLiked).toggleClass("fa-regular", isLiked);
 					                likeCount.text(newCount);
 					            } else {
-					                alert("좋아요 처리 실패");
+					                //alert("좋아요 처리 실패");
 					            }
 					        },
 					        error: function () {
