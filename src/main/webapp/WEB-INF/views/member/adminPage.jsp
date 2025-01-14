@@ -389,7 +389,7 @@ table tbody tr:hover {
 		    	html += '</tr>';
     		});
     	} else {
-    		html += '<h2>정보를 불러오지 못했습니다.</h2>';
+    		html += '<h2>내역이 존재하지 않습니다.</h2>';
     	}
     	
     	html += '</tbody>';
