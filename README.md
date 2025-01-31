@@ -25,7 +25,7 @@
 ## 📊 다이어그램
 
 ### 🔹 ERD(Entity Relationship Diagram)
-![ERD 다이어그램](링크)
+![ERD 다이어그램](https://github.com/wona-owo/FinalGit/blob/master/readme-img/erd%20%EA%B5%AC%EC%A1%B0.png)
 
 ## 🛠 기술 스택
 
