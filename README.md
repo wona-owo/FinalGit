@@ -90,18 +90,21 @@
 ``` 
 src/main/java
 ├── kr.or.iei
-│   ├── chat (채팅 기능 관련)
+│   ├── chat (채팅 기능)
 │   │   ├── controller (ChatController.java)
 │   │   ├── model
 │   │   │   ├── service (ChatService.java)
 │   │   │   ├── dao (ChatDao.java)
 │   │   │   ├── vo (ChatMessage.java, ChatRoom.java)
-│   ├── member (회원 관리)
-│   ├── post (게시물 기능)
-│   ├── story (스토리 기능)
+│   ├── common (핸들러 및 예외처리)
 │   ├── follow (팔로우 기능)
+│   ├── kakao (카카오 로그인 기능)
+│   ├── member (회원 관리)
+│   ├── naver (네이버 로그인 기능)
 │   ├── notify (알림 기능)
+│   ├── post (게시물 기능)
 │   ├── report (신고/관리 기능)
+│   ├── story (스토리 기능)
 │   ├── HomeController.java (메인 컨트롤러)
 ├── resources (설정 파일 및 XML)
 │   ├── mapper (MyBatis 매퍼 파일)
